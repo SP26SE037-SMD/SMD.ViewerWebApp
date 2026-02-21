@@ -1,6 +1,6 @@
 export default function ButtonBase({
   children,
-  variant = "primary",
+  variant = "",
   onClick,
   className = "",
   icon: Icon,

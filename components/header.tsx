@@ -1,4 +1,4 @@
-import ButtonBase from "@/components/button";
+import ButtonBase from "@/components/button-base";
 
 export default function Header() {
   return (
