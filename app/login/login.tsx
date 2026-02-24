@@ -3,9 +3,33 @@
 import GoogleIcon from "@/components/google-icon";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { useGoogleLogin } from "@react-oauth/google";
 import { motion } from "motion/react";
+import { useRouter } from "next/navigation";
 
-export function HomePage() {
+export default function Login() {
+  const router = useRouter();
+  const handleGoogleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      const userInfo = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+        headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
+      }).then((res) => res.json());
+      router.push("/home");
+      alert(`✅ Đăng nhập thành công!\n\nEmail: ${userInfo.email}\nTên: ${userInfo.name}\n\n`);
+
+      // TODO: Bật lên khi backend sẵn sàng
+      // await fetch('http://localhost:8080/api/auth/google', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({ token: tokenResponse.access_token }),
+      // });
+    },
+    onError: (error) => {
+      console.error("[TEST] Google login thất bại:", error);
+      alert("Google login thất bại. Xem console để biết thêm chi tiết.");
+    },
+  });
+
   return (
     <section className="min-h-screen relative pt-32 pb-20 bg-[#c8f0d2] overflow-hidden">
       {/* Decorative Geometric Background Elements */}
@@ -105,7 +129,10 @@ export function HomePage() {
                   </p>
                 </div>
 
-                <Button className="w-full h-14 text-base font-medium bg-white text-[#062C23] border-2 border-gray-200 hover:bg-gray-50 hover:border-[#062C23] relative group overflow-hidden">
+                <Button
+                  onClick={() => handleGoogleLogin()}
+                  className="w-full h-14 text-base font-medium bg-white text-[#062C23] border-2 border-gray-200 hover:bg-gray-50 hover:border-[#062C23] relative group overflow-hidden"
+                >
                   <span className="relative z-10 flex items-center justify-center gap-3">
                     <GoogleIcon />
                     Continue with Google

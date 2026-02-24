@@ -1,9 +1,10 @@
-import { HomePage } from "@/components/homepage";
+import { redirect } from "next/navigation";
 
 export default function Home() {
-  return (
-    <main>
-      <HomePage />
-    </main>
-  );
+  // if (!isAuth) {
+  //   redirect("/login");
+  // }
+  redirect("/login");
+
+  return <main></main>;
 }
