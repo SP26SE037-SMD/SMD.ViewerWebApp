@@ -54,7 +54,7 @@ export default function AppProvider({
   }, [setUserState]);
 
   return (
-    <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}>
+    <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!.trim()}>
       <AppContext.Provider
         value={{
           user,

@@ -1,7 +1,7 @@
 import Login from "@/app/login/login";
 
 export const metadata = {
-  title: "Login | SMD Viewer",
+  title: "Login",
 };
 export default function LoginPage() {
   return <Login />;

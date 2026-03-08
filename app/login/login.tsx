@@ -3,53 +3,84 @@
 import GoogleIcon from "@/components/google-icon";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { useGoogleLogin } from "@react-oauth/google";
 import { motion } from "motion/react";
 import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import authApiRequest from "@/apiRequests/auth";
+import { useAppContext } from "@/app/app-provider";
+import { useGoogleOneTapLogin, GoogleLogin } from "@react-oauth/google";
 
 export default function Login() {
+  const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
-  const handleGoogleLogin = useGoogleLogin({
-    onSuccess: async (tokenResponse) => {
-      const userInfo = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
-        headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
-      }).then((res) => res.json());
-      router.push("/home");
-      alert(`✅ Đăng nhập thành công!\n\nEmail: ${userInfo.email}\nTên: ${userInfo.name}\n\n`);
+  const { setUser } = useAppContext();
 
-      // TODO: Bật lên khi backend sẵn sàng
-      // await fetch('http://localhost:8080/api/auth/google', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ token: tokenResponse.access_token }),
-      // });
+  // 👉 THÊM HÀM NÀY MỚI
+  const handleGoogleSuccess = async (idToken: string) => {
+    setLoading(true);
+    try {
+      const response = await authApiRequest.loginGoogle({ idToken });
+
+      if (response?.status === 200) {
+        const payload = response.payload as any;
+        const token = payload?.data?.token;
+        const account = payload?.data?.account;
+
+        if (token) {
+          localStorage.setItem("sessionToken", token);
+          if (account) {
+            setUser({
+              id: account.accountId,
+              name: account.fullName || account.username,
+              email: account.email,
+              avatar: undefined,
+            });
+          }
+          router.push("/home");
+        } else {
+          console.error("No token received from backend:", payload);
+        }
+      }
+    } catch (error) {
+      console.error("Error during Google backend integration:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useGoogleOneTapLogin({
+    onSuccess: (credentialResponse) => {
+      // Khi user click chọn tài khoản vào popup One Tap
+      const idToken = credentialResponse.credential;
+      if (idToken) {
+        handleGoogleSuccess(idToken);
+      }
     },
-    onError: (error) => {
-      console.error("[TEST] Google login thất bại:", error);
-      alert("Google login thất bại. Xem console để biết thêm chi tiết.");
+    onError: () => {
+      console.error("One Tap Login Failed or modal closed by user");
     },
   });
 
   return (
-    <section className="min-h-screen relative pt-32 pb-20 bg-[#c8f0d2] overflow-hidden">
+    <section className="min-h-screen relative pt-32 pb-20 bg-[#c8f0d2] overflow-x-hidden">
       {/* Decorative Geometric Background Elements */}
       <motion.div
-        animate={{ y: [0, -15, 0], rotate: [0, 10, 0] }}
+        animate={{ y: [0, -50, 0], rotate: [0, 50, 0] }}
         transition={{
           duration: 6,
           repeat: Infinity,
           ease: "easeInOut",
         }}
-        className="absolute right-[15%] top-[20%] w-64 h-64 border-2 border-[#062C23]/10 opacity-40 pointer-events-none rounded-full"
+        className="absolute right-[15%] top-[10%] w-64 h-64 border-2 border-[#062C23]/10 opacity-60 pointer-events-none rounded-full"
       />
       <motion.div
-        animate={{ y: [0, 20, 0], rotate: [0, 10, 0] }}
+        animate={{ y: [0, 50, 0], rotate: [0, 10, 0] }}
         transition={{
           duration: 8,
           repeat: Infinity,
           ease: "easeInOut",
         }}
-        className="absolute right-[10%] top-[15%] w-32 h-32 bg-[#FFD074] border border-[#062C23]/10 pointer-events-none rounded-t-lg rounded-b-lg"
+        className="absolute right-[10%] top-[10%] w-32 h-32 bg-[#FFD074] border border-[#062C23]/10 pointer-events-none rounded-lg rotate-4"
       />
       <motion.div
         animate={{ y: [0, -25, 0], x: [0, 10, 0] }}
@@ -58,7 +89,7 @@ export default function Login() {
           repeat: Infinity,
           ease: "easeInOut",
         }}
-        className="absolute right-[25%] top-[40%] w-24 h-24 bg-[#062C23]/5 border border-[#062C23]/10 pointer-events-none rounded-lg rotate-12"
+        className="absolute right-[30%] top-[15%] w-24 h-24 bg-[#233E8B] border border-[#062C23]/10 pointer-events-none rounded-lg -rotate-4"
       />
 
       <div className="container mx-auto px-6 md:px-12 lg:px-24 relative z-10">
@@ -71,12 +102,12 @@ export default function Login() {
                 <span>Spring Semester 2026 is active</span>
               </div>
 
-              <h1 className="text-5xl md:text-7xl font-mono text-[#062C23] leading-[1.1] mb-6">
+              <h1 className="text-5xl md:text-7xl font-serif text-[#062C23] leading-[1.1] mb-6">
                 The syllabus <br />
                 system for <br />
-                <span className="italic relative inline-block">
+                <span className="italic relative inline-block text-[#EA6227]">
                   future innovators.
-                  <svg
+                  {/* <svg
                     className="absolute -bottom-2 left-0 w-full animate-in fade-in duration-1000 delay-500"
                     viewBox="0 0 200 9"
                     fill="none"
@@ -88,7 +119,7 @@ export default function Login() {
                       strokeWidth="3"
                       strokeLinecap="round"
                     />
-                  </svg>
+                  </svg> */}
                 </span>
               </h1>
 
@@ -129,16 +160,30 @@ export default function Login() {
                   </p>
                 </div>
 
-                <Button
-                  onClick={() => handleGoogleLogin()}
-                  className="w-full h-14 text-base font-medium bg-white text-[#062C23] border-2 border-gray-200 hover:bg-gray-50 hover:border-[#062C23] relative group overflow-hidden"
-                >
-                  <span className="relative z-10 flex items-center justify-center gap-3">
-                    <GoogleIcon />
-                    Continue with Google
-                  </span>
-                </Button>
-
+                <div className="flex justify-center w-full min-h-[56px] items-center">
+                  {loading ? (
+                    // Hiệu ứng Loading nhẹ nhàng nếu muốn
+                    <p className="text-sm text-gray-500 font-medium">Đang xử lý đăng nhập...</p>
+                  ) : (
+                    // Nút bấm chuẩn của thư viện
+                    <GoogleLogin
+                      onSuccess={(credentialResponse) => {
+                        const idToken = credentialResponse.credential;
+                        if (idToken) {
+                          handleGoogleSuccess(idToken);
+                        }
+                      }}
+                      onError={() => {
+                        console.error("Standard Google Login Failed");
+                      }}
+                      // Tùy chỉnh nhẹ giao diện nút (trắng, góc bo)
+                      theme="outline"
+                      size="large"
+                      shape="circle"
+                      width="300px" // Cho nó full chiều ngang Card
+                    />
+                  )}
+                </div>
                 <p className="text-xs text-gray-400 mt-4">
                   By clicking continue, you agree to our{" "}
                   <a href="#" className="underline hover:text-gray-600">
