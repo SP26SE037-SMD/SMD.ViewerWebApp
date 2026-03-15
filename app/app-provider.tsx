@@ -1,5 +1,7 @@
 "use client";
+
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import { AccountResType } from "@/schemaValidations/account.schema";
 import {
   createContext,
   useCallback,
@@ -8,13 +10,7 @@ import {
   useState,
 } from "react";
 
-type User = {
-  id: string;
-  name: string;
-  email: string;
-  avatar?: string;
-};
-
+type User = AccountResType["data"];
 
 const AppContext = createContext<{
   user: User | null;
@@ -22,15 +18,13 @@ const AppContext = createContext<{
   isAuthenticated: boolean;
 }>({
   user: null,
-  setUser: () => { },
+  setUser: () => {},
   isAuthenticated: false,
 });
-
 export const useAppContext = () => {
   const context = useContext(AppContext);
   return context;
 };
-
 export default function AppProvider({
   children,
 }: {
@@ -45,7 +39,7 @@ export default function AppProvider({
       setUserState(user);
       localStorage.setItem("user", JSON.stringify(user));
     },
-    [setUserState]
+    [setUserState],
   );
 
   useEffect(() => {
@@ -54,7 +48,9 @@ export default function AppProvider({
   }, [setUserState]);
 
   return (
-    <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!.trim()}>
+    <GoogleOAuthProvider
+      clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!.trim()}
+    >
       <AppContext.Provider
         value={{
           user,

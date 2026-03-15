@@ -1,5 +1,4 @@
-import envConfig from "@/app/config";
-import { normalizePath } from "@/lib/utils";
+import envConfig from "@/config";
 import { redirect } from "next/navigation";
 
 type CustomOptions = Omit<RequestInit, "method"> & {
@@ -64,8 +63,8 @@ const request = async <Response>(
     body instanceof FormData
       ? {}
       : {
-        "Content-Type": "application/json",
-      };
+          "Content-Type": "application/json",
+        };
 
   if (isClient()) {
     const sessionToken = localStorage.getItem("sessionToken");

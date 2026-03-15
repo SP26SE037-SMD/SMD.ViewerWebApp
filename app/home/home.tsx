@@ -1,244 +1,151 @@
 "use client";
 
-import React, { useState } from "react";
-import { Search, BookOpen, GitMerge, Layers, ChevronRight, Bell, User, LogOut, Menu, X } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { BookOpen, Map, Milestone, GraduationCap, Search, X } from "lucide-react";
+import { useRouter } from "next/navigation";
 
-// ─── Types ───────────────────────────────────────────────────────────────────
-type TabType = "curriculum" | "syllabus" | "prerequisite";
-
-interface SearchResult {
-    id: string;
-    title: string;
-    code: string;
-    description: string;
-    credits?: number;
-    semester?: string;
-    department?: string;
-}
-
-// ─── Mock data ────────────────────────────────────────────────────────────────
-const MOCK_DATA: Record<TabType, SearchResult[]> = {
-    curriculum: [
-        { id: "1", title: "Software Engineering", code: "SE", description: "A 4-year program covering software development lifecycle, system design, and engineering practices.", credits: 145, semester: "2024.1", department: "FPT University" },
-        { id: "2", title: "Artificial Intelligence", code: "AI", description: "Covers machine learning, deep learning, computer vision, and NLP fundamentals.", credits: 140, semester: "2024.1", department: "FPT University" },
-        { id: "3", title: "Information Assurance", code: "IA", description: "Focus on cybersecurity, data protection, and network security principles.", credits: 138, semester: "2024.1", department: "FPT University" },
-        { id: "4", title: "Digital Art & Design", code: "GD", description: "Creative program covering UI/UX, graphic design, and multimedia production.", credits: 135, semester: "2024.1", department: "FPT University" },
-    ],
-    syllabus: [
-        { id: "1", title: "Software Architecture and Design", code: "SAD301", description: "Study of architectural patterns, design principles, and scalable system design.", credits: 3, semester: "Fall 2025", department: "School of Computing" },
-        { id: "2", title: "Mobile Application Development", code: "MAD301", description: "Developing mobile applications for iOS and Android platforms using React Native.", credits: 3, semester: "Fall 2025", department: "School of Computing" },
-        { id: "3", title: "Database Systems", code: "DBS301", description: "Relational and non-relational database design, SQL, query optimization, and transactions.", credits: 3, semester: "Spring 2025", department: "School of Computing" },
-        { id: "4", title: "Machine Learning", code: "ML301", description: "Supervised, unsupervised learning algorithms and their practical applications.", credits: 3, semester: "Spring 2025", department: "School of Computing" },
-        { id: "5", title: "Operating Systems", code: "OS201", description: "Process management, memory management, file systems, and concurrency.", credits: 3, semester: "Fall 2024", department: "School of Computing" },
-    ],
-    prerequisite: [
-        { id: "1", title: "MAD301 → WDP301", code: "MAD301", description: "Mobile App Development is required before taking Web Development with React & Node.", department: "School of Computing" },
-        { id: "2", title: "DBS201 → DBS301", code: "DBS201", description: "Introduction to Databases must be completed before Database Systems.", department: "School of Computing" },
-        { id: "3", title: "ML201 → ML301", code: "ML201", description: "Foundations of Machine Learning is prerequisite for Advanced Machine Learning.", department: "School of Computing" },
-        { id: "4", title: "OS201 → CN201", code: "OS201", description: "Operating Systems is required before taking Computer Networks.", department: "School of Computing" },
-    ],
-};
-
-// ─── Tab config ───────────────────────────────────────────────────────────────
-const TABS: { key: TabType; label: string; Icon: React.FC<{ size?: number; className?: string }> }[] = [
-    { key: "curriculum", label: "Curriculum", Icon: Layers },
-    { key: "syllabus", label: "Syllabus", Icon: BookOpen },
-    { key: "prerequisite", label: "Pre-requisite", Icon: GitMerge },
-];
-
-// ─── Result Card ──────────────────────────────────────────────────────────────
-function ResultCard({ item, tab }: { item: SearchResult; tab: TabType }) {
-    const accent =
-        tab === "curriculum" ? "#EA6227" : tab === "syllabus" ? "#233E8B" : "#062C23";
-
-    return (
-        <div className="group bg-white border border-gray-100 rounded-xl p-5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer flex gap-4">
-            {/* Color stripe */}
-            <div
-                className="w-1 rounded-full shrink-0 transition-all duration-200 group-hover:w-1.5"
-                style={{ backgroundColor: accent }}
-            />
-            <div className="flex-1 min-w-0">
-                <div className="flex items-start justify-between gap-2">
-                    <div>
-                        <span className="inline-block text-xs font-mono font-semibold px-2 py-0.5 rounded-md mb-1"
-                            style={{ backgroundColor: `${accent}15`, color: accent }}>
-                            {item.code}
-                        </span>
-                        <h3 className="font-semibold text-gray-900 text-base leading-tight">{item.title}</h3>
-                    </div>
-                    <ChevronRight size={16} className="text-gray-300 group-hover:text-gray-500 shrink-0 mt-1 transition-colors" />
-                </div>
-                <p className="text-sm text-gray-500 mt-1.5 line-clamp-2 leading-relaxed">{item.description}</p>
-                <div className="flex flex-wrap gap-3 mt-3">
-                    {item.credits && (
-                        <span className="text-xs text-gray-400">{item.credits} credits</span>
-                    )}
-                    {item.semester && (
-                        <span className="text-xs text-gray-400">· {item.semester}</span>
-                    )}
-                    {item.department && (
-                        <span className="text-xs text-gray-400">· {item.department}</span>
-                    )}
-                </div>
-            </div>
-        </div>
-    );
-}
-
-// ─── Main Component ───────────────────────────────────────────────────────────
 export default function Home() {
-    const [activeTab, setActiveTab] = useState<TabType>("syllabus");
-    const [query, setQuery] = useState("");
-    const [sidebarOpen, setSidebarOpen] = useState(true);
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
+  const [searchTarget, setSearchTarget] = useState<string | null>(null);
 
-    const filtered = MOCK_DATA[activeTab].filter((item) => {
-        const q = query.toLowerCase();
-        return (
-            item.title.toLowerCase().includes(q) ||
-            item.code.toLowerCase().includes(q) ||
-            item.description.toLowerCase().includes(q)
-        );
-    });
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 500);
+    return () => clearTimeout(timer);
+  }, []);
 
-    const activeTabInfo = TABS.find((t) => t.key === activeTab)!;
+  const items = [
+    {
+      id: 1,
+      title: "View Syllabus",
+      desc: "Explore the structured learning path for your major.",
+      icon: BookOpen,
+      color: "bg-[#3D6B2C]",
+      span: "col-span-2 row-span-2",
+      path: "/syllabus",
+    },
+    {
+      id: 2,
+      title: "View Curriculum",
+      desc: "Detailed step-by-step guide.",
+      icon: Milestone,
+      color: "bg-[#2D4A22]",
+      span: "col-span-2 row-span-1",
+      path: "/curriculum",
+    },
+    {
+      id: 3,
+      title: "Learning Path",
+      desc: "Download course outlines.",
+      icon: Map,
+      color: "bg-[#4A7D37]",
+      span: "col-span-1 row-span-1",
+      path: "/learning-path",
+    },
+    {
+      id: 4,
+      title: "Pre-requisite",
+      desc: "Check required subjects.",
+      icon: GraduationCap,
+      color: "bg-[#1A2E12]",
+      span: "col-span-1 row-span-1",
+      path: "/pre-requisite",
+    },
+  ];
 
-    return (
-        <div className="min-h-screen bg-gray-50 flex flex-col">
-            {/* ── Top Nav ── */}
-            <header className="sticky top-0 z-40 bg-white border-b border-gray-100 px-4 h-16 flex items-center gap-4 shadow-sm">
-                <button
-                    onClick={() => setSidebarOpen((v) => !v)}
-                    className="p-2 rounded-lg hover:bg-gray-100 text-gray-500 transition-colors"
-                    aria-label="Toggle sidebar"
-                >
-                    {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
-                </button>
+  return (
+    <div className="min-h-screen w-screen bg-[#f0f7ed] flex items-center justify-center p-6 lg:p-12">
+      <AnimatePresence>
+        {loading && (
+          <motion.div
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-[#f0f7ed] flex items-center justify-center"
+          >
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#3D6B2C]"></div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-                {/* Brand */}
-                <span className="font-mono font-bold text-lg tracking-tight text-[#062C23] whitespace-nowrap">
-                    UniSyllabus
-                </span>
+      <AnimatePresence>
+        {searchTarget !== null && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSearchTarget(null)}
+            className="fixed inset-0 z-50 flex items-start justify-center pt-32 bg-black/40 backdrop-blur-sm p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0, y: -20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: -20 }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-2xl bg-white rounded-full shadow-2xl p-3 flex items-center gap-3"
+            >
+              <div className="text-[#3D6B2C] ml-4">
+                <Search size={24} />
+              </div>
+              <input
+                autoFocus
+                type="text"
+                placeholder="Type to search..."
+                className="flex-1 text-lg outline-none text-[#5A6B52] bg-transparent ml-2 font-[Lexend]"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && e.currentTarget.value.trim() !== "") {
+                    const query = e.currentTarget.value.trim().toLowerCase();
+                    router.push(`${searchTarget}?search=${encodeURIComponent(query)}`);
+                    setSearchTarget(null);
+                  }
+                }}
+              />
+              <button
+                onClick={() => setSearchTarget(null)}
+                className="p-3 bg-[#E8F5E0] rounded-full hover:bg-[#D4ECC8] text-[#3D6B2C] transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-                {/* Search bar - central */}
-                <div className="flex-1 max-w-2xl mx-auto">
-                    <div className="relative">
-                        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-                        <input
-                            type="text"
-                            placeholder={`Search ${activeTabInfo.label}…`}
-                            value={query}
-                            onChange={(e) => setQuery(e.target.value)}
-                            className="w-full pl-9 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#062C23]/20 focus:border-[#062C23]/40 transition-all placeholder:text-gray-400"
-                        />
-                    </div>
-                </div>
-
-                {/* Right actions */}
-                <div className="flex items-center gap-2 ml-auto">
-                    <button className="relative p-2 rounded-lg hover:bg-gray-100 text-gray-500 transition-colors">
-                        <Bell size={20} />
-                        <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#EA6227] rounded-full" />
-                    </button>
-                    <button className="p-2 rounded-lg hover:bg-gray-100 text-gray-500 transition-colors">
-                        <User size={20} />
-                    </button>
-                </div>
-            </header>
-
-            <div className="flex flex-1 overflow-hidden">
-                {/* ── Sidebar ── */}
-                <aside
-                    className={`${sidebarOpen ? "w-60" : "w-0"} shrink-0 bg-white border-r border-gray-100 overflow-hidden transition-all duration-300 flex flex-col`}
-                >
-                    <div className="p-4 pt-6 flex-1">
-                        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider px-2 mb-3">
-                            Browse
-                        </p>
-                        <nav className="space-y-1">
-                            {TABS.map(({ key, label, Icon }) => (
-                                <button
-                                    key={key}
-                                    onClick={() => { setActiveTab(key); setQuery(""); }}
-                                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 ${activeTab === key
-                                            ? "bg-[#062C23] text-white shadow-sm"
-                                            : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-                                        }`}
-                                >
-                                    <Icon size={16} />
-                                    {label}
-                                </button>
-                            ))}
-                        </nav>
-                    </div>
-
-                    {/* Sidebar footer */}
-                    <div className="p-4 border-t border-gray-100">
-                        <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-500 hover:bg-red-50 hover:text-red-600 transition-colors">
-                            <LogOut size={16} />
-                            Sign out
-                        </button>
-                    </div>
-                </aside>
-
-                {/* ── Main Content ── */}
-                <main className="flex-1 overflow-y-auto p-6">
-                    {/* Page header */}
-                    <div className="mb-6 flex items-center justify-between">
-                        <div>
-                            <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-                                <activeTabInfo.Icon size={22} className="text-gray-500" />
-                                {activeTabInfo.label}
-                            </h1>
-                            <p className="text-sm text-gray-500 mt-0.5">
-                                {filtered.length} {filtered.length === 1 ? "result" : "results"}
-                                {query && ` for "${query}"`}
-                            </p>
-                        </div>
-
-                        {/* Tab pills */}
-                        <div className="flex bg-gray-100 p-1 rounded-lg gap-1">
-                            {TABS.map(({ key, label }) => (
-                                <button
-                                    key={key}
-                                    onClick={() => { setActiveTab(key); setQuery(""); }}
-                                    className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all duration-150 ${activeTab === key
-                                            ? "bg-white text-gray-900 shadow-sm"
-                                            : "text-gray-500 hover:text-gray-700"
-                                        }`}
-                                >
-                                    {label}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Results */}
-                    {filtered.length > 0 ? (
-                        <div className="grid gap-3 sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-2">
-                            {filtered.map((item) => (
-                                <ResultCard key={item.id} item={item} tab={activeTab} />
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="flex flex-col items-center justify-center py-24 text-center">
-                            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                                <Search size={24} className="text-gray-300" />
-                            </div>
-                            <h3 className="text-gray-700 font-semibold text-lg">No results found</h3>
-                            <p className="text-gray-400 text-sm mt-1">
-                                Try a different keyword or clear the search.
-                            </p>
-                            <button
-                                onClick={() => setQuery("")}
-                                className="mt-4 text-sm text-[#062C23] underline hover:opacity-70"
-                            >
-                                Clear search
-                            </button>
-                        </div>
-                    )}
-                </main>
+      <div className="max-w-6xl w-full grid grid-cols-1 md:grid-cols-4 grid-rows-2 gap-4 h-[auto] md:h-[600px]">
+        {items.map((item, index) => (
+          <motion.div
+            key={item.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1 }}
+            whileHover={{ y: -5, transition: { duration: 0.2 } }}
+            className={`relative p-8 rounded-[32px] overflow-hidden flex flex-col justify-between text-white border border-white/10 shadow-[8px_8px_0px_0px_rgba(26,46,18,0.1)] ${item.span} ${item.color}`}
+          >
+            {/* Background Decor */}
+            <div className="absolute top-[-10%] right-[-10%] opacity-10">
+              <item.icon size={150} />
             </div>
-        </div>
-    );
+
+            <div className="z-10">
+              <div className="p-3 bg-white/10 w-fit rounded-2xl mb-4 backdrop-blur-md">
+                <item.icon size={28} />
+              </div>
+              <h2 className="text-2xl font-bold font-[Lexend] leading-tight mb-2">
+                {item.title}
+              </h2>
+              <p className="text-white/70 text-sm font-light max-w-[200px]">
+                {item.desc}
+              </p>
+            </div>
+
+            <button
+              onClick={() => setSearchTarget(item.path)}
+              className="z-10 mt-4 w-fit px-4 py-2 bg-white/10 hover:bg-white/20 rounded-full text-xs font-medium transition-all border border-white/20"
+            >
+              Search →
+            </button>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  );
 }

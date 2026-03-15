@@ -1,28 +1,37 @@
-import ButtonBase from "@/components/button-base";
+import { Bell, User } from "lucide-react";
+import Image from "next/image";
 
 export default function Header() {
   return (
-    <nav className="flex justify-between items-center px-6 py-4 w-full mx-auto font-sans sticky z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 sticky top-0">
-      <div className="max-w-7xl mx-auto w-full flex justify-between items-center">
-        <div className="flex items-center gap-12">
-          <div className="font-bold text-xl tracking-tight flex items-center gap-2 font-mono uppercase">
-            UniSyllabus
-          </div>
-          <div className="hidden md:flex gap-8 text-[15px] font-medium text-gray-900">
-            <a href="#" className="hover:opacity-60">
-              Product
-            </a>
-            <a href="#" className="hover:opacity-60">
-              Solutions
-            </a>
-            <a href="#" className="hover:opacity-60">
-              Pricing
-            </a>
+    <nav className="flex justify-between items-center px-6 py-4 w-full mx-auto font-sans z-50 bg-[#2D4A22] backdrop-blur-md border-b border-gray-100 sticky top-0">
+      <div className="mx-auto flex h-10 w-full max-w-7xl items-center px-6">
+        {/* Logo */}
+        <div className="flex flex-1 justify-start">
+          <div className="relative h-10 w-32">
+            <Image
+              src="/smd-with-name.png"
+              alt="SMD Logo"
+              fill
+              priority
+              className="object-contain"
+            />
           </div>
         </div>
-        <div className="flex items-center gap-4">
-          <ButtonBase variant="secondary">Log in</ButtonBase>
-          <ButtonBase variant="primary">Get started</ButtonBase>
+        {/* Title */}
+        <div className="flex flex-1 justify-center">
+          <h1 className="whitespace-nowrap font-[Bricolage_Grotesque] text-2xl font-bold tracking-tight text-[#6AB04C] sm:text-3xl">
+            Syllabus
+          </h1>
+        </div>
+        {/* Notification and Profile */}
+        <div className="flex flex-1 justify-end items-center gap-2">
+          <button className="relative p-2 text-white transition-colors hover:rounded-lg hover:bg-gray-100">
+            <Bell size={20} />
+            <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-[#EA6227]" />
+          </button>
+          <button className="p-2 text-white transition-colors hover:rounded-lg hover:bg-gray-100">
+            <User size={20} />
+          </button>
         </div>
       </div>
     </nav>
