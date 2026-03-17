@@ -15,13 +15,13 @@ const authApiRequest = {
     http.post("/api/auth", body, {
       baseUrl: "",
     }),
-  logoutFromNextServerToServer: (sessionToken: string) =>
+  logoutFromNextServerToServer: (jwt: string) =>
     http.post<MessageResType>(
-      "/api/auth/logout",
-      {},
+      `/api/auth/logout?jwt=${encodeURIComponent(jwt)}`,
+      null,
       {
         headers: {
-          Authorization: `Bearer ${sessionToken}`,
+          accept: "*/*",
         },
       },
     ),

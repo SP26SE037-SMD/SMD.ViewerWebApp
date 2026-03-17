@@ -24,9 +24,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 
 export default function Login() {
-  const [loading, setLoading] = useState<boolean>(false);
-  const [isEmailLoading, setIsEmailLoading] = useState<boolean>(false);
-  const [isGoogleLoading, setIsGoogleLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
+  const [isEmailLoading, setIsEmailLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const router = useRouter();
   const { setUser } = useAppContext();
 
@@ -55,10 +55,11 @@ export default function Login() {
       toast.success(result.payload.message);
       const account = result.payload.data.account;
       setUser({
-        id: account.accountId,
-        name: account.fullName,
+        accountId: String(account.accountId),
         email: account.email,
-        avatar: account.avatar,
+        fullName: account.fullName,
+        avatarUrl: null,
+        role: account.role,
       });
       router.push("/home");
       router.refresh();
@@ -85,10 +86,14 @@ export default function Login() {
           localStorage.setItem("sessionToken", token);
           if (account) {
             setUser({
-              id: account.accountId,
-              name: account.fullName || account.username,
+              accountId: String(account.accountId),
               email: account.email,
-              avatar: account.avatar,
+              fullName: account.fullName || "",
+              avatarUrl: null,
+              role:
+                typeof account.role === "string"
+                  ? account.role
+                  : (account.role?.roleName ?? ""),
             });
           }
           router.push("/home");
@@ -392,10 +397,11 @@ export default function Login() {
                     <Button
                       type="submit"
                       disabled={isEmailLoading || isGoogleLoading}
-                      className={`font-[Lexend] bg-[#6ab04c] text-[#F0F7ED] w-full h-11 shadow-[4px_4px_0px_0px_#1A2E12] rounded-sm transition-colors ${isEmailLoading
+                      className={`font-[Lexend] bg-[#6ab04c] text-[#F0F7ED] w-full h-11 shadow-[4px_4px_0px_0px_#1A2E12] rounded-sm transition-colors ${
+                        isEmailLoading
                           ? "opacity-50 cursor-not-allowed"
                           : "opacity-100 hover:bg-[#2D4F21]"
-                        }`}
+                      }`}
                     >
                       {isEmailLoading ? "Signing in..." : "Sign In"}
                     </Button>

@@ -63,8 +63,8 @@ const request = async <Response>(
     body instanceof FormData
       ? {}
       : {
-          "Content-Type": "application/json",
-        };
+        "Content-Type": "application/json",
+      };
 
   if (isClient()) {
     const sessionToken = localStorage.getItem("sessionToken");

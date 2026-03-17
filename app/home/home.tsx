@@ -2,7 +2,14 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { BookOpen, Map, Milestone, GraduationCap, Search, X } from "lucide-react";
+import {
+  BookOpen,
+  Map,
+  Milestone,
+  GraduationCap,
+  Search,
+  X,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
@@ -92,9 +99,14 @@ export default function Home() {
                 placeholder="Type to search..."
                 className="flex-1 text-lg outline-none text-[#5A6B52] bg-transparent ml-2 font-[Lexend]"
                 onKeyDown={(e) => {
-                  if (e.key === "Enter" && e.currentTarget.value.trim() !== "") {
+                  if (
+                    e.key === "Enter" &&
+                    e.currentTarget.value.trim() !== ""
+                  ) {
                     const query = e.currentTarget.value.trim().toLowerCase();
-                    router.push(`${searchTarget}?search=${encodeURIComponent(query)}`);
+                    router.push(
+                      `${searchTarget}?search=${encodeURIComponent(query)}`,
+                    );
                     setSearchTarget(null);
                   }
                 }}
@@ -110,7 +122,7 @@ export default function Home() {
         )}
       </AnimatePresence>
 
-      <div className="max-w-6xl w-full grid grid-cols-1 md:grid-cols-4 grid-rows-2 gap-4 h-[auto] md:h-[600px]">
+      <div className="max-w-6xl w-full grid grid-cols-1 md:grid-cols-4 grid-rows-2 gap-4 h-auto md:h-150">
         {items.map((item, index) => (
           <motion.div
             key={item.id}
@@ -132,7 +144,7 @@ export default function Home() {
               <h2 className="text-2xl font-bold font-[Lexend] leading-tight mb-2">
                 {item.title}
               </h2>
-              <p className="text-white/70 text-sm font-light max-w-[200px]">
+              <p className="text-white/70 text-sm font-light max-w-50">
                 {item.desc}
               </p>
             </div>

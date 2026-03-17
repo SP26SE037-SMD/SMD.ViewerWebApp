@@ -32,6 +32,6 @@ export const CurriculumRes = z
         }),
     })
 
-export type CurriculumBodyType = z.TypeOf<typeof CurriculumBody>;
+export type CurriculumBodyType = z.infer<typeof CurriculumBody>;
 
-export type CurriculumResType = z.TypeOf<typeof CurriculumRes>;
+export type CurriculumResType = z.infer<typeof CurriculumRes>;

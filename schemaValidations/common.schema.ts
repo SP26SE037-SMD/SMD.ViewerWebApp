@@ -7,4 +7,4 @@ export const MessageRes = z
   })
   .strict()
 
-export type MessageResType = z.TypeOf<typeof MessageRes>
+export type MessageResType = z.infer<typeof MessageRes>
