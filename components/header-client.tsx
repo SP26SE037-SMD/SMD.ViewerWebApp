@@ -1,68 +1,78 @@
 "use client";
 
-import { Bell, Mail, ShieldCheck, User } from "lucide-react";
+import { Bell, Mail, ShieldCheck, User, LogOut } from "lucide-react";
 import Image from "next/image";
 import * as Popover from "@radix-ui/react-popover";
 import { motion } from "motion/react";
 import type { AccountMeResType } from "@/schemaValidations/account.schema";
 import ButtonLogout from "./button-logout";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/lib/store";
 
 type Props = {
   account: AccountMeResType["data"] | null;
 };
 
 export default function HeaderClient({ account }: Props) {
-  const avatarUrl = account?.avatarUrl;
-  const fullName = account?.fullName || "User";
-  const email = account?.email || "No email";
-  const roleName = account?.role?.roleName || "GUEST";
+  const reduxUser = useSelector((state: RootState) => state.user.user);
+
+  const avatarUrl = reduxUser?.avatarUrl || account?.avatarUrl;
+  const fullName = reduxUser?.fullName || account?.fullName || "Người dùng";
+  const email = reduxUser?.email || account?.email || "";
+  const roleName = (typeof reduxUser?.role === 'string' ? reduxUser.role : reduxUser?.role?.roleName) || account?.role?.roleName || "GUEST";
+
+  const initials = fullName
+    .split(" ")
+    .map((w) => w[0])
+    .slice(-2)
+    .join("")
+    .toUpperCase();
 
   return (
-    <nav className="flex justify-between items-center px-6 py-4 w-full mx-auto font-sans z-50 bg-[#2D4A22] backdrop-blur-md border-b border-gray-100 sticky top-0">
-      <div className="mx-auto flex h-10 w-full max-w-7xl items-center px-6">
-        <div className="flex flex-1 justify-start">
-          <div className="relative h-10 w-32">
-            <Image
-              src="/smd-with-name.png"
-              alt="SMD Logo"
-              fill
-              priority
-              className="object-contain"
-            />
-          </div>
+    <nav className="sticky top-0 z-50 w-full bg-white border-b border-gray-100 shadow-sm">
+      <div className="mx-auto max-w-6xl flex h-16 items-center justify-between px-4">
+
+        {/* Logo */}
+        <div className="relative h-9 w-28 shrink-0">
+          <Image
+            src="/smd-with-name.png"
+            alt="SMD Logo"
+            fill
+            priority
+            className="object-contain"
+          />
         </div>
 
-        <div className="flex flex-1 justify-center">
-          <h1 className="whitespace-nowrap font-[Bricolage_Grotesque] text-2xl font-bold tracking-tight text-[#6AB04C] sm:text-3xl">
-            Syllabus
-          </h1>
+        {/* Title */}
+        <div className="hidden sm:block absolute left-1/2 -translate-x-1/2">
+          <p className="font-[Bricolage_Grotesque] text-xl font-bold text-gray-800">
+            Hệ thống <span className="text-[#6AB04C]">Đề cương</span>
+          </p>
         </div>
 
-        <div className="flex flex-1 items-center justify-end gap-3">
-          <button className="group relative rounded-full p-2 text-white/80 transition-all hover:bg-white/10 hover:text-white">
-            <Bell size={20} />
-            <span className="absolute right-2.5 top-2.5 h-2 w-2 rounded-full border-2 border-[#2D4A22] bg-[#EA6227]" />
+        {/* Right side */}
+        <div className="flex items-center gap-2">
+          {/* Notification */}
+          <button className="relative p-2 rounded-xl text-gray-500 hover:bg-gray-100 transition-colors">
+            <Bell size={20} strokeWidth={1.7} />
+            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-red-500 border-2 border-white" />
           </button>
 
+          {/* Account */}
           <Popover.Root>
             <Popover.Trigger asChild>
-              <button className="flex items-center gap-2 rounded-full border border-white/20 bg-white/5 p-1 pr-3 transition-all hover:bg-white/10 active:scale-95">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#6AB04C] text-white">
+              <button className="flex items-center gap-2.5 rounded-2xl border border-gray-200 bg-gray-50 hover:bg-gray-100 px-3 py-2 transition-all active:scale-95">
+                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#6AB04C] text-white text-sm font-bold shrink-0">
                   {avatarUrl ? (
-                    <Image
-                      src={avatarUrl}
-                      alt={fullName}
-                      width={32}
-                      height={32}
-                      className="rounded-full object-cover"
-                    />
+                    <Image src={avatarUrl} alt={fullName} width={32} height={32} className="rounded-xl object-cover" />
                   ) : (
-                    <User size={18} />
+                    <span>{initials}</span>
                   )}
                 </div>
-                <span className="hidden text-sm font-medium text-white lg:block">
-                  Account
-                </span>
+                <div className="hidden md:flex flex-col items-start">
+                  <span className="text-sm font-semibold text-gray-800 leading-none">{fullName.split(" ").pop()}</span>
+                  <span className="text-[10px] text-gray-400 mt-0.5 font-medium">{roleName}</span>
+                </div>
               </button>
             </Popover.Trigger>
 
@@ -71,47 +81,42 @@ export default function HeaderClient({ account }: Props) {
                 <motion.div
                   initial={{ opacity: 0, y: 10, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
-                  className="z-100 w-72 rounded-2xl border border-gray-100 bg-white p-2 shadow-2xl"
+                  className="z-100 w-72 rounded-3xl bg-white border border-gray-100 shadow-2xl overflow-hidden"
                 >
-                  <div className="flex flex-col items-center border-b border-gray-50 px-4 py-6 text-center">
-                    <div className="mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-[#f0f7ed] text-[#3D6B2C]">
-                      {avatarUrl ? (
-                        <Image
-                          src={avatarUrl}
-                          alt={fullName}
-                          width={64}
-                          height={64}
-                          className="rounded-full object-cover"
-                        />
-                      ) : (
-                        <User size={32} />
-                      )}
-                    </div>
-                    <h3 className="font-[Lexend] text-base font-bold text-[#1A2E12]">
-                      {fullName}
-                    </h3>
-                    <p className="mt-1 flex items-center gap-1 text-xs text-gray-400">
-                      <Mail size={12} /> {email}
-                    </p>
-                  </div>
-
-                  <div className="space-y-1 py-2">
-                    <div className="flex items-center justify-between rounded-lg px-3 py-2 text-sm text-[#5C7250] transition-colors hover:bg-[#f8faf7]">
-                      <div className="flex items-center gap-2">
-                        <ShieldCheck size={16} className="text-[#6AB04C]" />
-                        <span>Role</span>
+                  {/* User info header */}
+                  <div className="px-5 py-5 bg-linear-to-br from-[#EBF5E4] to-[#f8faf7] border-b border-gray-100">
+                    <div className="flex items-center gap-4">
+                      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#6AB04C] text-white text-xl font-bold shadow-sm">
+                        {avatarUrl ? (
+                          <Image src={avatarUrl} alt={fullName} width={56} height={56} className="rounded-2xl object-cover" />
+                        ) : (
+                          <span>{initials}</span>
+                        )}
                       </div>
-                      <span className="font-bold text-[#2D4A22]">
-                        {roleName}
-                      </span>
+                      <div className="min-w-0">
+                        <p className="font-bold text-gray-900 text-base truncate">{fullName}</p>
+                        {email && (
+                          <p className="text-xs text-gray-500 flex items-center gap-1 mt-0.5 truncate">
+                            <Mail size={11} />
+                            {email}
+                          </p>
+                        )}
+                        <span className="inline-flex items-center gap-1 mt-2 px-2.5 py-0.5 rounded-full bg-[#6AB04C]/15 text-[#3D6B2C] text-[10px] font-bold">
+                          <ShieldCheck size={10} />
+                          {roleName}
+                        </span>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="mt-1 border-t border-gray-50 pt-1">
-                    <ButtonLogout className="flex w-full items-center gap-2 rounded-lg px-3 py-3 text-sm font-semibold text-red-500 transition-colors hover:bg-red-50">
-                      Sign out
+                  {/* Actions */}
+                  <div className="p-2">
+                    <ButtonLogout className="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold text-red-500 hover:bg-red-50 transition-colors">
+                      <LogOut size={17} />
+                      Đăng xuất
                     </ButtonLogout>
                   </div>
+
                   <Popover.Arrow className="fill-white" />
                 </motion.div>
               </Popover.Content>

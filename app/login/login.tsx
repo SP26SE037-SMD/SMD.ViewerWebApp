@@ -3,8 +3,11 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { jwtDecode } from "jwt-decode";
 import authApiRequest from "@/apiRequests/auth";
-import { useAppContext } from "@/app/app-provider";
+import accountApiRequest from "@/apiRequests/account";
+import { useDispatch } from "react-redux";
+import { setUser } from "@/lib/features/userSlice";
 import { useGoogleOneTapLogin, GoogleLogin } from "@react-oauth/google";
 import Image from "next/image";
 import {
@@ -28,7 +31,7 @@ export default function Login() {
   const [isEmailLoading, setIsEmailLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const router = useRouter();
-  const { setUser } = useAppContext();
+  const dispatch = useDispatch();
 
   // Giả lập hoặc kiểm tra session lần đầu
   useEffect(() => {
@@ -49,18 +52,21 @@ export default function Login() {
     setIsEmailLoading(true);
     try {
       const result = await authApiRequest.login(values);
+      if (!result || !result.payload || !result.payload.data) {
+        throw new Error("Phản hồi từ server không hợp lệ");
+      }
       const token = result.payload.data.token;
       await authApiRequest.auth({ sessionToken: token });
       localStorage.setItem("sessionToken", token);
       toast.success(result.payload.message);
       const account = result.payload.data.account;
-      setUser({
+      dispatch(setUser({
         accountId: String(account.accountId),
         email: account.email,
         fullName: account.fullName,
         avatarUrl: null,
         role: account.role,
-      });
+      }));
       router.push("/home");
       router.refresh();
     } catch (error: any) {
@@ -83,20 +89,50 @@ export default function Login() {
         const token = payload?.data?.token;
         const account = payload?.data?.account;
         if (token) {
-          localStorage.setItem("sessionToken", token);
           if (account) {
-            setUser({
+            const userRole = typeof account.role === "string" 
+                ? account.role 
+                : (account.role?.roleName ?? "");
+                
+            if (userRole !== "LECTURER" && userRole !== "STUDENT") {
+              toast.error("Tài khoản của bạn không có quyền truy cập vào hệ thống SMD.");
+              setIsGoogleLoading(false);
+              return;
+            }
+
+            let googleAvatarUrl: string | null = null;
+            try {
+              const decodedToken = jwtDecode<{ picture?: string }>(idToken);
+              googleAvatarUrl = decodedToken.picture || null;
+            } catch (err) {
+              console.error("Failed to decode Google Token", err);
+            }
+
+            // Sync with backend
+            try {
+              await accountApiRequest.updateAccount(String(account.accountId), {
+                fullName: account.fullName || "",
+                phoneNumber: account.phoneNumber || "",
+                avatarUrl: googleAvatarUrl || "",
+              });
+            } catch (updateErr) {
+              console.error("Failed to update avatar on backend", updateErr);
+            }
+
+            localStorage.setItem("sessionToken", token);
+            dispatch(setUser({
               accountId: String(account.accountId),
               email: account.email,
               fullName: account.fullName || "",
-              avatarUrl: null,
-              role:
-                typeof account.role === "string"
-                  ? account.role
-                  : (account.role?.roleName ?? ""),
-            });
+              avatarUrl: googleAvatarUrl,
+              role: userRole,
+            }));
+            
+            toast.success("Đăng nhập Google thành công");
+            router.push("/home");
+          } else {
+            console.error("No account information received from backend");
           }
-          router.push("/home");
         } else {
           console.error("No token received from backend:", payload);
         }
@@ -121,6 +157,7 @@ export default function Login() {
     onError: () => {
       console.error("One Tap Login Failed or modal closed by user");
     },
+    use_fedcm_for_prompt: false,
   });
 
   return (
@@ -397,11 +434,10 @@ export default function Login() {
                     <Button
                       type="submit"
                       disabled={isEmailLoading || isGoogleLoading}
-                      className={`font-[Lexend] bg-[#6ab04c] text-[#F0F7ED] w-full h-11 shadow-[4px_4px_0px_0px_#1A2E12] rounded-sm transition-colors ${
-                        isEmailLoading
+                      className={`font-[Lexend] bg-[#6ab04c] text-[#F0F7ED] w-full h-11 shadow-[4px_4px_0px_0px_#1A2E12] rounded-sm transition-colors ${isEmailLoading
                           ? "opacity-50 cursor-not-allowed"
                           : "opacity-100 hover:bg-[#2D4F21]"
-                      }`}
+                        }`}
                     >
                       {isEmailLoading ? "Signing in..." : "Sign In"}
                     </Button>
@@ -439,6 +475,7 @@ export default function Login() {
                       theme="outline"
                       shape="pill"
                       width="100%" // Để nó tự co giãn theo card
+                      use_fedcm_for_prompt={false}
                     />
                   </div>
                 )}
