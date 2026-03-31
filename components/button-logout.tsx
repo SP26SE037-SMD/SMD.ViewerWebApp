@@ -1,6 +1,7 @@
 "use client";
 
-import { useAppContext } from "@/app/app-provider";
+import { useDispatch } from "react-redux";
+import { logout } from "@/lib/features/userSlice";
 import authApiRequest from "@/apiRequests/auth";
 import { handleErrorApi } from "@/lib/utils";
 import { useRouter } from "next/navigation";
@@ -12,7 +13,7 @@ interface Props {
 
 export default function ButtonLogout({ className, children }: Props) {
   const router = useRouter();
-  const { setUser } = useAppContext();
+  const dispatch = useDispatch();
 
   const handleLogout = async () => {
     try {
@@ -20,7 +21,7 @@ export default function ButtonLogout({ className, children }: Props) {
     } catch (error) {
       handleErrorApi({ error });
     } finally {
-      setUser(null);
+      dispatch(logout());
       localStorage.removeItem("user");
       localStorage.removeItem("sessionToken");
       localStorage.removeItem("sessionTokenExpiresAt");

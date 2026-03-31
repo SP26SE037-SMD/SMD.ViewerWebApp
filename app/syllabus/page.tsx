@@ -2,28 +2,31 @@
 
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import curriculumApiRequest from "@/apiRequests/curriculum";
+import syllabusApiRequest from "@/apiRequests/syllabus";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Search,
   X,
-  BookMarked,
-  Calendar,
+  BookOpen,
+  Award,
   ChevronLeft,
   ChevronRight,
   ChevronDown,
+  FileText,
   ArrowLeft,
 } from "lucide-react";
 
-type Curriculum = {
-  curriculumId: string;
-  curriculumCode: string;
-  curriculumName: string;
-  startYear: number | null;
-  status: string;
+type Syllabus = {
+  syllabusId: string;
+  syllabusCode: string;
+  syllabusName: string;
+  credits?: number;
+  department?: string;
+  status?: string;
+  description?: string;
 };
 
-function SearchContent() {
+function SyllabusContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const searchQuery = searchParams.get("search") || "";
@@ -32,7 +35,7 @@ function SearchContent() {
   const page = Number(searchParams.get("page")) || 0;
   const size = Number(searchParams.get("size")) || 12;
 
-  const [curriculums, setCurriculums] = useState<Curriculum[]>([]);
+  const [syllabuses, setSyllabuses] = useState<Syllabus[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
@@ -47,26 +50,26 @@ function SearchContent() {
   }, [nameQuery, codeQuery, searchQuery]);
 
   useEffect(() => {
-    const fetchCurriculums = async () => {
+    const fetchSyllabuses = async () => {
       setLoading(true);
       try {
-        const res = await curriculumApiRequest.getCurriculums("", searchType === "name" ? searchQuery || localSearch : "", searchType === "code" ? searchQuery || localSearch : "", page, size);
+        const res = await syllabusApiRequest.getSyllabuses("", searchType === "name" ? searchQuery || localSearch : "", searchType === "code" ? searchQuery || localSearch : "", page, size);
         if (res?.payload?.data) {
-          setCurriculums(res.payload.data.content || []);
+          setSyllabuses(res.payload.data.content || []);
           setTotalPages(res.payload.data.totalPages || 0);
           setTotalElements(res.payload.data.totalElements || 0);
         } else {
-          setCurriculums([]);
+          setSyllabuses([]);
         }
       } catch (error) {
-        console.error("Failed to fetch curriculums", error);
-        setCurriculums([]);
+        console.error("Failed to fetch syllabuses", error);
+        setSyllabuses([]);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchCurriculums();
+    fetchSyllabuses();
   }, [searchQuery, nameQuery, codeQuery, page, size]);
 
   const handleSearch = (e: React.FormEvent) => {
@@ -76,13 +79,13 @@ function SearchContent() {
       params.set(searchType, localSearch.trim());
     }
     params.set("page", "0");
-    router.push(`/curriculum?${params.toString()}`);
+    router.push(`/syllabus?${params.toString()}`);
   };
 
   const goToPage = (p: number) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set("page", String(p));
-    router.push(`/curriculum?${params.toString()}`);
+    router.push(`/syllabus?${params.toString()}`);
   };
 
 
@@ -100,19 +103,19 @@ function SearchContent() {
             Quay lại
           </button>
           <div className="flex items-center gap-3 mb-1">
-            <div className="p-2.5 rounded-2xl bg-[#4caf50]/10">
-              <BookMarked size={22} className="text-[#4caf50]" strokeWidth={1.7} />
+            <div className="p-2.5 rounded-2xl bg-[#EBF5E4]">
+              <BookOpen size={22} className="text-[#6AB04C]" strokeWidth={1.7} />
             </div>
             <div>
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Chương Trình Học</p>
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Đề Cương Môn Học</p>
               <h1 className="text-2xl font-bold text-gray-900 font-[Bricolage_Grotesque]">
-                Curriculum
+                Syllabus
               </h1>
             </div>
           </div>
           {totalElements > 0 && (
             <p className="text-sm text-gray-500 mt-2 ml-14">
-              {nameQuery || codeQuery ? `Kết quả tìm kiếm — ` : ""}<span className="font-semibold text-gray-700">{totalElements}</span> chương trình học
+              {nameQuery || codeQuery ? `Kết quả tìm kiếm — ` : ""}<span className="font-semibold text-gray-700">{totalElements}</span> đề cương môn học
             </p>
           )}
         </div>
@@ -122,7 +125,7 @@ function SearchContent() {
         {/* ── Search bar ── */}
         <form onSubmit={handleSearch} className="mb-8">
           <div className="flex flex-col md:flex-row gap-3">
-            <div className="flex-1 flex items-center bg-white rounded-3xl border border-gray-200 focus-within:border-[#4caf50]/50 focus-within:ring-2 focus-within:ring-[#4caf50]/20 shadow-sm transition-all p-1.5 min-w-0">
+            <div className="flex-1 flex items-center bg-white rounded-3xl border-2 border-gray-100 focus-within:border-[#6AB04C]/50 shadow-sm transition-all p-1.5 min-w-0">
               <div className="relative">
                 <button
                   type="button"
@@ -152,7 +155,7 @@ function SearchContent() {
                           setSearchType("name");
                           setIsDropdownOpen(false);
                         }}
-                        className={`w-full text-left px-4 py-3 text-sm font-bold transition-colors ${searchType === "name" ? "bg-[#4caf50]/10 text-[#4caf50]" : "hover:bg-gray-50 text-gray-600"}`}
+                        className={`w-full text-left px-4 py-3 text-sm font-bold transition-colors ${searchType === "name" ? "bg-[#EBF5E4] text-[#6AB04C]" : "hover:bg-gray-50 text-gray-600"}`}
                       >
                         Tên
                       </button>
@@ -162,7 +165,7 @@ function SearchContent() {
                           setSearchType("code");
                           setIsDropdownOpen(false);
                         }}
-                        className={`w-full text-left px-4 py-3 text-sm font-bold transition-colors ${searchType === "code" ? "bg-[#4caf50]/10 text-[#4caf50]" : "hover:bg-gray-50 text-gray-600"}`}
+                        className={`w-full text-left px-4 py-3 text-sm font-bold transition-colors ${searchType === "code" ? "bg-[#EBF5E4] text-[#6AB04C]" : "hover:bg-gray-50 text-gray-600"}`}
                       >
                         Mã
                       </button>
@@ -176,7 +179,7 @@ function SearchContent() {
                 <input
                   value={localSearch}
                   onChange={(e) => setLocalSearch(e.target.value)}
-                  placeholder={searchType === "name" ? "Nhập tên chương trình học..." : "Nhập mã chương trình..."}
+                  placeholder={searchType === "name" ? "Nhập tên môn học..." : "Nhập mã môn học..."}
                   className="flex-1 text-sm outline-none text-gray-800 bg-transparent placeholder-gray-400"
                 />
                 {localSearch && (
@@ -188,7 +191,7 @@ function SearchContent() {
                       params.delete("name");
                       params.delete("code");
                       params.delete("search");
-                      router.push(`/curriculum?${params.toString()}`);
+                      router.push(`/syllabus?${params.toString()}`);
                     }}
                     className="p-1 hover:bg-gray-100 rounded-lg text-gray-400 transition-colors"
                   >
@@ -199,7 +202,7 @@ function SearchContent() {
             </div>
             <button
               type="submit"
-              className="px-10 py-4 bg-[#4caf50] hover:bg-[#43a047] text-white text-sm font-bold rounded-3xl shadow-xl shadow-[#4caf50]/20 transition-all active:scale-95 shrink-0"
+              className="px-10 py-4 bg-[#6AB04C] hover:bg-[#5a9940] text-white text-sm font-bold rounded-3xl shadow-xl shadow-[#6AB04C]/20 transition-all active:scale-95 shrink-0"
             >
               Tìm kiếm
             </button>
@@ -212,43 +215,56 @@ function SearchContent() {
         <AnimatePresence mode="wait">
           {loading ? (
             <motion.div key="loading" exit={{ opacity: 0 }} className="flex flex-col items-center justify-center py-32 gap-4">
-              <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#4caf50]" />
+              <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#6AB04C]" />
               <p className="text-sm text-gray-400 font-medium">Đang tải dữ liệu...</p>
             </motion.div>
-          ) : curriculums.length > 0 ? (
+          ) : syllabuses.length > 0 ? (
             <motion.div
               key="results"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
             >
-              {curriculums.map((curr, i) => {
+              {syllabuses.map((syl, i) => {
                 return (
                   <motion.div
-                    key={curr.curriculumId}
+                    key={syl.syllabusId}
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.05 }}
-                    onClick={() => router.push(`/curriculum/${curr.curriculumId}`)}
-                    className="bg-white rounded-3xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-all group cursor-pointer"
+                    onClick={() => router.push(`/syllabus/${syl.syllabusCode}`)}
+                    className="bg-white rounded-3xl p-6 border-2 border-gray-100 hover:border-[#6AB04C]/30 hover:shadow-lg transition-all group cursor-pointer"
                   >
                     <div className="flex justify-between items-start mb-4">
-                      <div className="p-2.5 rounded-2xl bg-[#4caf50]/10 transition-colors">
-                        <BookMarked size={20} className="text-[#4caf50]" strokeWidth={1.7} />
+                      <div className="p-2.5 rounded-2xl bg-[#EBF5E4] group-hover:bg-[#6AB04C]/20 transition-colors">
+                        <BookOpen size={20} className="text-[#6AB04C]" strokeWidth={1.7} />
                       </div>
                     </div>
-                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">{curr.curriculumCode}</p>
-                    <h3 className="text-base font-bold text-gray-800 leading-tight mb-4 transition-colors">
-                      {curr.curriculumName}
-                    </h3>
-                    {curr.startYear && (
-                      <div className="flex items-center gap-2 text-sm text-gray-500 transition-colors">
-                        <Calendar size={14} />
-                        <span>Từ năm <span className="font-semibold text-gray-700 transition-colors">{curr.startYear}</span></span>
-                      </div>
-                    )}
-                  </motion.div>
 
+                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">{syl.syllabusCode}</p>
+                    <h3 className="text-base font-bold text-gray-800 leading-tight mb-4">
+                      {syl.syllabusName}
+                    </h3>
+
+                    {syl.description && (
+                      <p className="text-sm text-gray-500 line-clamp-2 mb-4">{syl.description}</p>
+                    )}
+
+                    <div className="flex items-center gap-3 flex-wrap">
+                      {syl.credits !== undefined && (
+                        <div className="flex items-center gap-1.5 text-sm text-gray-500">
+                          <Award size={14} className="text-[#6AB04C]" />
+                          <span><span className="font-semibold text-gray-700">{syl.credits}</span> tín chỉ</span>
+                        </div>
+                      )}
+                      {syl.department && (
+                        <div className="flex items-center gap-1.5 text-sm text-gray-500">
+                          <FileText size={14} />
+                          <span>{syl.department}</span>
+                        </div>
+                      )}
+                    </div>
+                  </motion.div>
                 );
               })}
             </motion.div>
@@ -259,15 +275,15 @@ function SearchContent() {
               animate={{ opacity: 1 }}
               className="flex flex-col items-center justify-center py-32 gap-4"
             >
-              <div className="w-20 h-20 rounded-3xl bg-[#4caf50]/10 flex items-center justify-center">
-                <BookMarked size={40} className="text-[#4caf50]/50" strokeWidth={1} />
+              <div className="w-20 h-20 rounded-3xl bg-[#EBF5E4] flex items-center justify-center">
+                <BookOpen size={40} className="text-[#6AB04C]/50" strokeWidth={1} />
               </div>
               <p className="text-gray-500 font-medium text-center">
-                {nameQuery || codeQuery ? `Không tìm thấy kết quả phù hợp` : "Chưa có dữ liệu chương trình học"}
+                {searchQuery ? `Không tìm thấy đề cương cho "${searchQuery}"` : "Chưa có dữ liệu đề cương môn học"}
               </p>
-              {(nameQuery || codeQuery) && (
-                <button onClick={() => router.push("/curriculum")} className="text-[#3D7EE8] text-sm font-semibold hover:underline">
-                  Xem tất cả chương trình
+              {searchQuery && (
+                <button onClick={() => router.push("/syllabus")} className="text-[#6AB04C] text-sm font-semibold hover:underline">
+                  Xem tất cả đề cương
                 </button>
               )}
             </motion.div>
@@ -280,7 +296,7 @@ function SearchContent() {
             <button
               onClick={() => goToPage(page - 1)}
               disabled={page === 0}
-              className="p-2.5 rounded-xl bg-white border border-gray-200 hover:border-[#3D7EE8]/40 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+              className="p-2.5 rounded-xl bg-white border border-gray-200 hover:border-[#6AB04C]/40 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
             >
               <ChevronLeft size={18} />
             </button>
@@ -292,8 +308,8 @@ function SearchContent() {
                   key={p}
                   onClick={() => goToPage(p)}
                   className={`w-10 h-10 rounded-xl text-sm font-semibold transition-all ${p === page
-                    ? "bg-[#3D7EE8] text-white shadow-sm"
-                    : "bg-white border border-gray-200 text-gray-600 hover:border-[#3D7EE8]/40"
+                    ? "bg-[#6AB04C] text-white shadow-sm"
+                    : "bg-white border border-gray-200 text-gray-600 hover:border-[#6AB04C]/40"
                     }`}
                 >
                   {p + 1}
@@ -303,7 +319,7 @@ function SearchContent() {
             <button
               onClick={() => goToPage(page + 1)}
               disabled={page >= totalPages - 1}
-              className="p-2.5 rounded-xl bg-white border border-gray-200 hover:border-[#3D7EE8]/40 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+              className="p-2.5 rounded-xl bg-white border border-gray-200 hover:border-[#6AB04C]/40 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
             >
               <ChevronRight size={18} />
             </button>
@@ -314,15 +330,15 @@ function SearchContent() {
   );
 }
 
-export default function SearchCurriculum() {
+export default function SyllabusPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen bg-[#f8fafb] flex flex-col items-center justify-center gap-3">
-        <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#3D7EE8]" />
+        <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#6AB04C]" />
         <p className="text-sm text-gray-400">Đang tải...</p>
       </div>
     }>
-      <SearchContent />
+      <SyllabusContent />
     </Suspense>
   );
 }

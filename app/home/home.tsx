@@ -9,155 +9,241 @@ import {
   GraduationCap,
   Search,
   X,
+  ArrowRight,
+  ChevronRight,
+  Sparkles,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/lib/store";
+import { ActionCard } from "@/components/ui/action-card";
+
+const items = [
+  {
+    id: 1,
+    title: "Xem Đề Cương",
+    subtitle: "View Syllabus",
+    desc: "Khám phá lộ trình học tập được cấu trúc rõ ràng cho chuyên ngành của bạn.",
+    icon: BookOpen,
+    bg: "bg-white",
+    iconBg: "bg-[#6AB04C]",
+    path: "/syllabus",
+  },
+  {
+    id: 2,
+    title: "Chương Trình Học",
+    subtitle: "Curriculum",
+    desc: "Hướng dẫn chi tiết từng bước trong chương trình đào tạo.",
+    icon: Milestone,
+    bg: "bg-white",
+    iconBg: "bg-[#6AB04C]",
+    path: "/curriculum",
+  },
+  {
+    id: 3,
+    title: "Lộ Trình Học",
+    subtitle: "Learning Path",
+    desc: "Xem toàn bộ lộ trình và các mốc quan trọng theo học kỳ.",
+    icon: Map,
+    bg: "bg-white",
+    iconBg: "bg-[#6AB04C]",
+    path: "/learning-path",
+  },
+  {
+    id: 4,
+    title: "Môn Tiên Quyết",
+    subtitle: "Pre-requisite",
+    desc: "Kiểm tra các môn học bắt buộc phải hoàn thành trước.",
+    icon: GraduationCap,
+    bg: "bg-white",
+    iconBg: "bg-[#6AB04C]",
+    path: "/pre-requisite",
+  },
+];
 
 export default function Home() {
   const router = useRouter();
+  const user = useSelector((state: RootState) => state.user.user);
   const [loading, setLoading] = useState(true);
+  const [isMounted, setIsMounted] = useState(false);
   const [searchTarget, setSearchTarget] = useState<string | null>(null);
+  const [searchValue, setSearchValue] = useState("");
 
   useEffect(() => {
+    setIsMounted(true);
     const timer = setTimeout(() => setLoading(false), 500);
     return () => clearTimeout(timer);
   }, []);
 
-  const items = [
-    {
-      id: 1,
-      title: "View Syllabus",
-      desc: "Explore the structured learning path for your major.",
-      icon: BookOpen,
-      color: "bg-[#3D6B2C]",
-      span: "col-span-2 row-span-2",
-      path: "/syllabus",
-    },
-    {
-      id: 2,
-      title: "View Curriculum",
-      desc: "Detailed step-by-step guide.",
-      icon: Milestone,
-      color: "bg-[#2D4A22]",
-      span: "col-span-2 row-span-1",
-      path: "/curriculum",
-    },
-    {
-      id: 3,
-      title: "Learning Path",
-      desc: "Download course outlines.",
-      icon: Map,
-      color: "bg-[#4A7D37]",
-      span: "col-span-1 row-span-1",
-      path: "/learning-path",
-    },
-    {
-      id: 4,
-      title: "Pre-requisite",
-      desc: "Check required subjects.",
-      icon: GraduationCap,
-      color: "bg-[#1A2E12]",
-      span: "col-span-1 row-span-1",
-      path: "/pre-requisite",
-    },
-  ];
+  if (!isMounted) {
+    return null;
+  }
+
+  const greeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Chào buổi sáng";
+    if (hour < 18) return "Chào buổi chiều";
+    return "Chào buổi tối";
+  };
+
+  const displayName = user?.fullName ? user.fullName.split(" ").pop() : "bạn";
 
   return (
-    <div className="min-h-screen w-screen bg-[#f0f7ed] flex items-center justify-center p-6 lg:p-12">
+    <div className="min-h-screen bg-[#f8fafb] font-[Lexend]">
       <AnimatePresence>
         {loading && (
           <motion.div
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-[#f0f7ed] flex items-center justify-center"
+            className="fixed inset-0 z-50 bg-white flex items-center justify-center"
           >
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#3D6B2C]"></div>
+            <div className="flex flex-col items-center gap-3">
+              <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#6AB04C]" />
+              <p className="text-sm text-gray-500 font-medium">Đang tải...</p>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
 
+      {/* ── Search Modal ── */}
       <AnimatePresence>
         {searchTarget !== null && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={() => setSearchTarget(null)}
-            className="fixed inset-0 z-50 flex items-start justify-center pt-32 bg-black/40 backdrop-blur-sm p-4"
+            onClick={() => { setSearchTarget(null); setSearchValue(""); }}
+            className="fixed inset-0 z-200 flex items-center justify-center bg-black/30 backdrop-blur-sm p-4"
           >
             <motion.div
-              initial={{ scale: 0.95, opacity: 0, y: -20 }}
+              initial={{ scale: 0.92, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.95, opacity: 0, y: -20 }}
+              exit={{ scale: 0.92, opacity: 0, y: 20 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-2xl bg-white rounded-full shadow-2xl p-3 flex items-center gap-3"
+              className="w-full max-w-lg bg-white rounded-3xl shadow-2xl overflow-hidden"
             >
-              <div className="text-[#3D6B2C] ml-4">
-                <Search size={24} />
+              <div className="flex items-center gap-4 p-5 border-b border-gray-100">
+                <div className="p-2.5 rounded-2xl bg-[#6AB04C]/10">
+                  <Search size={22} className="text-[#6AB04C]" />
+                </div>
+                <input
+                  autoFocus
+                  type="text"
+                  value={searchValue}
+                  onChange={(e) => setSearchValue(e.target.value)}
+                  placeholder="Nhập từ khóa tìm kiếm..."
+                  className="flex-1 text-lg outline-none text-gray-800 bg-transparent placeholder-gray-400"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && searchValue.trim() !== "") {
+                      router.push(`${searchTarget}?search=${encodeURIComponent(searchValue.trim().toLowerCase())}`);
+                      setSearchTarget(null);
+                      setSearchValue("");
+                    }
+                    if (e.key === "Escape") { setSearchTarget(null); setSearchValue(""); }
+                  }}
+                />
+                <button
+                  onClick={() => { setSearchTarget(null); setSearchValue(""); }}
+                  className="p-2 hover:bg-gray-100 rounded-xl text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <X size={20} />
+                </button>
               </div>
-              <input
-                autoFocus
-                type="text"
-                placeholder="Type to search..."
-                className="flex-1 text-lg outline-none text-[#5A6B52] bg-transparent ml-2 font-[Lexend]"
-                onKeyDown={(e) => {
-                  if (
-                    e.key === "Enter" &&
-                    e.currentTarget.value.trim() !== ""
-                  ) {
-                    const query = e.currentTarget.value.trim().toLowerCase();
-                    router.push(
-                      `${searchTarget}?search=${encodeURIComponent(query)}`,
-                    );
-                    setSearchTarget(null);
-                  }
-                }}
-              />
-              <button
-                onClick={() => setSearchTarget(null)}
-                className="p-3 bg-[#E8F5E0] rounded-full hover:bg-[#D4ECC8] text-[#3D6B2C] transition-colors"
-              >
-                <X size={20} />
-              </button>
+              <div className="p-5">
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Gợi ý</p>
+                <div className="flex flex-wrap gap-2">
+                  {["Giải tích", "Lập trình web", "Cơ sở dữ liệu", "Mạng máy tính"].map((hint) => (
+                    <button
+                      key={hint}
+                      onClick={() => {
+                        router.push(`${searchTarget}?search=${encodeURIComponent(hint.toLowerCase())}`);
+                        setSearchTarget(null);
+                        setSearchValue("");
+                      }}
+                      className="px-4 py-2 bg-gray-100 hover:bg-[#EBF5E4] hover:text-[#3D6B2C] text-gray-600 text-sm rounded-xl transition-colors"
+                    >
+                      {hint}
+                    </button>
+                  ))}
+                </div>
+                {searchValue && (
+                  <button
+                    onClick={() => {
+                      router.push(`${searchTarget}?search=${encodeURIComponent(searchValue.trim().toLowerCase())}`);
+                      setSearchTarget(null);
+                      setSearchValue("");
+                    }}
+                    className="mt-4 w-full flex items-center justify-center gap-2 bg-[#6AB04C] text-white py-3 rounded-2xl font-semibold hover:bg-[#5a9940] transition-colors"
+                  >
+                    Tìm kiếm "{searchValue}"
+                    <ArrowRight size={18} />
+                  </button>
+                )}
+              </div>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      <div className="max-w-6xl w-full grid grid-cols-1 md:grid-cols-4 grid-rows-2 gap-4 h-auto md:h-150">
-        {items.map((item, index) => (
-          <motion.div
-            key={item.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
-            whileHover={{ y: -5, transition: { duration: 0.2 } }}
-            className={`relative p-8 rounded-[32px] overflow-hidden flex flex-col justify-between text-white border border-white/10 shadow-[8px_8px_0px_0px_rgba(26,46,18,0.1)] ${item.span} ${item.color}`}
-          >
-            {/* Background Decor */}
-            <div className="absolute top-[-10%] right-[-10%] opacity-10">
-              <item.icon size={150} />
-            </div>
+      {/* ── Main Layout ── */}
+      <main className="max-w-6xl mx-auto px-4 py-8 lg:py-12">
 
-            <div className="z-10">
-              <div className="p-3 bg-white/10 w-fit rounded-2xl mb-4 backdrop-blur-md">
-                <item.icon size={28} />
-              </div>
-              <h2 className="text-2xl font-bold font-[Lexend] leading-tight mb-2">
-                {item.title}
-              </h2>
-              <p className="text-white/70 text-sm font-light max-w-50">
-                {item.desc}
-              </p>
-            </div>
+        {/* Welcome Banner */}
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8"
+        >
+          <div className="flex items-center gap-2 mb-1">
+            <Sparkles size={18} className="text-[#6AB04C]" />
+            <span className="text-sm font-semibold text-[#6AB04C]">{greeting()},</span>
+          </div>
+          <h1 className="text-3xl font-bold text-gray-900 font-[Bricolage_Grotesque]">
+            {displayName}! 👋
+          </h1>
+          <p className="text-gray-500 mt-1 text-base">
+            Hôm nay bạn muốn khám phá điều gì trong chương trình học?
+          </p>
+        </motion.div>
 
-            <button
-              onClick={() => setSearchTarget(item.path)}
-              className="z-10 mt-4 w-fit px-4 py-2 bg-white/10 hover:bg-white/20 rounded-full text-xs font-medium transition-all border border-white/20"
-            >
-              Search →
-            </button>
-          </motion.div>
-        ))}
-      </div>
+      
+
+        {/* Cards Section */}
+        <div>
+          <h2 className="text-base font-bold text-gray-700 mb-4 flex items-center gap-2">
+            <ChevronRight size={18} className="text-[#6AB04C]" />
+            Truy cập nhanh
+          </h2>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {items.map((item, index) => (
+              <ActionCard 
+                key={item.id} 
+                {...item} 
+                index={index} 
+                onSearchClick={setSearchTarget} 
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Info Banner */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6 }}
+          className="mt-8 flex items-center gap-4 bg-[#EBF5E4] border border-[#6AB04C]/20 rounded-3xl p-5"
+        >
+          <div className="w-10 h-10 rounded-2xl bg-[#6AB04C] flex items-center justify-center shrink-0">
+            <Sparkles size={20} className="text-white" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-[#2D4A22]">Mẹo hữu ích</p>
+            <p className="text-xs text-[#4A7D37] mt-0.5">
+              Sử dụng thanh tìm kiếm nhanh ở trên để tra cứu môn học theo tên hoặc mã môn.
+            </p>
+          </div>
+        </motion.div>
+      </main>
     </div>
   );
 }

@@ -7,6 +7,7 @@ import {
 } from "next/font/google";
 import "./globals.css";
 import AppProvider from "./app-provider";
+import StoreProvider from "./StoreProvider";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 
@@ -46,7 +47,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <AppProvider>{children}</AppProvider>
+          <StoreProvider>
+            <AppProvider>{children}</AppProvider>
+          </StoreProvider>
         </ThemeProvider>
       </body>
     </html>
