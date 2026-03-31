@@ -4,6 +4,7 @@ import { Bell, Mail, ShieldCheck, User, LogOut } from "lucide-react";
 import Image from "next/image";
 import * as Popover from "@radix-ui/react-popover";
 import { motion } from "motion/react";
+import { useState, useEffect } from "react";
 import type { AccountMeResType } from "@/schemaValidations/account.schema";
 import ButtonLogout from "./button-logout";
 import { useSelector } from "react-redux";
@@ -16,10 +17,20 @@ type Props = {
 export default function HeaderClient({ account }: Props) {
   const reduxUser = useSelector((state: RootState) => state.user.user);
 
-  const avatarUrl = reduxUser?.avatarUrl || account?.avatarUrl;
-  const fullName = reduxUser?.fullName || account?.fullName || "Người dùng";
-  const email = reduxUser?.email || account?.email || "";
-  const roleName = (typeof reduxUser?.role === 'string' ? reduxUser.role : reduxUser?.role?.roleName) || account?.role?.roleName || "GUEST";
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  const avatarUrl = isMounted ? (reduxUser?.avatarUrl || account?.avatarUrl) : account?.avatarUrl;
+  const fullName = isMounted 
+    ? (reduxUser?.fullName || account?.fullName || "Người dùng")
+    : (account?.fullName || "Người dùng");
+  const email = isMounted ? (reduxUser?.email || account?.email || "") : (account?.email || "");
+  const roleName = isMounted 
+    ? ((typeof reduxUser?.role === 'string' ? reduxUser.role : reduxUser?.role?.roleName) || account?.role?.roleName || "GUEST")
+    : (account?.role?.roleName || "GUEST");
 
   const initials = fullName
     .split(" ")
