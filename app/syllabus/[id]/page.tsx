@@ -2,10 +2,10 @@
 
 import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
-import { 
-  ArrowLeft, 
-  BookOpen, 
-  Clock, 
+import {
+  ArrowLeft,
+  BookOpen,
+  Clock,
   Award,
   Calendar,
   Layers,
@@ -213,11 +213,7 @@ export default function SyllabusDetailPage({ params }: { params: Promise<{ id: s
                 <span className="inline-flex px-2.5 py-1 rounded bg-[#4caf50]/10 text-[#4caf50] text-xs font-bold uppercase tracking-widest shrink-0">
                   {syllabus.syllabusCode}
                 </span>
-                {syllabus.isActive && (
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-blue-50 text-blue-600 text-[11px] font-bold uppercase tracking-widest shrink-0">
-                    <CheckCircle2 size={12} /> Áp dụng
-                  </span>
-                )}
+
               </div>
               <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-2">
                 {syllabus.syllabusName}
@@ -226,33 +222,32 @@ export default function SyllabusDetailPage({ params }: { params: Promise<{ id: s
                 {syllabus.englishName}
               </p>
             </div>
-            
+
             <div className="hidden sm:flex flex-col gap-3 shrink-0 ml-4">
-               <div className="bg-gray-50 rounded-2xl p-4 flex items-center gap-4 border border-gray-100 min-w-[200px]">
-                 <div className="p-2.5 bg-white rounded-xl shadow-sm">
-                   <Award size={24} className="text-[#4caf50]" />
-                 </div>
-                 <div>
-                   <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">Tín chỉ</p>
-                   <p className="text-2xl font-black text-gray-900 leading-none">{syllabus.noCredit}</p>
-                 </div>
-               </div>
+              <div className="bg-gray-50 rounded-2xl p-4 flex items-center gap-4 border border-gray-100 min-w-[200px]">
+                <div className="p-2.5 bg-white rounded-xl shadow-sm">
+                  <Award size={24} className="text-[#4caf50]" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">Tín chỉ</p>
+                  <p className="text-2xl font-black text-gray-900 leading-none">{syllabus.noCredit}</p>
+                </div>
+              </div>
             </div>
           </div>
 
           {/* ── Desktop Tabs Navigation ── */}
-          <div className="hidden md:flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth">
+          <div className="hidden md:flex items-center gap-2 overflow-x-auto pb-3 scrollbar-green scroll-smooth">
             {TABS.map((tab) => {
               const TabIcon = tab.icon;
               const isActive = activeTab === tab.id;
-              
+
               return (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`relative flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-bold transition-all whitespace-nowrap shrink-0 ${
-                    isActive ? "text-[#4caf50]" : "text-gray-500 hover:text-gray-900 hover:bg-gray-50"
-                  }`}
+                  className={`relative flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-bold transition-all whitespace-nowrap shrink-0 ${isActive ? "text-[#4caf50]" : "text-gray-500 hover:text-gray-900 hover:bg-gray-50"
+                    }`}
                 >
                   <TabIcon size={18} className={isActive ? "text-[#4caf50]" : "opacity-50"} />
                   {tab.label}
@@ -277,14 +272,13 @@ export default function SyllabusDetailPage({ params }: { params: Promise<{ id: s
           {TABS.map((tab) => {
             const TabIcon = tab.icon;
             const isActive = activeTab === tab.id;
-            
+
             return (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-colors whitespace-nowrap snap-start ${
-                  isActive ? "bg-[#4caf50]/10 text-[#4caf50]" : "text-gray-500 hover:bg-gray-50"
-                }`}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-colors whitespace-nowrap snap-start ${isActive ? "bg-[#4caf50]/10 text-[#4caf50]" : "text-gray-500 hover:bg-gray-50"
+                  }`}
               >
                 <TabIcon size={16} className={isActive ? "text-[#4caf50]" : "opacity-70"} />
                 {tab.label}
@@ -304,84 +298,84 @@ export default function SyllabusDetailPage({ params }: { params: Promise<{ id: s
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
           >
-          
+
             {/* ═══ TAB: CHUNG ═══ */}
             {activeTab === "general" && (
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-2 space-y-6">
-                   <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-gray-100">
-                     <h2 className="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
-                       <FileText size={20} className="text-[#4caf50]" /> Thông tin cơ bản
-                     </h2>
-                     <div className="space-y-4">
-                       <div>
-                         <span className="text-xs font-bold uppercase tracking-wider text-gray-400 block mb-1">Decison No</span>
-                         <p className="text-sm text-gray-800 font-medium">{syllabus.decisionNo} (Approved: {syllabus.approvedDate})</p>
-                       </div>
-                       <hr className="border-gray-50" />
-                       <div>
-                         <span className="text-xs font-bold uppercase tracking-wider text-gray-400 block mb-1">Degree Level</span>
-                         <p className="text-sm text-gray-800 font-medium">{syllabus.degreeLevel}</p>
-                       </div>
-                       <hr className="border-gray-50" />
-                       <div>
-                         <span className="text-xs font-bold uppercase tracking-wider text-gray-400 block mb-1">Time Allocation</span>
-                         <p className="text-sm text-gray-800 font-medium">{syllabus.timeAllocation}</p>
-                       </div>
-                       <hr className="border-gray-50" />
-                       <div>
-                         <span className="text-xs font-bold uppercase tracking-wider text-gray-400 block mb-1">Pre-Requisite</span>
-                         {syllabus.preRequisite !== "None" ? (
-                           <span className="inline-flex px-2.5 py-1 rounded bg-red-50 text-red-600 text-xs font-bold uppercase tracking-wider">
-                             {syllabus.preRequisite}
-                           </span>
-                         ) : (
-                           <span className="text-sm text-gray-400 italic">Không có môn tiên quyết</span>
-                         )}
-                       </div>
-                     </div>
-                   </div>
+                  <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-gray-100">
+                    <h2 className="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
+                      <FileText size={20} className="text-[#4caf50]" /> Thông tin cơ bản
+                    </h2>
+                    <div className="space-y-4">
+                      <div>
+                        <span className="text-xs font-bold uppercase tracking-wider text-gray-400 block mb-1">Decison No</span>
+                        <p className="text-sm text-gray-800 font-medium">{syllabus.decisionNo} (Approved: {syllabus.approvedDate})</p>
+                      </div>
+                      <hr className="border-gray-50" />
+                      <div>
+                        <span className="text-xs font-bold uppercase tracking-wider text-gray-400 block mb-1">Degree Level</span>
+                        <p className="text-sm text-gray-800 font-medium">{syllabus.degreeLevel}</p>
+                      </div>
+                      <hr className="border-gray-50" />
+                      <div>
+                        <span className="text-xs font-bold uppercase tracking-wider text-gray-400 block mb-1">Time Allocation</span>
+                        <p className="text-sm text-gray-800 font-medium">{syllabus.timeAllocation}</p>
+                      </div>
+                      <hr className="border-gray-50" />
+                      <div>
+                        <span className="text-xs font-bold uppercase tracking-wider text-gray-400 block mb-1">Pre-Requisite</span>
+                        {syllabus.preRequisite !== "None" ? (
+                          <span className="inline-flex px-2.5 py-1 rounded bg-red-50 text-red-600 text-xs font-bold uppercase tracking-wider">
+                            {syllabus.preRequisite}
+                          </span>
+                        ) : (
+                          <span className="text-sm text-gray-400 italic">Không có môn tiên quyết</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
 
-                   <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-gray-100">
-                     <h2 className="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
-                       <BookOpen size={20} className="text-[#4caf50]" /> Mô tả môn học (Description)
-                     </h2>
-                     <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
-                       {syllabus.description}
-                     </div>
-                   </div>
+                  <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-gray-100">
+                    <h2 className="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
+                      <BookOpen size={20} className="text-[#4caf50]" /> Mô tả môn học (Description)
+                    </h2>
+                    <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
+                      {syllabus.description}
+                    </div>
+                  </div>
                 </div>
 
                 <div className="space-y-6">
-                   <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
-                     <h2 className="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
-                       <CheckCircle2 size={20} className="text-[#4caf50]" /> Student Tasks
-                     </h2>
-                     <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
-                       {syllabus.studentTasks}
-                     </div>
-                   </div>
+                  <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
+                    <h2 className="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
+                      <CheckCircle2 size={20} className="text-[#4caf50]" /> Student Tasks
+                    </h2>
+                    <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
+                      {syllabus.studentTasks}
+                    </div>
+                  </div>
 
-                   <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
-                     <h2 className="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
-                       <Layers size={20} className="text-[#4caf50]" /> Tools & Software
-                     </h2>
-                     <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
-                       {syllabus.tools}
-                     </div>
-                   </div>
+                  <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
+                    <h2 className="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
+                      <Layers size={20} className="text-[#4caf50]" /> Tools & Software
+                    </h2>
+                    <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
+                      {syllabus.tools}
+                    </div>
+                  </div>
 
-                   <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex items-center justify-between">
-                     <div>
-                       <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Scoring Scale</h2>
-                       <p className="text-2xl font-black text-gray-900">{syllabus.scoringScale}</p>
-                     </div>
-                     <div className="w-px h-12 bg-gray-100 mx-4" />
-                     <div>
-                       <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Min Passing Mark</h2>
-                       <p className="text-2xl font-black text-[#4caf50]">{syllabus.minAvgMarkToPass}</p>
-                     </div>
-                   </div>
+                  <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex items-center justify-between">
+                    <div>
+                      <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Scoring Scale</h2>
+                      <p className="text-2xl font-black text-gray-900">{syllabus.scoringScale}</p>
+                    </div>
+                    <div className="w-px h-12 bg-gray-100 mx-4" />
+                    <div>
+                      <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Min Passing Mark</h2>
+                      <p className="text-2xl font-black text-[#4caf50]">{syllabus.minAvgMarkToPass}</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
@@ -407,13 +401,13 @@ export default function SyllabusDetailPage({ params }: { params: Promise<{ id: s
                       {syllabus.materials.map((m, idx) => (
                         <tr key={idx} className="hover:bg-gray-50/50 transition-colors">
                           <td className="px-6 py-4 whitespace-nowrap hidden md:table-cell align-top">
-                             {m.isMainMaterial ? (
-                               <span className="inline-flex px-2.5 py-1 bg-green-100 text-green-700 text-[10px] font-bold uppercase rounded-lg">Main</span>
-                             ) : m.isOnline ? (
-                               <span className="inline-flex px-2.5 py-1 bg-blue-100 text-blue-700 text-[10px] font-bold uppercase rounded-lg">Online</span>
-                             ) : (
-                               <span className="inline-flex px-2.5 py-1 bg-gray-100 text-gray-600 text-[10px] font-bold uppercase rounded-lg">Reference</span>
-                             )}
+                            {m.isMainMaterial ? (
+                              <span className="inline-flex px-2.5 py-1 bg-green-100 text-green-700 text-[10px] font-bold uppercase rounded-lg">Main</span>
+                            ) : m.isOnline ? (
+                              <span className="inline-flex px-2.5 py-1 bg-blue-100 text-blue-700 text-[10px] font-bold uppercase rounded-lg">Online</span>
+                            ) : (
+                              <span className="inline-flex px-2.5 py-1 bg-gray-100 text-gray-600 text-[10px] font-bold uppercase rounded-lg">Reference</span>
+                            )}
                           </td>
                           <td className="px-6 py-4">
                             <p className="text-sm font-semibold text-gray-900 mb-1 leading-snug break-all">
@@ -454,7 +448,7 @@ export default function SyllabusDetailPage({ params }: { params: Promise<{ id: s
                   {syllabus.learningObjectives.map((lo, idx) => (
                     <div key={idx} className="p-6 flex flex-col sm:flex-row gap-4 sm:gap-6 hover:bg-gray-50/30 transition-colors">
                       <div className="shrink-0">
-                        <span className="inline-flex px-3 py-1.5 rounded-xl bg-orange-50 text-orange-600 font-bold text-sm min-w-[80px] justify-center tracking-widest border border-orange-100/50">
+                        <span className="inline-flex px-3 py-1.5 rounded-xl border border-[#4caf50]/30 bg-white text-[#4caf50] font-bold text-sm min-w-[80px] justify-center tracking-widest">
                           {lo.name}
                         </span>
                       </div>
@@ -506,7 +500,7 @@ export default function SyllabusDetailPage({ params }: { params: Promise<{ id: s
                             <div className="flex flex-wrap gap-1">
                               {s.lo.split(",").map((l: string, i: number) => {
                                 const cl = l.trim();
-                                if(!cl) return null;
+                                if (!cl) return null;
                                 return (
                                   <span key={i} className="px-2 py-0.5 bg-orange-50 text-orange-600 font-medium text-[10px] rounded border border-orange-100">
                                     {cl}
@@ -621,7 +615,7 @@ export default function SyllabusDetailPage({ params }: { params: Promise<{ id: s
                         <span className="text-sm font-bold text-blue-800 uppercase tracking-widest">{ass.category}</span>
                         <span className="text-[10px] font-bold text-blue-500 uppercase px-2 py-0.5 bg-blue-100 rounded">Part {ass.part}</span>
                       </div>
-                      
+
                       <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-8">
                         <div>
                           <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Type & Duration</span>
@@ -637,8 +631,8 @@ export default function SyllabusDetailPage({ params }: { params: Promise<{ id: s
                           <p className="text-sm text-gray-600 mt-1 italic whitespace-pre-wrap">{ass.noQuestion}</p>
                         </div>
                         <div className="sm:col-span-2 pt-4 border-t border-gray-100">
-                           <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Grading Guide</span>
-                           <p className="text-sm text-gray-600">{ass.gradingGuide}</p>
+                          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Grading Guide</span>
+                          <p className="text-sm text-gray-600">{ass.gradingGuide}</p>
                         </div>
                       </div>
                     </div>
@@ -646,11 +640,11 @@ export default function SyllabusDetailPage({ params }: { params: Promise<{ id: s
                 </div>
               </div>
             )}
-            
+
           </motion.div>
         </AnimatePresence>
       </div>
-      
+
     </div>
   );
 }

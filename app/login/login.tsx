@@ -7,7 +7,7 @@ import { jwtDecode } from "jwt-decode";
 import authApiRequest from "@/apiRequests/auth";
 import accountApiRequest from "@/apiRequests/account";
 import { useDispatch } from "react-redux";
-import { setUser } from "@/lib/features/userSlice";
+import { setUser } from "@/provider/userSlice";
 import { useGoogleOneTapLogin, GoogleLogin } from "@react-oauth/google";
 import Image from "next/image";
 import {

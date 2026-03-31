@@ -125,3 +125,22 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Custom scrollbar for horizontal tabs */
+.scrollbar-green {
+  scrollbar-width: thin;
+  scrollbar-color: #86efac transparent;
+}
+.scrollbar-green::-webkit-scrollbar {
+  height: 6px;
+}
+.scrollbar-green::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scrollbar-green::-webkit-scrollbar-thumb {
+  background-color: #86efac; /* Tailwind green-300 */
+  border-radius: 20px;
+}
+.scrollbar-green::-webkit-scrollbar-thumb:hover {
+  background-color: #22c55e; /* Tailwind green-500 */
+}

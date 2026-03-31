@@ -1,8 +1,8 @@
 "use client";
 import { useEffect, useRef } from "react";
 import { Provider } from "react-redux";
-import { store } from "@/lib/store";
-import { setUser } from "@/lib/features/userSlice";
+import { store } from "./store";
+import { setUser } from "./userSlice";
 
 export default function StoreProvider({
   children,
