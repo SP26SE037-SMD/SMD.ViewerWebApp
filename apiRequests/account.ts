@@ -14,7 +14,8 @@ const accountApiRequest = {
   updateAccount: (id: string, body: UpdateAccountBodyType, status: boolean = true) =>
     http.put<MessageResType>(
       `/api/accounts?id=${encodeURIComponent(id)}&status=${status}`, 
-      body
+      body,
+      { baseUrl: "" }
     ),
 };
 

@@ -157,7 +157,6 @@ export default function Login() {
     onError: () => {
       console.error("One Tap Login Failed or modal closed by user");
     },
-    use_fedcm_for_prompt: false,
   });
 
   return (
@@ -475,7 +474,6 @@ export default function Login() {
                       theme="outline"
                       shape="pill"
                       width="100%" // Để nó tự co giãn theo card
-                      use_fedcm_for_prompt={false}
                     />
                   </div>
                 )}
