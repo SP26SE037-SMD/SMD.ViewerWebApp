@@ -6,8 +6,8 @@ import {
   Lexend,
 } from "next/font/google";
 import "./globals.css";
-import AppProvider from "./app-provider";
-import StoreProvider from "./StoreProvider";
+import AppProvider from "@/provider/app-provider";
+import StoreProvider from "@/provider/store-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 

@@ -7,7 +7,7 @@ import { motion } from "motion/react";
 import type { AccountMeResType } from "@/schemaValidations/account.schema";
 import ButtonLogout from "./button-logout";
 import { useSelector } from "react-redux";
-import type { RootState } from "@/lib/store";
+import type { RootState } from "@/provider/store";
 
 type Props = {
   account: AccountMeResType["data"] | null;

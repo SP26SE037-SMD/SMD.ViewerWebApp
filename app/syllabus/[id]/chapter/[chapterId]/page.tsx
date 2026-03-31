@@ -2,7 +2,8 @@
 
 import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, BookOpen, AlertCircle } from "lucide-react";
+import { ArrowLeft, BookOpen, AlertCircle, X, Copy } from "lucide-react";
+import { toast } from "sonner";
 
 type SyllabusDetail = {
   syllabusId: string;
@@ -16,6 +17,8 @@ type SyllabusDetail = {
       type: "H1" | "H2" | "PARAGRAPH" | "ORDERED_LIST" | "BULLET_LIST" | "CODE_BLOCK" | "QUOTE" | "TABLE" | "DIVIDER" | "IMAGE";
       content: string;
       startIndex?: number; // Used for split Ordered Lists
+      scaledHeight?: number; // Used for dynamically scaling down images
+      h2Number?: number; // Used for auto-numbering H2
     }[];
   }[];
 };
@@ -28,6 +31,61 @@ export default function ChapterViewerPage({ params }: { params: Promise<{ id: st
 
   const [syllabus, setSyllabus] = useState<SyllabusDetail | null>(null);
   const [loading, setLoading] = useState(true);
+  const [enlargedImage, setEnlargedImage] = useState<string | null>(null);
+  const [selectionBox, setSelectionBox] = useState<{ x: number, y: number, text: string } | null>(null);
+
+  // Handle global text selection for the copying tooltip
+  useEffect(() => {
+    const handleMouseUp = () => {
+      const selection = window.getSelection();
+      if (!selection || selection.isCollapsed) {
+        setSelectionBox(null);
+        return;
+      }
+      const text = selection.toString().trim();
+      if (!text) {
+        setSelectionBox(null);
+        return;
+      }
+      setTimeout(() => {
+        const currSelection = window.getSelection();
+        if (!currSelection || currSelection.isCollapsed) return;
+        const range = currSelection.getRangeAt(0);
+        const rect = range.getBoundingClientRect();
+        
+        // Don't show if the selection is outside the viewport
+        if (rect.top === 0 && rect.left === 0) return;
+
+        setSelectionBox({
+          x: rect.left + rect.width / 2,
+          y: Math.max(8, rect.top - 8), // Keep it purely fixed viewport coordinate!
+          text
+        });
+      }, 0);
+    };
+
+    const handleScroll = () => {
+       if (selectionBox) setSelectionBox(null);
+    };
+
+    document.addEventListener("mouseup", handleMouseUp);
+    window.addEventListener("scroll", handleScroll, true);
+    
+    // Clear selection early if they start a new drag or scroll
+    const handleSelectionChange = () => {
+      const selection = window.getSelection();
+      if (!selection || selection.isCollapsed) {
+        setSelectionBox(null);
+      }
+    };
+    document.addEventListener("selectionchange", handleSelectionChange);
+
+    return () => {
+      document.removeEventListener("mouseup", handleMouseUp);
+      document.removeEventListener("selectionchange", handleSelectionChange);
+      window.removeEventListener("scroll", handleScroll, true);
+    };
+  }, [selectionBox]);
 
   useEffect(() => {
     const fetchDetail = async () => {
@@ -78,7 +136,12 @@ export default function ChapterViewerPage({ params }: { params: Promise<{ id: st
       case "H1":
         return <h1 key={block.id} className="text-3xl font-bold text-gray-900 mt-8 mb-4">{block.content}</h1>;
       case "H2":
-        return <h2 key={block.id} className="text-xl font-bold text-gray-800 mt-6 mb-3">{block.content}</h2>;
+        return (
+          <h2 key={block.id} className="text-xl font-bold text-gray-800 mt-8 mb-4 text-blue-900 border-b pb-2 border-gray-100 flex items-center gap-2">
+            {block.h2Number && <span className="text-blue-500/80 mr-1">{block.h2Number}.</span>} 
+            {block.content}
+          </h2>
+        );
       case "PARAGRAPH":
         return <p key={block.id} className="text-base text-gray-700 leading-relaxed mb-4 whitespace-pre-wrap">{block.content}</p>;
       case "ORDERED_LIST": {
@@ -153,9 +216,14 @@ export default function ChapterViewerPage({ params }: { params: Promise<{ id: st
         return <hr key={block.id} className="my-10 border-gray-300" />;
       case "IMAGE":
         return (
-          <figure key={block.id} className="my-8">
-            <img src={block.content} alt="Material Illustration" className="w-full rounded-xl shadow-sm border border-gray-200" />
-            <figcaption className="text-center text-xs text-gray-400 mt-2 font-medium">Hình ảnh đính kèm</figcaption>
+          <figure key={block.id} className="my-8 flex flex-col justify-center">
+            <img 
+              src={block.content} 
+              alt="Material Illustration" 
+              className="w-full object-contain mx-auto rounded-xl shadow-[0_2px_8px_rgb(0,0,0,0.08)] border border-gray-200 bg-gray-50 cursor-zoom-in hover:opacity-95 transition-opacity" 
+              style={{ maxHeight: block.scaledHeight ? `${block.scaledHeight}px` : '470px' }}
+              onClick={() => setEnlargedImage(block.content)}
+            />
           </figure>
         );
       default:
@@ -197,9 +265,17 @@ export default function ChapterViewerPage({ params }: { params: Promise<{ id: st
         estimatedHeight = 60 + (rows.length * 48);
         break;
       }
-      case "IMAGE":
-        estimatedHeight = 450;
+      case "IMAGE": {
+        const remaining = availableHeight - currentHeight;
+        // If there's decent space left (>= 250px) but not the full 480px an image wants, we scale it down to fit!
+        if (remaining >= 250 && remaining < 480) {
+          estimatedHeight = remaining - 20; // Leave 20px padding
+          block.scaledHeight = estimatedHeight - 40; // Subtract space for figure/caption margins
+        } else {
+          estimatedHeight = 480;
+        }
         break;
+      }
       case "DIVIDER":
         estimatedHeight = 80;
         break;
@@ -278,9 +354,18 @@ export default function ChapterViewerPage({ params }: { params: Promise<{ id: st
     }
   };
 
+  // Pre-process chapter blocks to add sequential numbering
+  let currentH2Sequence = 0;
   chapter.blocks.forEach((block) => {
-    const pageAvailableHeight = pages.length === 0 ? EFFECTIVE_PAGE_HEIGHT - initialOffset : EFFECTIVE_PAGE_HEIGHT;
-    processBlock(block, pageAvailableHeight);
+    if (block.type === "H2" && !block.id.includes("-p1") && !block.id.includes("-p2")) {
+       currentH2Sequence++;
+       block.h2Number = currentH2Sequence;
+    }
+  });
+
+  chapter.blocks.forEach((block) => {
+    const availableHeight = pages.length === 0 ? EFFECTIVE_PAGE_HEIGHT - initialOffset : EFFECTIVE_PAGE_HEIGHT;
+    processBlock(block, availableHeight);
   });
 
   if (currentPage.length > 0) {
@@ -350,6 +435,55 @@ export default function ChapterViewerPage({ params }: { params: Promise<{ id: st
           </div>
         ))}
       </div>
+
+      {/* ── Text Selection Quick Action Tooltip ── */}
+      {selectionBox && (
+        <div 
+          className="fixed z-[60] flex items-center justify-center -translate-x-1/2 -translate-y-full animate-in fade-in zoom-in duration-150 pointer-events-auto shadow-2xl"
+          style={{ left: selectionBox.x, top: selectionBox.y }}
+        >
+          <button
+            onPointerDown={(e) => {
+               // Use onPointerDown instead of onClick to prevent selection clearing before click registers
+               e.preventDefault(); 
+               navigator.clipboard.writeText(selectionBox.text);
+               toast.success("Đã copy văn bản", { position: "bottom-center" });
+               setSelectionBox(null);
+               window.getSelection()?.removeAllRanges();
+            }}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-900/95 backdrop-blur-sm text-white text-xs font-semibold rounded-lg hover:bg-black transition-colors ring-1 ring-white/10"
+          >
+            <Copy size={14} />
+            Copy
+          </button>
+          {/* Tooltip little triangle pointer */}
+          <div className="absolute top-[98%] left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-l-transparent border-t-[6px] border-t-gray-900/95 border-r-[6px] border-r-transparent"></div>
+        </div>
+      )}
+
+      {/* ── Image Lightbox Modal ── */}
+      {enlargedImage && (
+        <div 
+          className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-sm flex items-center justify-center p-4 sm:p-8 animate-in fade-in duration-200"
+          onClick={() => setEnlargedImage(null)}
+        >
+          <div className="relative max-w-6xl w-full h-full flex flex-col items-center justify-center">
+             <button 
+               onClick={(e) => { e.stopPropagation(); setEnlargedImage(null); }}
+               className="absolute top-0 right-0 p-3 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors z-[101]"
+               title="Đóng (Esc)"
+             >
+               <X size={24} />
+             </button>
+             <img 
+               src={enlargedImage} 
+               alt="Enlarged" 
+               className="max-w-full max-h-full object-contain rounded-md shadow-2xl"
+               onClick={(e) => e.stopPropagation()}
+             />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

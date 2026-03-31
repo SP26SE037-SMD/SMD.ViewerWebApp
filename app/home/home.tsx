@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
-import type { RootState } from "@/lib/store";
+import type { RootState } from "@/provider/store";
 import { ActionCard } from "@/components/ui/action-card";
 
 const items = [

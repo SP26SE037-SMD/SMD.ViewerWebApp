@@ -1,7 +1,7 @@
 "use client";
 
 import { useDispatch } from "react-redux";
-import { logout } from "@/lib/features/userSlice";
+import { logout } from "@/provider/userSlice";
 import authApiRequest from "@/apiRequests/auth";
 import { handleErrorApi } from "@/lib/utils";
 import { useRouter } from "next/navigation";
