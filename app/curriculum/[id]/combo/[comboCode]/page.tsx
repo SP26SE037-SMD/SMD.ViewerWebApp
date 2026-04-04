@@ -17,9 +17,9 @@ export default function ComboDetailPage({
 
   // MOCK DATA for combo subjects (since there's no combo API yet)
   const mockSubjects = [
-    { subjectCode: `${comboCode}_1`, subjectName: `Môn nền tảng của ${comboCode}`, noCredit: 3, semester: 5 },
-    { subjectCode: `${comboCode}_2`, subjectName: `Môn cốt lõi nhóm ${comboCode}`, noCredit: 3, semester: 6 },
-    { subjectCode: `${comboCode}_3`, subjectName: `Đồ án chuyên sâu ${comboCode}`, noCredit: 3, semester: 7 },
+    { subjectCode: `${comboCode}_1`, subjectName: `Foundational subject for ${comboCode}`, noCredit: 3, semester: 5 },
+    { subjectCode: `${comboCode}_2`, subjectName: `Core subject for group ${comboCode}`, noCredit: 3, semester: 6 },
+    { subjectCode: `${comboCode}_3`, subjectName: `Specialized project for ${comboCode}`, noCredit: 3, semester: 7 },
   ];
 
   const totalCredits = mockSubjects.reduce((sum, s) => sum + s.noCredit, 0);
@@ -46,7 +46,7 @@ export default function ComboDetailPage({
                 </span>
               </div>
               <h1 className="text-xl sm:text-2xl font-bold text-gray-900 leading-tight">
-                Kho môn học Combo
+                Combo Subject Warehouse
               </h1>
             </div>
           </div>
@@ -59,10 +59,10 @@ export default function ComboDetailPage({
         <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-gray-100 mb-8 flex flex-col sm:flex-row items-start sm:items-center gap-6 justify-between">
           <div>
             <h2 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-1.5">
-              Thông tin chi tiết
+              Detailed Information
             </h2>
             <p className="text-gray-900 font-medium">
-              Bạn đang xem danh sách các môn học thuộc {comboCode} của chương trình đào tạo hiện tại. 
+              You are viewing the list of subjects belonging to {comboCode} in the current curriculum. 
             </p>
           </div>
           
@@ -73,7 +73,7 @@ export default function ComboDetailPage({
                 {mockSubjects.length}
               </div>
               <div className="text-[10px] font-bold text-[#4caf50] uppercase tracking-wider">
-                Môn học
+                Subjects
               </div>
             </div>
             
@@ -83,7 +83,7 @@ export default function ComboDetailPage({
                 {totalCredits}
               </div>
               <div className="text-[10px] font-bold text-blue-500 uppercase tracking-wider">
-                Tín chỉ
+                Credits
               </div>
             </div>
           </div>
@@ -93,10 +93,10 @@ export default function ComboDetailPage({
         <div className="bg-white rounded-3xl border border-gray-100 overflow-hidden shadow-sm">
            {/* Desktop Table Header */}
            <div className="hidden md:grid grid-cols-12 gap-4 px-6 py-4 bg-gray-50 text-xs font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">
-             <div className="col-span-3">Mã môn</div>
-             <div className="col-span-6">Tên môn học</div>
-             <div className="col-span-2 text-center">Học kỳ</div>
-             <div className="col-span-1 text-center">TC</div>
+             <div className="col-span-3">Subject Code</div>
+             <div className="col-span-6">Subject Name</div>
+             <div className="col-span-2 text-center">Semester</div>
+             <div className="col-span-1 text-center">Credits</div>
            </div>
            
            <div className="divide-y divide-gray-100">
@@ -133,7 +133,7 @@ export default function ComboDetailPage({
                      </span>
                      <div className="flex gap-2">
                        <span className="inline-flex px-2 py-1 bg-gray-100 text-gray-600 text-[10px] font-bold rounded-lg items-center uppercase">
-                         HK {subject.semester}
+                         Sem {subject.semester}
                        </span>
                        <span className="inline-flex px-2 py-1 bg-gray-100 text-gray-600 text-[10px] font-bold rounded-lg items-center">
                          <Clock size={10} className="mr-1" />

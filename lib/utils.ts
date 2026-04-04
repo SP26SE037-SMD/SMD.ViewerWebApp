@@ -35,7 +35,7 @@ export const handleErrorApi = ({
 };
 
 /**
- * Xóa đi kí tự "/" đầu tiên của Path
+ * Remove the first "/" character of the path
  */
 export const normalizePath = (path: string) => {
   return path.startsWith("/") ? path.slice(1) : path;

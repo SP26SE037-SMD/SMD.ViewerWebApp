@@ -21,9 +21,9 @@ import { ActionCard } from "@/components/ui/action-card";
 const items = [
   {
     id: 1,
-    title: "Xem Đề Cương",
+    title: "View Syllabus",
     subtitle: "View Syllabus",
-    desc: "Khám phá lộ trình học tập được cấu trúc rõ ràng cho chuyên ngành của bạn.",
+    desc: "Explore a clearly structured learning path for your major.",
     icon: BookOpen,
     bg: "bg-white",
     iconBg: "bg-[#6AB04C]",
@@ -31,9 +31,9 @@ const items = [
   },
   {
     id: 2,
-    title: "Chương Trình Học",
+    title: "Curriculum",
     subtitle: "Curriculum",
-    desc: "Hướng dẫn chi tiết từng bước trong chương trình đào tạo.",
+    desc: "Detailed step-by-step guide in the training program.",
     icon: Milestone,
     bg: "bg-white",
     iconBg: "bg-[#6AB04C]",
@@ -41,9 +41,9 @@ const items = [
   },
   {
     id: 3,
-    title: "Lộ Trình Học",
+    title: "Learning Path",
     subtitle: "Learning Path",
-    desc: "Xem toàn bộ lộ trình và các mốc quan trọng theo học kỳ.",
+    desc: "View the entire roadmap and key milestones by semester.",
     icon: Map,
     bg: "bg-white",
     iconBg: "bg-[#6AB04C]",
@@ -51,9 +51,9 @@ const items = [
   },
   {
     id: 4,
-    title: "Môn Tiên Quyết",
+    title: "Pre-requisite",
     subtitle: "Pre-requisite",
-    desc: "Kiểm tra các môn học bắt buộc phải hoàn thành trước.",
+    desc: "Check mandatory subjects that must be completed first.",
     icon: GraduationCap,
     bg: "bg-white",
     iconBg: "bg-[#6AB04C]",
@@ -81,12 +81,12 @@ export default function Home() {
 
   const greeting = () => {
     const hour = new Date().getHours();
-    if (hour < 12) return "Chào buổi sáng";
-    if (hour < 18) return "Chào buổi chiều";
-    return "Chào buổi tối";
+    if (hour < 12) return "Good morning";
+    if (hour < 18) return "Good afternoon";
+    return "Good evening";
   };
 
-  const displayName = user?.fullName ? user.fullName.split(" ").pop() : "bạn";
+  const displayName = user?.fullName ? user.fullName.split(" ").pop() : "you";
 
   return (
     <div className="min-h-screen bg-[#f8fafb] font-[Lexend]">
@@ -98,7 +98,7 @@ export default function Home() {
           >
             <div className="flex flex-col items-center gap-3">
               <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#6AB04C]" />
-              <p className="text-sm text-gray-500 font-medium">Đang tải...</p>
+              <p className="text-sm text-gray-500 font-medium">Loading...</p>
             </div>
           </motion.div>
         )}
@@ -130,7 +130,7 @@ export default function Home() {
                   type="text"
                   value={searchValue}
                   onChange={(e) => setSearchValue(e.target.value)}
-                  placeholder="Nhập từ khóa tìm kiếm..."
+                  placeholder="Enter search keyword..."
                   className="flex-1 text-lg outline-none text-gray-800 bg-transparent placeholder-gray-400"
                   onKeyDown={(e) => {
                     if (e.key === "Enter" && searchValue.trim() !== "") {
@@ -149,9 +149,9 @@ export default function Home() {
                 </button>
               </div>
               <div className="p-5">
-                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Gợi ý</p>
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Suggestions</p>
                 <div className="flex flex-wrap gap-2">
-                  {["Giải tích", "Lập trình web", "Cơ sở dữ liệu", "Mạng máy tính"].map((hint) => (
+                  {["Calculus", "Web programming", "Database", "Computer networks"].map((hint) => (
                     <button
                       key={hint}
                       onClick={() => {
@@ -174,7 +174,7 @@ export default function Home() {
                     }}
                     className="mt-4 w-full flex items-center justify-center gap-2 bg-[#6AB04C] text-white py-3 rounded-2xl font-semibold hover:bg-[#5a9940] transition-colors"
                   >
-                    Tìm kiếm "{searchValue}"
+                    Search "{searchValue}"
                     <ArrowRight size={18} />
                   </button>
                 )}
@@ -201,7 +201,7 @@ export default function Home() {
             {displayName}! 👋
           </h1>
           <p className="text-gray-500 mt-1 text-base">
-            Hôm nay bạn muốn khám phá điều gì trong chương trình học?
+            What do you want to explore in the curriculum today?
           </p>
         </motion.div>
 
@@ -211,7 +211,7 @@ export default function Home() {
         <div>
           <h2 className="text-base font-bold text-gray-700 mb-4 flex items-center gap-2">
             <ChevronRight size={18} className="text-[#6AB04C]" />
-            Truy cập nhanh
+            Quick access
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -237,9 +237,9 @@ export default function Home() {
             <Sparkles size={20} className="text-white" />
           </div>
           <div>
-            <p className="text-sm font-semibold text-[#2D4A22]">Mẹo hữu ích</p>
+            <p className="text-sm font-semibold text-[#2D4A22]">Helpful Tips</p>
             <p className="text-xs text-[#4A7D37] mt-0.5">
-              Sử dụng thanh tìm kiếm nhanh ở trên để tra cứu môn học theo tên hoặc mã môn.
+              Use the quick search bar above to look up subjects by name or course code.
             </p>
           </div>
         </motion.div>

@@ -109,7 +109,7 @@ export default function ChapterViewerPage({ params }: { params: Promise<{ id: st
     return (
       <div className="min-h-screen bg-[#f3f4f6] flex flex-col items-center justify-center gap-3">
         <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-gray-400" />
-        <p className="text-sm text-gray-400">Đang tải tài liệu...</p>
+        <p className="text-sm text-gray-400">Loading document...</p>
       </div>
     );
   }
@@ -122,9 +122,9 @@ export default function ChapterViewerPage({ params }: { params: Promise<{ id: st
         <div className="w-20 h-20 rounded-3xl bg-red-50 flex items-center justify-center">
           <AlertCircle size={40} className="text-red-400" strokeWidth={1.5} />
         </div>
-        <p className="text-gray-500 font-medium text-center">Không tìm thấy nội dung tài liệu này</p>
+        <p className="text-gray-500 font-medium text-center">Document content not found</p>
         <button onClick={() => router.back()} className="text-blue-500 text-sm font-semibold hover:underline mt-2">
-          Quay lại trang trước
+          Back to previous page
         </button>
       </div>
     );
@@ -381,7 +381,7 @@ export default function ChapterViewerPage({ params }: { params: Promise<{ id: st
             <button
               onClick={() => router.back()}
               className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-500 hover:text-gray-900 shrink-0"
-              title="Quay lại"
+              title="Back"
             >
               <ArrowLeft size={20} />
             </button>
@@ -390,9 +390,9 @@ export default function ChapterViewerPage({ params }: { params: Promise<{ id: st
                  <BookOpen size={14} className="text-blue-600" />
                  <h1 className="text-sm font-bold text-gray-800 truncate">{syllabus.syllabusCode} • {syllabus.syllabusName}</h1>
               </div>
-              <p className="text-xs text-gray-500 font-medium truncate flex items-center gap-2">
-                 Tài liệu bài giảng: <span className="text-gray-700">{chapter.chapterName}</span>
-              </p>
+                <p className="text-xs text-gray-500 font-medium truncate flex items-center gap-2">
+                   Lecture material: <span className="text-gray-700">{chapter.chapterName}</span>
+                </p>
             </div>
           </div>
           <div className="text-xs font-bold text-gray-400 bg-gray-100 px-3 py-1.5 rounded-lg shrink-0">
@@ -444,12 +444,11 @@ export default function ChapterViewerPage({ params }: { params: Promise<{ id: st
         >
           <button
             onPointerDown={(e) => {
-               // Use onPointerDown instead of onClick to prevent selection clearing before click registers
-               e.preventDefault(); 
-               navigator.clipboard.writeText(selectionBox.text);
-               toast.success("Đã copy văn bản", { position: "bottom-center" });
-               setSelectionBox(null);
-               window.getSelection()?.removeAllRanges();
+                e.preventDefault(); 
+                navigator.clipboard.writeText(selectionBox.text);
+                toast.success("Text copied", { position: "bottom-center" });
+                setSelectionBox(null);
+                window.getSelection()?.removeAllRanges();
             }}
             className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-900/95 backdrop-blur-sm text-white text-xs font-semibold rounded-lg hover:bg-black transition-colors ring-1 ring-white/10"
           >
@@ -471,7 +470,7 @@ export default function ChapterViewerPage({ params }: { params: Promise<{ id: st
              <button 
                onClick={(e) => { e.stopPropagation(); setEnlargedImage(null); }}
                className="absolute top-0 right-0 p-3 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors z-[101]"
-               title="Đóng (Esc)"
+               title="Close (Esc)"
              >
                <X size={24} />
              </button>

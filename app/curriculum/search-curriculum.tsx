@@ -97,14 +97,14 @@ function SearchContent() {
             className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-800 mb-5 group transition-colors"
           >
             <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-            Quay lại
+            Back
           </button>
           <div className="flex items-center gap-3 mb-1">
             <div className="p-2.5 rounded-2xl bg-[#4caf50]/10">
               <BookMarked size={22} className="text-[#4caf50]" strokeWidth={1.7} />
             </div>
             <div>
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Chương Trình Học</p>
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Curriculum</p>
               <h1 className="text-2xl font-bold text-gray-900 font-[Bricolage_Grotesque]">
                 Curriculum
               </h1>
@@ -112,7 +112,7 @@ function SearchContent() {
           </div>
           {totalElements > 0 && (
             <p className="text-sm text-gray-500 mt-2 ml-14">
-              {nameQuery || codeQuery ? `Kết quả tìm kiếm — ` : ""}<span className="font-semibold text-gray-700">{totalElements}</span> chương trình học
+              {nameQuery || codeQuery ? `Search results — ` : ""}<span className="font-semibold text-gray-700">{totalElements}</span> curriculums
             </p>
           )}
         </div>
@@ -129,7 +129,7 @@ function SearchContent() {
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                   className="flex items-center gap-2 px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded-2xl text-sm font-bold text-gray-700 transition-all min-w-[80px] justify-between"
                 >
-                  {searchType === "name" ? "Tên" : "Mã"}
+                  {searchType === "name" ? "Name" : "Code"}
                   <motion.div
                     animate={{ rotate: isDropdownOpen ? 180 : 0 }}
                     transition={{ duration: 0.2 }}
@@ -154,7 +154,7 @@ function SearchContent() {
                         }}
                         className={`w-full text-left px-4 py-3 text-sm font-bold transition-colors ${searchType === "name" ? "bg-[#4caf50]/10 text-[#4caf50]" : "hover:bg-gray-50 text-gray-600"}`}
                       >
-                        Tên
+                        Name
                       </button>
                       <button
                         type="button"
@@ -164,7 +164,7 @@ function SearchContent() {
                         }}
                         className={`w-full text-left px-4 py-3 text-sm font-bold transition-colors ${searchType === "code" ? "bg-[#4caf50]/10 text-[#4caf50]" : "hover:bg-gray-50 text-gray-600"}`}
                       >
-                        Mã
+                        Code
                       </button>
                     </motion.div>
                   )}
@@ -176,7 +176,7 @@ function SearchContent() {
                 <input
                   value={localSearch}
                   onChange={(e) => setLocalSearch(e.target.value)}
-                  placeholder={searchType === "name" ? "Nhập tên chương trình học..." : "Nhập mã chương trình..."}
+                  placeholder={searchType === "name" ? "Enter curriculum name..." : "Enter curriculum code..."}
                   className="flex-1 text-sm outline-none text-gray-800 bg-transparent placeholder-gray-400"
                 />
                 {localSearch && (
@@ -201,7 +201,7 @@ function SearchContent() {
               type="submit"
               className="px-10 py-4 bg-[#4caf50] hover:bg-[#43a047] text-white text-sm font-bold rounded-3xl shadow-xl shadow-[#4caf50]/20 transition-all active:scale-95 shrink-0"
             >
-              Tìm kiếm
+              Search
             </button>
           </div>
         </form>
@@ -213,7 +213,7 @@ function SearchContent() {
           {loading ? (
             <motion.div key="loading" exit={{ opacity: 0 }} className="flex flex-col items-center justify-center py-32 gap-4">
               <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#4caf50]" />
-              <p className="text-sm text-gray-400 font-medium">Đang tải dữ liệu...</p>
+              <p className="text-sm text-gray-400 font-medium">Loading data...</p>
             </motion.div>
           ) : curriculums.length > 0 ? (
             <motion.div
@@ -244,7 +244,7 @@ function SearchContent() {
                     {curr.startYear && (
                       <div className="flex items-center gap-2 text-sm text-gray-500 transition-colors">
                         <Calendar size={14} />
-                        <span>Từ năm <span className="font-semibold text-gray-700 transition-colors">{curr.startYear}</span></span>
+                        <span>From year <span className="font-semibold text-gray-700 transition-colors">{curr.startYear}</span></span>
                       </div>
                     )}
                   </motion.div>
@@ -263,11 +263,11 @@ function SearchContent() {
                 <BookMarked size={40} className="text-[#4caf50]/50" strokeWidth={1} />
               </div>
               <p className="text-gray-500 font-medium text-center">
-                {nameQuery || codeQuery ? `Không tìm thấy kết quả phù hợp` : "Chưa có dữ liệu chương trình học"}
+                {nameQuery || codeQuery ? `No matching results found` : "No curriculum data available"}
               </p>
               {(nameQuery || codeQuery) && (
                 <button onClick={() => router.push("/curriculum")} className="text-[#3D7EE8] text-sm font-semibold hover:underline">
-                  Xem tất cả chương trình
+                  View all curriculums
                 </button>
               )}
             </motion.div>
@@ -319,7 +319,7 @@ export default function SearchCurriculum() {
     <Suspense fallback={
       <div className="min-h-screen bg-[#f8fafb] flex flex-col items-center justify-center gap-3">
         <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#3D7EE8]" />
-        <p className="text-sm text-gray-400">Đang tải...</p>
+        <p className="text-sm text-gray-400">Loading...</p>
       </div>
     }>
       <SearchContent />

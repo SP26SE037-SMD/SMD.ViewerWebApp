@@ -31,7 +31,7 @@ export default function ButtonLogout({ className, children }: Props) {
   };
   return (
     <button className={className} onClick={handleLogout}>
-      {children || "Đăng xuất"}
+      {children || "Log out"}
     </button>
   );
 }

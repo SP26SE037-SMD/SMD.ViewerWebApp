@@ -53,13 +53,13 @@ type SyllabusDetail = {
 };
 
 const TABS = [
-  { id: "general", label: "Chung", icon: FileText },
-  { id: "materials", label: "Tài liệu", icon: BookOpen },
-  { id: "los", label: "Chuẩn đầu ra (LOs)", icon: Award },
-  { id: "sessions", label: "Kế hoạch giảng dạy", icon: Calendar },
-  { id: "chapterMaterials", label: "Tài liệu môn học", icon: BookOpen },
-  { id: "questions", label: "Câu hỏi xây dựng", icon: HelpCircle },
-  { id: "assessments", label: "Đánh giá", icon: FileCheck2 },
+  { id: "general", label: "General", icon: FileText },
+  { id: "materials", label: "Materials", icon: BookOpen },
+  { id: "los", label: "Learning Objectives (LOs)", icon: Award },
+  { id: "sessions", label: "Teaching Plan", icon: Calendar },
+  { id: "chapterMaterials", label: "Course Materials", icon: BookOpen },
+  { id: "questions", label: "Constructive Questions", icon: HelpCircle },
+  { id: "assessments", label: "Assessments", icon: FileCheck2 },
 ];
 
 export default function SyllabusDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -97,7 +97,7 @@ export default function SyllabusDetailPage({ params }: { params: Promise<{ id: s
     return (
       <div className="min-h-screen bg-[#f8fafb] flex flex-col items-center justify-center gap-3">
         <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#4caf50]" />
-        <p className="text-sm text-gray-400">Đang tải thông tin đề cương...</p>
+        <p className="text-sm text-gray-400">Loading syllabus information...</p>
       </div>
     );
   }
@@ -108,9 +108,9 @@ export default function SyllabusDetailPage({ params }: { params: Promise<{ id: s
         <div className="w-20 h-20 rounded-3xl bg-red-50 flex items-center justify-center">
           <AlertCircle size={40} className="text-red-400" strokeWidth={1.5} />
         </div>
-        <p className="text-gray-500 font-medium text-center">Không tìm thấy thông tin đề cương môn học</p>
+        <p className="text-gray-500 font-medium text-center">Syllabus information not found</p>
         <button onClick={() => router.back()} className="text-[#4caf50] text-sm font-semibold hover:underline mt-2">
-          Quay lại trang trước
+          Back to previous page
         </button>
       </div>
     );
@@ -229,7 +229,7 @@ export default function SyllabusDetailPage({ params }: { params: Promise<{ id: s
                   <Award size={24} className="text-[#4caf50]" />
                 </div>
                 <div>
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">Tín chỉ</p>
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">Credits</p>
                   <p className="text-2xl font-black text-gray-900 leading-none">{syllabus.noCredit}</p>
                 </div>
               </div>
@@ -305,7 +305,7 @@ export default function SyllabusDetailPage({ params }: { params: Promise<{ id: s
                 <div className="lg:col-span-2 space-y-6">
                   <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-gray-100">
                     <h2 className="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
-                      <FileText size={20} className="text-[#4caf50]" /> Thông tin cơ bản
+                      <FileText size={20} className="text-[#4caf50]" /> Basic Information
                     </h2>
                     <div className="space-y-4">
                       <div>
@@ -330,7 +330,7 @@ export default function SyllabusDetailPage({ params }: { params: Promise<{ id: s
                             {syllabus.preRequisite}
                           </span>
                         ) : (
-                          <span className="text-sm text-gray-400 italic">Không có môn tiên quyết</span>
+                          <span className="text-sm text-gray-400 italic">No pre-requisites</span>
                         )}
                       </div>
                     </div>
@@ -338,7 +338,7 @@ export default function SyllabusDetailPage({ params }: { params: Promise<{ id: s
 
                   <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-gray-100">
                     <h2 className="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
-                      <BookOpen size={20} className="text-[#4caf50]" /> Mô tả môn học (Description)
+                      <BookOpen size={20} className="text-[#4caf50]" /> Course Description
                     </h2>
                     <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
                       {syllabus.description}
@@ -384,17 +384,17 @@ export default function SyllabusDetailPage({ params }: { params: Promise<{ id: s
             {activeTab === "materials" && (
               <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden flex flex-col">
                 <div className="px-6 py-5 border-b border-gray-100 bg-gray-50/50 flex items-center justify-between">
-                  <h3 className="font-bold text-gray-900">Danh sách Tài liệu ({syllabus.materials.length})</h3>
+                  <h3 className="font-bold text-gray-900">Material List ({syllabus.materials.length})</h3>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse">
                     <thead>
                       <tr className="bg-white border-b border-gray-100 text-[11px] font-bold text-gray-400 uppercase tracking-wider">
                         <th className="px-6 py-4 whitespace-nowrap hidden md:table-cell">Type</th>
-                        <th className="px-6 py-4">Mô tả tài liệu</th>
-                        <th className="px-6 py-4">Tác giả</th>
-                        <th className="px-6 py-4 hidden sm:table-cell">ISBN / Editon</th>
-                        <th className="px-6 py-4 hidden lg:table-cell">Nhà xuất bản</th>
+                        <th className="px-6 py-4">Description</th>
+                        <th className="px-6 py-4">Author</th>
+                        <th className="px-6 py-4 hidden sm:table-cell">ISBN / Edition</th>
+                        <th className="px-6 py-4 hidden lg:table-cell">Publisher</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-50">
@@ -527,7 +527,7 @@ export default function SyllabusDetailPage({ params }: { params: Promise<{ id: s
               <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden p-6 md:p-8">
                 <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
                   <BookOpen className="text-[#4caf50]" size={24} />
-                  Danh sách Bài giảng
+                  Lectures List
                 </h3>
                 {syllabus.chapterMaterials && syllabus.chapterMaterials.length > 0 ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -549,7 +549,7 @@ export default function SyllabusDetailPage({ params }: { params: Promise<{ id: s
                           {chap.chapterName}
                         </h4>
                         <p className="text-sm text-[#4caf50] font-medium mt-auto flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                          Xem tài liệu <ArrowLeft size={14} className="rotate-180" />
+                          View material <ArrowLeft size={14} className="rotate-180" />
                         </p>
                       </div>
                     ))}
@@ -557,7 +557,7 @@ export default function SyllabusDetailPage({ params }: { params: Promise<{ id: s
                 ) : (
                   <div className="py-12 flex flex-col items-center justify-center text-gray-400 gap-3 text-center border-2 border-dashed border-gray-100 rounded-2xl">
                     <BookOpen size={48} className="opacity-20 mb-2" />
-                    <p className="font-medium">Chưa có tài liệu bài giảng nào được tải lên.</p>
+                    <p className="font-medium">No lecture materials uploaded yet.</p>
                   </div>
                 )}
               </div>

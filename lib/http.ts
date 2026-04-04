@@ -73,8 +73,8 @@ const request = async <Response>(
     }
   }
 
-  // Nếu không truyền baseUrl (hoặc baseUrl = undefined) thì lấy từ envConfig.NEXT_PUBLIC_API_ENDPOINT
-  // Nếu truyền baseUrl thì lấy giá trị truyền vào, truyền vào '' thì đồng nghĩa với việc chúng ta gọi API đến Next.js Server
+  // If baseUrl is not passed (or baseUrl = undefined), get it from envConfig.NEXT_PUBLIC_API_ENDPOINT
+  // If baseUrl is passed, use that value, passing '' means calling the API to the Next.js Server
   const baseUrl =
     options?.baseUrl === undefined
       ? envConfig.NEXT_PUBLIC_API_ENDPOINT
@@ -94,8 +94,8 @@ const request = async <Response>(
     method,
   });
 
-  // Interceptor là nơi chúng ta xử lý request và response trước khi trả về cho phía component
-  // Xử lý an toàn khi API không trả về body (vd: 204 No Content)
+  // Inceptor is where we process request and response before returning to the component
+  // Safely handle cases where API doesn't return a body (e.g., 204 No Content)
   let payload: Response;
   const contentType = res.headers.get("Content-Type");
   if (contentType && contentType.includes("application/json")) {
@@ -110,7 +110,7 @@ const request = async <Response>(
   };
 
   if (!res.ok) {
-    // Xử lý lỗi nghiệp vụ (422 Unprocessable Entity)
+    // Handle horizontal error (422 Unprocessable Entity)
     if (res.status === ENTITY_ERROR_STATUS) {
       throw new EntityError(
         data as {
@@ -120,7 +120,7 @@ const request = async <Response>(
       );
     }
 
-    // Xử lý lỗi xác thực (401 Unauthorized)
+    // Handle authentication error (401 Unauthorized)
     if (res.status === AUTHENTICATION_ERROR_STATUS) {
       if (isClient()) {
         if (!clientLogoutRequest) {
@@ -130,7 +130,7 @@ const request = async <Response>(
             headers: { "Content-Type": "application/json", ...baseHeaders },
           });
 
-          // Xử lý logout
+          // Handle logout
           try {
             await clientLogoutRequest;
           } catch (error) {
@@ -144,14 +144,14 @@ const request = async <Response>(
           }
         }
       } else {
-        // An toàn hơn khi trích xuất token trên server
+        // Safer to extract token on the server
         const authHeader = (options?.headers as Record<string, string>)
           ?.Authorization;
         const sessionToken = authHeader?.split("Bearer ")?.[1];
         if (sessionToken) {
           redirect(`/logout?sessionToken=${sessionToken}`);
         } else {
-          redirect("/login"); // Fallback nếu không có token
+          redirect("/login"); // Fallback if no token
         }
       }
     }

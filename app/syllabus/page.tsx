@@ -100,14 +100,14 @@ function SyllabusContent() {
             className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-800 mb-5 group transition-colors"
           >
             <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-            Quay lại
+            Back
           </button>
           <div className="flex items-center gap-3 mb-1">
             <div className="p-2.5 rounded-2xl bg-[#EBF5E4]">
               <BookOpen size={22} className="text-[#6AB04C]" strokeWidth={1.7} />
             </div>
             <div>
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Đề Cương Môn Học</p>
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Syllabuses</p>
               <h1 className="text-2xl font-bold text-gray-900 font-[Bricolage_Grotesque]">
                 Syllabus
               </h1>
@@ -115,7 +115,7 @@ function SyllabusContent() {
           </div>
           {totalElements > 0 && (
             <p className="text-sm text-gray-500 mt-2 ml-14">
-              {nameQuery || codeQuery ? `Kết quả tìm kiếm — ` : ""}<span className="font-semibold text-gray-700">{totalElements}</span> đề cương môn học
+              {nameQuery || codeQuery ? `Search results — ` : ""}<span className="font-semibold text-gray-700">{totalElements}</span> syllabuses
             </p>
           )}
         </div>
@@ -132,7 +132,7 @@ function SyllabusContent() {
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                   className="flex items-center gap-2 px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded-2xl text-sm font-bold text-gray-700 transition-all min-w-[80px] justify-between"
                 >
-                  {searchType === "name" ? "Tên" : "Mã"}
+                  {searchType === "name" ? "Name" : "Code"}
                   <motion.div
                     animate={{ rotate: isDropdownOpen ? 180 : 0 }}
                     transition={{ duration: 0.2 }}
@@ -157,7 +157,7 @@ function SyllabusContent() {
                         }}
                         className={`w-full text-left px-4 py-3 text-sm font-bold transition-colors ${searchType === "name" ? "bg-[#EBF5E4] text-[#6AB04C]" : "hover:bg-gray-50 text-gray-600"}`}
                       >
-                        Tên
+                        Name
                       </button>
                       <button
                         type="button"
@@ -167,7 +167,7 @@ function SyllabusContent() {
                         }}
                         className={`w-full text-left px-4 py-3 text-sm font-bold transition-colors ${searchType === "code" ? "bg-[#EBF5E4] text-[#6AB04C]" : "hover:bg-gray-50 text-gray-600"}`}
                       >
-                        Mã
+                        Code
                       </button>
                     </motion.div>
                   )}
@@ -179,7 +179,7 @@ function SyllabusContent() {
                 <input
                   value={localSearch}
                   onChange={(e) => setLocalSearch(e.target.value)}
-                  placeholder={searchType === "name" ? "Nhập tên môn học..." : "Nhập mã môn học..."}
+                  placeholder={searchType === "name" ? "Enter subject name..." : "Enter subject code..."}
                   className="flex-1 text-sm outline-none text-gray-800 bg-transparent placeholder-gray-400"
                 />
                 {localSearch && (
@@ -204,7 +204,7 @@ function SyllabusContent() {
               type="submit"
               className="px-10 py-4 bg-[#6AB04C] hover:bg-[#5a9940] text-white text-sm font-bold rounded-3xl shadow-xl shadow-[#6AB04C]/20 transition-all active:scale-95 shrink-0"
             >
-              Tìm kiếm
+              Search
             </button>
           </div>
         </form>
@@ -216,7 +216,7 @@ function SyllabusContent() {
           {loading ? (
             <motion.div key="loading" exit={{ opacity: 0 }} className="flex flex-col items-center justify-center py-32 gap-4">
               <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#6AB04C]" />
-              <p className="text-sm text-gray-400 font-medium">Đang tải dữ liệu...</p>
+              <p className="text-sm text-gray-400 font-medium">Loading data...</p>
             </motion.div>
           ) : syllabuses.length > 0 ? (
             <motion.div
@@ -254,7 +254,7 @@ function SyllabusContent() {
                       {syl.credits !== undefined && (
                         <div className="flex items-center gap-1.5 text-sm text-gray-500">
                           <Award size={14} className="text-[#6AB04C]" />
-                          <span><span className="font-semibold text-gray-700">{syl.credits}</span> tín chỉ</span>
+                          <span><span className="font-semibold text-gray-700">{syl.credits}</span> credits</span>
                         </div>
                       )}
                       {syl.department && (
@@ -279,11 +279,11 @@ function SyllabusContent() {
                 <BookOpen size={40} className="text-[#6AB04C]/50" strokeWidth={1} />
               </div>
               <p className="text-gray-500 font-medium text-center">
-                {searchQuery ? `Không tìm thấy đề cương cho "${searchQuery}"` : "Chưa có dữ liệu đề cương môn học"}
+                {searchQuery ? `No syllabus found for "${searchQuery}"` : "No syllabus data available"}
               </p>
               {searchQuery && (
                 <button onClick={() => router.push("/syllabus")} className="text-[#6AB04C] text-sm font-semibold hover:underline">
-                  Xem tất cả đề cương
+                  View all syllabuses
                 </button>
               )}
             </motion.div>
@@ -335,7 +335,7 @@ export default function SyllabusPage() {
     <Suspense fallback={
       <div className="min-h-screen bg-[#f8fafb] flex flex-col items-center justify-center gap-3">
         <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#6AB04C]" />
-        <p className="text-sm text-gray-400">Đang tải...</p>
+        <p className="text-sm text-gray-400">Loading...</p>
       </div>
     }>
       <SyllabusContent />

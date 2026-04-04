@@ -57,7 +57,7 @@ export default function PrerequisiteGraphPage() {
     return (
       <div className="min-h-screen bg-[#f8fafb] flex flex-col items-center justify-center gap-4">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#4caf50]" />
-        <p className="text-sm text-gray-400 font-medium">Đang tải sơ đồ...</p>
+        <p className="text-sm text-gray-400 font-medium">Loading graph...</p>
       </div>
     );
   }
@@ -107,7 +107,7 @@ export default function PrerequisiteGraphPage() {
             </button>
             <div className="flex-1 min-w-0">
               <h1 className="text-lg font-bold text-gray-900 font-[Bricolage_Grotesque] truncate">
-                Sơ đồ môn tiên quyết
+                Prerequisite Graph
               </h1>
               <p className="text-xs text-gray-400 truncate">
                 {curriculum.curriculumName}
@@ -124,7 +124,7 @@ export default function PrerequisiteGraphPage() {
              <div className="w-8 h-8 rounded-full bg-[#4caf50]/10 flex items-center justify-center text-[#4caf50]">
                <svg fill="currentColor" viewBox="0 0 24 24" className="w-4 h-4"><path d="M17 11V3h-2v4H9V3H7v8H5v2h2v8h2v-4h6v4h2v-8h2v-2h-2zm-2 2H9v-4h6v4z"/></svg>
              </div>
-             <span className="font-semibold text-gray-700 text-sm">Hiện đường kết nối</span>
+             <span className="font-semibold text-gray-700 text-sm">Show connections</span>
            </div>
            
            {/* Custom Toggle Switch */}
@@ -150,7 +150,7 @@ export default function PrerequisiteGraphPage() {
                 {/* Semester Pill */}
                 <div className="md:w-24 shrink-0 flex md:block items-center justify-start z-10">
                    <div className="sticky top-40 bg-gray-100 border border-gray-200 text-[#059669] font-bold text-sm px-4 py-2 rounded-full inline-block">
-                     HK {sem}
+                     Sem {sem}
                    </div>
                 </div>
 
@@ -248,7 +248,7 @@ export default function PrerequisiteGraphPage() {
                         {selectedSubject.subjectName}
                       </h2>
                       <p className="text-xs text-gray-500">
-                        {selectedSubject.noCredit} tín chỉ • Học kỳ {selectedSubject.semester}
+                        {selectedSubject.noCredit} credits • Semester {selectedSubject.semester}
                       </p>
                     </div>
                   </div>
@@ -259,21 +259,21 @@ export default function PrerequisiteGraphPage() {
                   {(selectedSubject.subjectCode.includes("_COM") || selectedSubject.subjectName.toLowerCase().includes("combo")) && (
                     <div className="bg-blue-50 rounded-2xl p-4 border border-blue-100 flex items-center justify-between">
                       <div>
-                        <h4 className="text-sm font-bold text-blue-900 mb-0.5">Đây là môn Combo</h4>
-                        <p className="text-xs text-blue-700">Nhấn để xem đầy đủ các môn nằm trong combo này.</p>
+                        <h4 className="text-sm font-bold text-blue-900 mb-0.5">This is a Combo subject</h4>
+                        <p className="text-xs text-blue-700">Click to see all subjects in this combo.</p>
                       </div>
                       <button
                         onClick={() => router.push(`/curriculum/${id}/combo/${selectedSubject.subjectCode}`)}
                         className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition-colors shrink-0"
                       >
-                        Xem chi tiết
+                        View details
                       </button>
                     </div>
                   )}
 
                   {/* Prerequisites */}
                   <div>
-                    <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Môn tiên quyết</h3>
+                    <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Prerequisites</h3>
                     {selectedSubject.preRequisite ? (
                       <div className="flex flex-wrap gap-2">
                         {selectedSubject.preRequisite.split(",").map(p => {
@@ -287,13 +287,13 @@ export default function PrerequisiteGraphPage() {
                         })}
                       </div>
                     ) : (
-                      <p className="text-sm text-gray-500 italic">Không có môn tiên quyết</p>
+                      <p className="text-sm text-gray-500 italic">No prerequisites</p>
                     )}
                   </div>
 
                   {/* Dependents */}
                   <div>
-                    <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Môn phụ thuộc vào môn này</h3>
+                    <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Dependent Subjects</h3>
                     {(() => {
                       const dependents = curriculum.subjects.filter(s => 
                         s.preRequisite?.includes(selectedSubject.subjectCode)
@@ -309,7 +309,7 @@ export default function PrerequisiteGraphPage() {
                           </div>
                         );
                       }
-                      return <p className="text-sm text-gray-500 italic">Không có môn phụ thuộc</p>;
+                      return <p className="text-sm text-gray-500 italic">No dependents</p>;
                     })()}
                   </div>
                 </div>
@@ -319,7 +319,7 @@ export default function PrerequisiteGraphPage() {
                   onClick={() => setSelectedSubject(null)}
                   className="w-full mt-8 py-3.5 rounded-2xl border-2 border-gray-100 text-gray-700 font-bold text-sm hover:bg-gray-50 transition-colors active:scale-[0.98]"
                 >
-                  Đóng
+                  Close
                 </button>
               </div>
             </motion.div>

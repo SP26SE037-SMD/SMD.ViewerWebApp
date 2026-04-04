@@ -33,7 +33,7 @@ export default function Login() {
   const router = useRouter();
   const dispatch = useDispatch();
 
-  // Giả lập hoặc kiểm tra session lần đầu
+  // Simulate or check session for the first time
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 500);
     return () => clearTimeout(timer);
@@ -53,7 +53,7 @@ export default function Login() {
     try {
       const result = await authApiRequest.login(values);
       if (!result || !result.payload || !result.payload.data) {
-        throw new Error("Phản hồi từ server không hợp lệ");
+        throw new Error("Invalid server response");
       }
       const token = result.payload.data.token;
       await authApiRequest.auth({ sessionToken: token });
@@ -95,7 +95,7 @@ export default function Login() {
                 : (account.role?.roleName ?? "");
                 
             if (userRole !== "LECTURER" && userRole !== "STUDENT") {
-              toast.error("Tài khoản của bạn không có quyền truy cập vào hệ thống SMD.");
+              toast.error("Your account does not have permission to access the SMD system.");
               setIsGoogleLoading(false);
               return;
             }
@@ -128,7 +128,7 @@ export default function Login() {
               role: userRole,
             }));
             
-            toast.success("Đăng nhập Google thành công");
+            toast.success("Google login successful");
             router.push("/home");
           } else {
             console.error("No account information received from backend");
@@ -161,7 +161,7 @@ export default function Login() {
 
   return (
     <div className="h-screen w-screen flex items-center justify-center bg-[#f0f7ed] p-4 lg:p-8">
-      {/* Loading Overlay cho toàn trang (nếu loading = true) */}
+      {/* Full-page loading overlay (if loading = true) */}
       <AnimatePresence>
         {loading && (
           <motion.div
@@ -173,7 +173,7 @@ export default function Login() {
         )}
       </AnimatePresence>
 
-      {/* Chiếc Card chính */}
+      {/* Main Card */}
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -182,7 +182,7 @@ export default function Login() {
                    rounded-[22px] overflow-hidden flex p-4 lg:p-4"
       >
         {/* ══════════════════════════════════════════════
-          CỘT TRÁI — Brand & Visual
+          LEFT COLUMN — Brand & Visual
          ══════════════════════════════════════════════ */}
         <motion.aside
           initial={{ opacity: 0, x: -30 }}
@@ -233,7 +233,7 @@ export default function Login() {
             style={{ background: "#6AB04C", opacity: 0.3 }}
           />
 
-          {/* Blobs trang trí */}
+          {/* Decorative blobs */}
           <div className="absolute top-10 left-10 w-8 h-8 bg-[#E8C87A] rounded-lg rotate-12 opacity-60" />
           <div className="absolute bottom-20 right-10 w-6 h-6 bg-[#6AB04C] rounded-full opacity-20" />
 
@@ -340,10 +340,10 @@ export default function Login() {
         </motion.aside>
 
         {/* ══════════════════════════════════════════════
-          CỘT PHẢI — Login Form
+          RIGHT COLUMN — Login Form
          ══════════════════════════════════════════════ */}
         <motion.main className="flex-1 flex flex-col items-center justify-center p-6 lg:p-12 h-full overflow-hidden">
-          {/* Thêm Logo phía trên Card */}
+          {/* Add Logo above the Card */}
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -358,7 +358,7 @@ export default function Login() {
             />
           </motion.div>
 
-          {/* Chiếc Card chứa nội dung Form */}
+          {/* Form Content Card */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

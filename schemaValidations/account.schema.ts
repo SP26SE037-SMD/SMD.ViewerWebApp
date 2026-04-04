@@ -50,7 +50,7 @@ export const AccountMeRes = z.object({
 export type AccountMeResType = z.infer<typeof AccountMeRes>;
 
 export const UpdateAccountBody = z.object({
-  fullName: z.string().min(1, "Họ và tên là bắt buộc").max(100),
+  fullName: z.string().min(1, "Full name is required").max(100),
   phoneNumber: z.string().optional(),
   avatarUrl: z.string().optional(),
 });

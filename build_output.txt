@@ -1,0 +1,23 @@
+
+> smd@0.1.0 build
+> next build
+
+Γû▓ Next.js 16.1.6 (Turbopack)
+- Environments: .env.local
+
+  Creating an optimized production build ...
+Γ£ô Compiled successfully in 9.7s
+  Running TypeScript ...
+Failed to compile.
+
+.next/dev/types/validator.ts:89:39
+Type error: File 'D:/Workspace/nextjs/SMD.ViewerWebApp/app/curriculum/search/page.tsx' is not a module.
+
+  87 | {
+  88 |   type __IsExpected<Specific extends AppPageConfig<"/curriculum/search">> = Specific
+> 89 |   const handler = {} as typeof import("../../../app/curriculum/search/page.js")
+     |                                       ^
+  90 |   type __Check = __IsExpected<typeof handler>
+  91 |   // @ts-ignore
+  92 |   type __Unused = __Check
+Next.js build worker exited with code: 1 and signal: null

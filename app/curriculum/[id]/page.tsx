@@ -46,9 +46,9 @@ type CurriculumDetail = {
 };
 
 const TABS = [
-  { key: "general", label: "Chung", icon: Info },
+  { key: "general", label: "General", icon: Info },
   { key: "plos", label: "PLOs", icon: Globe },
-  { key: "subjects", label: "Môn học", icon: Layers },
+  { key: "subjects", label: "Subjects", icon: Layers },
 ] as const;
 
 type TabKey = (typeof TABS)[number]["key"];
@@ -110,7 +110,7 @@ export default function CurriculumDetailPage() {
     return (
       <div className="min-h-screen bg-[#f8fafb] flex flex-col items-center justify-center gap-4 font-[Lexend]">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#4caf50]" />
-        <p className="text-sm text-gray-400 font-medium">Đang tải chương trình học...</p>
+        <p className="text-sm text-gray-400 font-medium">Loading curriculum...</p>
       </div>
     );
   }
@@ -119,12 +119,12 @@ export default function CurriculumDetailPage() {
     return (
       <div className="min-h-screen bg-[#f8fafb] flex flex-col items-center justify-center gap-4 font-[Lexend]">
         <BookMarked size={48} className="text-gray-300" />
-        <p className="text-gray-500 font-medium">Không tìm thấy chương trình học</p>
+        <p className="text-gray-500 font-medium">Curriculum not found</p>
         <button
           onClick={() => router.push("/curriculum")}
           className="text-[#4caf50] font-semibold text-sm hover:underline"
         >
-          Quay lại danh sách
+          Back to list
         </button>
       </div>
     );
@@ -154,7 +154,7 @@ export default function CurriculumDetailPage() {
               </p>
             </div>
             <span className="shrink-0 px-4 py-1.5 rounded-full bg-[#4caf50]/10 text-[#4caf50] text-xs font-bold border border-[#4caf50]/30">
-              {curriculum.totalCredits} Tín chỉ
+              {curriculum.totalCredits} Credits
             </span>
           </div>
 
@@ -210,7 +210,7 @@ export default function CurriculumDetailPage() {
                     <BookMarked size={22} className="text-[#4caf50]" strokeWidth={1.7} />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-xs text-gray-400 font-semibold">Mã chương trình</p>
+                    <p className="text-xs text-gray-400 font-semibold">Curriculum Code</p>
                     <p className="text-sm font-bold text-gray-900 font-mono truncate">{curriculum.curriculumCode}</p>
                   </div>
                 </div>
@@ -219,7 +219,7 @@ export default function CurriculumDetailPage() {
                     <Hash size={22} className="text-[#4caf50]" />
                   </div>
                   <div>
-                    <p className="text-xs text-gray-400 font-semibold">Tổng môn học</p>
+                    <p className="text-xs text-gray-400 font-semibold">Total Subjects</p>
                     <p className="text-xl font-bold text-gray-900">{curriculum.totalSubjects}</p>
                   </div>
                 </div>
@@ -228,7 +228,7 @@ export default function CurriculumDetailPage() {
                     <Award size={22} className="text-[#4caf50]" />
                   </div>
                   <div>
-                    <p className="text-xs text-gray-400 font-semibold">Tổng tín chỉ</p>
+                    <p className="text-xs text-gray-400 font-semibold">Total Credits</p>
                     <p className="text-xl font-bold text-gray-900">{curriculum.totalCredits}</p>
                   </div>
                 </div>
@@ -238,7 +238,7 @@ export default function CurriculumDetailPage() {
                       <FileText size={22} className="text-[#4caf50]" />
                     </div>
                     <div className="min-w-0">
-                      <p className="text-xs text-gray-400 font-semibold">Quyết định</p>
+                      <p className="text-xs text-gray-400 font-semibold">Decision</p>
                       <p className="text-sm font-bold text-gray-900">{curriculum.decisionNo}</p>
                     </div>
                   </div>
@@ -247,7 +247,7 @@ export default function CurriculumDetailPage() {
 
               {/* Full Name */}
               <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Tên đầy đủ</p>
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Full Name</p>
                 <h2 className="text-base font-bold text-gray-900 leading-relaxed mb-1">
                   {curriculum.curriculumName}
                 </h2>
@@ -261,7 +261,7 @@ export default function CurriculumDetailPage() {
                 <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
                   <div className="flex items-center gap-2 mb-4">
                     <FileText size={16} className="text-[#4caf50]" />
-                    <h3 className="text-sm font-bold text-gray-900">Mô tả chương trình</h3>
+                    <h3 className="text-sm font-bold text-gray-900">Curriculum Description</h3>
                   </div>
                   <div className="text-sm text-gray-600 leading-relaxed whitespace-pre-line">
                     {descExpanded ? curriculum.description : descriptionPreview + "..."}
@@ -271,9 +271,9 @@ export default function CurriculumDetailPage() {
                     className="mt-4 flex items-center gap-2 text-sm font-bold text-[#4caf50] hover:underline transition-colors"
                   >
                     {descExpanded ? (
-                      <>Thu gọn <ChevronUp size={16} /></>
+                      <>Show less <ChevronUp size={16} /></>
                     ) : (
-                      <>Xem thêm <ChevronDown size={16} /></>
+                      <>See more <ChevronDown size={16} /></>
                     )}
                   </button>
                 </div>
@@ -296,7 +296,7 @@ export default function CurriculumDetailPage() {
                     <span className="px-3 py-1 text-xs font-bold rounded-full bg-[#4caf50]/10 text-[#4caf50]">
                       {curriculum.plos.length} PLOs
                     </span>
-                    <p className="text-sm text-gray-400">Chuẩn đầu ra chương trình</p>
+                    <p className="text-sm text-gray-400">Program Learning Outcomes</p>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {curriculum.plos.map((plo, i) => (
@@ -325,7 +325,7 @@ export default function CurriculumDetailPage() {
               ) : (
                 <div className="bg-white rounded-2xl p-10 border-2 border-gray-200 text-center">
                   <Target size={40} className="text-gray-300 mx-auto mb-3" />
-                  <p className="text-gray-500 font-medium">Chưa có dữ liệu PLO</p>
+                  <p className="text-gray-500 font-medium">No PLO data</p>
                 </div>
               )}
             </motion.div>
@@ -344,7 +344,7 @@ export default function CurriculumDetailPage() {
                 <>
                   <div className="flex items-center gap-3 mb-5">
                     <span className="px-3 py-1 text-xs font-bold rounded-full bg-[#4caf50]/10 text-[#4caf50]">
-                      {curriculum.totalSubjects} môn · {curriculum.totalCredits} tín chỉ
+                      {curriculum.totalSubjects} subjects · {curriculum.totalCredits} credits
                     </span>
                   </div>
 
@@ -372,10 +372,10 @@ export default function CurriculumDetailPage() {
                               </div>
                               <div className="text-left">
                                 <h3 className="text-sm font-bold text-gray-900">
-                                  {sem === 0 ? "Học kỳ chuẩn bị" : `Học kỳ ${sem}`}
+                                  {sem === 0 ? "Preparatory Semester" : `Semester ${sem}`}
                                 </h3>
                                 <p className="text-xs text-gray-400">
-                                  {subjects.length} môn · {semCredits} tín chỉ
+                                  {subjects.length} subjects · {semCredits} credits
                                 </p>
                               </div>
                             </div>
@@ -400,10 +400,10 @@ export default function CurriculumDetailPage() {
                                 <div className="border-t border-gray-100">
                                   {/* Desktop Table Header */}
                                   <div className="hidden md:grid grid-cols-12 gap-2 px-5 py-2.5 bg-gray-50 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
-                                    <div className="col-span-2">Mã môn</div>
-                                    <div className="col-span-5">Tên môn học</div>
-                                    <div className="col-span-1 text-center">TC</div>
-                                    <div className="col-span-4">Tiên quyết</div>
+                                    <div className="col-span-2">Subject Code</div>
+                                    <div className="col-span-5">Subject Name</div>
+                                    <div className="col-span-1 text-center">Credits</div>
+                                    <div className="col-span-4">Pre-requisite</div>
                                   </div>
 
                                   {/* Subject Cards */}
@@ -477,7 +477,7 @@ export default function CurriculumDetailPage() {
                                           </div>
                                           <div className="flex items-center gap-1.5 text-xs text-gray-400">
                                             <Clock size={12} />
-                                            {subject.noCredit} tín chỉ
+                                            {subject.noCredit} credits
                                           </div>
                                         </div>
                                         <p className="text-sm font-semibold text-gray-800 mb-0.5">
@@ -491,7 +491,7 @@ export default function CurriculumDetailPage() {
                                         {subject.preRequisite && subject.preRequisite !== "None" && subject.preRequisite !== "Không" && (
                                           <span className="text-xs text-orange-600 bg-orange-50 px-3 py-1.5 rounded-lg inline-flex items-center gap-1.5 mt-1">
                                             <AlertCircle size={12} />
-                                            Tiên quyết: {subject.preRequisite}
+                                            Pre-requisite: {subject.preRequisite}
                                           </span>
                                         )}
                                       </div>
@@ -509,7 +509,7 @@ export default function CurriculumDetailPage() {
               ) : (
                 <div className="bg-white rounded-2xl p-10 border-2 border-gray-200 text-center">
                   <Layers size={40} className="text-gray-300 mx-auto mb-3" />
-                  <p className="text-gray-500 font-medium">Chưa có dữ liệu môn học</p>
+                  <p className="text-gray-500 font-medium">No subject data</p>
                 </div>
               )}
             </motion.div>
@@ -525,7 +525,7 @@ export default function CurriculumDetailPage() {
             className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-[#059669] hover:bg-[#047857] text-white text-base font-bold shadow-lg hover:shadow-xl transition-all active:scale-[0.98]"
           >
             <GitMerge size={20} />
-            Xem sơ đồ môn học
+            View subject graph
           </button>
         </div>
       </div>

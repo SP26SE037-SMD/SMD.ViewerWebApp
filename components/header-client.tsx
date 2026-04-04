@@ -25,8 +25,8 @@ export default function HeaderClient({ account }: Props) {
 
   const avatarUrl = isMounted ? (reduxUser?.avatarUrl || account?.avatarUrl) : account?.avatarUrl;
   const fullName = isMounted 
-    ? (reduxUser?.fullName || account?.fullName || "Người dùng")
-    : (account?.fullName || "Người dùng");
+    ? (reduxUser?.fullName || account?.fullName || "User")
+    : (account?.fullName || "User");
   const email = isMounted ? (reduxUser?.email || account?.email || "") : (account?.email || "");
   const roleName = isMounted 
     ? ((typeof reduxUser?.role === 'string' ? reduxUser.role : reduxUser?.role?.roleName) || account?.role?.roleName || "GUEST")
@@ -57,7 +57,7 @@ export default function HeaderClient({ account }: Props) {
         {/* Title */}
         <div className="hidden sm:block absolute left-1/2 -translate-x-1/2">
           <p className="font-[Bricolage_Grotesque] text-xl font-bold text-gray-800">
-            Hệ thống <span className="text-[#6AB04C]">Đề cương</span>
+            Syllabus <span className="text-[#6AB04C]">System</span>
           </p>
         </div>
 
@@ -124,7 +124,7 @@ export default function HeaderClient({ account }: Props) {
                   <div className="p-2">
                     <ButtonLogout className="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold text-red-500 hover:bg-red-50 transition-colors">
                       <LogOut size={17} />
-                      Đăng xuất
+                      Log out
                     </ButtonLogout>
                   </div>
 
