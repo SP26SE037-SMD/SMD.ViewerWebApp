@@ -1,15 +1,18 @@
 import z from "zod";
 
-export const SyllabusStatusEnum = z.enum(["ACTIVE", "INACTIVE", "DRAFT", "ARCHIVED"]);
+export const SyllabusStatusEnum = z.enum([
+  "DRAFT",
+  "INTERNAL_REVIEW",
+  "PUBLISHED",
+  "ARCHIVED",
+]);
 
 export const SyllabusContent = z.object({
   syllabusId: z.string(),
   syllabusCode: z.string(),
   syllabusName: z.string(),
-  credits: z.number().optional(),
-  department: z.string().optional(),
   status: SyllabusStatusEnum.optional(),
-  description: z.string().optional(),
+  subjectId: z.string(),
 });
 
 export const SyllabusRes = z.object({
