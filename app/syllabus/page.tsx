@@ -2,7 +2,8 @@
 
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import syllabusApiRequest from "@/apiRequests/syllabus";
+import subjectApiRequest from "@/apiRequests/subject";
+import { SubjectContentType } from "@/schemaValidations/subject.schema";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Search,
@@ -16,67 +17,72 @@ import {
   ArrowLeft,
 } from "lucide-react";
 
-type Syllabus = {
-  syllabusId: string;
-  syllabusCode: string;
-  syllabusName: string;
-  credits?: number;
-  department?: string;
-  status?: string;
-  description?: string;
-};
-
 function SyllabusContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const searchQuery = searchParams.get("search") || "";
-  const nameQuery = searchParams.get("name") || "";
-  const codeQuery = searchParams.get("code") || "";
+  const searchQuery =
+    searchParams.get("search") ||
+    searchParams.get("name") ||
+    searchParams.get("code") ||
+    "";
+  const searchByQuery =
+    searchParams.get("searchBy") ||
+    (searchParams.get("code") ? "code" : "name");
   const page = Number(searchParams.get("page")) || 0;
   const size = Number(searchParams.get("size")) || 12;
 
-  const [syllabuses, setSyllabuses] = useState<Syllabus[]>([]);
+  const [subjects, setSubjects] = useState<SubjectContentType[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
-  const [localSearch, setLocalSearch] = useState(nameQuery || codeQuery || searchQuery);
-  const [searchType, setSearchType] = useState<"name" | "code">(codeQuery ? "code" : "name");
+  const [localSearch, setLocalSearch] = useState(searchQuery);
+  const [searchType, setSearchType] = useState<"name" | "code">(
+    searchByQuery === "code" ? "code" : "name",
+  );
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   useEffect(() => {
-    setLocalSearch(nameQuery || codeQuery || searchQuery);
-    if (codeQuery) setSearchType("code");
-    else setSearchType("name");
-  }, [nameQuery, codeQuery, searchQuery]);
+    setLocalSearch(searchQuery);
+    setSearchType(searchByQuery === "code" ? "code" : "name");
+  }, [searchByQuery, searchQuery]);
 
   useEffect(() => {
-    const fetchSyllabuses = async () => {
+    const fetchSubjects = async () => {
       setLoading(true);
       try {
-        const res = await syllabusApiRequest.getSyllabuses("", searchType === "name" ? searchQuery || localSearch : "", searchType === "code" ? searchQuery || localSearch : "", page, size);
+        const res = await subjectApiRequest.getSubjects({
+          search: localSearch.trim() || undefined,
+          searchBy: searchType,
+          status: "COMPLETED",
+          page,
+          size,
+          sortBy: "approvedDate",
+          direction: "asc",
+        });
         if (res?.payload?.data) {
-          setSyllabuses(res.payload.data.content || []);
+          setSubjects(res.payload.data.content || []);
           setTotalPages(res.payload.data.totalPages || 0);
           setTotalElements(res.payload.data.totalElements || 0);
         } else {
-          setSyllabuses([]);
+          setSubjects([]);
         }
       } catch (error) {
-        console.error("Failed to fetch syllabuses", error);
-        setSyllabuses([]);
+        console.error("Failed to fetch subjects", error);
+        setSubjects([]);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchSyllabuses();
-  }, [searchQuery, nameQuery, codeQuery, page, size]);
+    fetchSubjects();
+  }, [localSearch, searchType, page, size]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     const params = new URLSearchParams();
     if (localSearch.trim()) {
-      params.set(searchType, localSearch.trim());
+      params.set("search", localSearch.trim());
+      params.set("searchBy", searchType);
     }
     params.set("page", "0");
     router.push(`/syllabus?${params.toString()}`);
@@ -88,8 +94,6 @@ function SyllabusContent() {
     router.push(`/syllabus?${params.toString()}`);
   };
 
-
-
   return (
     <div className="min-h-screen bg-[#f8fafb] font-[Lexend]">
       {/* ── Page Header ── */}
@@ -99,15 +103,24 @@ function SyllabusContent() {
             onClick={() => router.back()}
             className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-800 mb-5 group transition-colors"
           >
-            <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
+            <ArrowLeft
+              size={18}
+              className="group-hover:-translate-x-1 transition-transform"
+            />
             Back
           </button>
           <div className="flex items-center gap-3 mb-1">
             <div className="p-2.5 rounded-2xl bg-[#EBF5E4]">
-              <BookOpen size={22} className="text-[#6AB04C]" strokeWidth={1.7} />
+              <BookOpen
+                size={22}
+                className="text-[#6AB04C]"
+                strokeWidth={1.7}
+              />
             </div>
             <div>
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Syllabuses</p>
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">
+                Syllabuses
+              </p>
               <h1 className="text-2xl font-bold text-gray-900 font-[Bricolage_Grotesque]">
                 Syllabus
               </h1>
@@ -115,7 +128,11 @@ function SyllabusContent() {
           </div>
           {totalElements > 0 && (
             <p className="text-sm text-gray-500 mt-2 ml-14">
-              {nameQuery || codeQuery ? `Search results — ` : ""}<span className="font-semibold text-gray-700">{totalElements}</span> syllabuses
+              {searchQuery ? `Search results — ` : ""}
+              <span className="font-semibold text-gray-700">
+                {totalElements}
+              </span>{" "}
+              subjects
             </p>
           )}
         </div>
@@ -130,7 +147,7 @@ function SyllabusContent() {
                 <button
                   type="button"
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className="flex items-center gap-2 px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded-2xl text-sm font-bold text-gray-700 transition-all min-w-[80px] justify-between"
+                  className="flex items-center gap-2 px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded-2xl text-sm font-bold text-gray-700 transition-all min-w-20 justify-between"
                 >
                   {searchType === "name" ? "Name" : "Code"}
                   <motion.div
@@ -179,7 +196,11 @@ function SyllabusContent() {
                 <input
                   value={localSearch}
                   onChange={(e) => setLocalSearch(e.target.value)}
-                  placeholder={searchType === "name" ? "Enter subject name..." : "Enter subject code..."}
+                  placeholder={
+                    searchType === "name"
+                      ? "Enter subject name..."
+                      : "Enter subject code..."
+                  }
                   className="flex-1 text-sm outline-none text-gray-800 bg-transparent placeholder-gray-400"
                 />
                 {localSearch && (
@@ -187,10 +208,13 @@ function SyllabusContent() {
                     type="button"
                     onClick={() => {
                       setLocalSearch("");
-                      const params = new URLSearchParams(searchParams.toString());
+                      const params = new URLSearchParams(
+                        searchParams.toString(),
+                      );
+                      params.delete("search");
+                      params.delete("searchBy");
                       params.delete("name");
                       params.delete("code");
-                      params.delete("search");
                       router.push(`/syllabus?${params.toString()}`);
                     }}
                     className="p-1 hover:bg-gray-100 rounded-lg text-gray-400 transition-colors"
@@ -209,58 +233,66 @@ function SyllabusContent() {
           </div>
         </form>
 
-
-
-        {/* ── Content ── */}
+        {/* ── Subject Content ── */}
         <AnimatePresence mode="wait">
           {loading ? (
-            <motion.div key="loading" exit={{ opacity: 0 }} className="flex flex-col items-center justify-center py-32 gap-4">
+            <motion.div
+              key="loading"
+              exit={{ opacity: 0 }}
+              className="flex flex-col items-center justify-center py-32 gap-4"
+            >
               <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#6AB04C]" />
-              <p className="text-sm text-gray-400 font-medium">Loading data...</p>
+              <p className="text-sm text-gray-400 font-medium">
+                Loading data...
+              </p>
             </motion.div>
-          ) : syllabuses.length > 0 ? (
+          ) : subjects.length > 0 ? (
             <motion.div
               key="results"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
             >
-              {syllabuses.map((syl, i) => {
+              {subjects.map((subject, i) => {
                 return (
                   <motion.div
-                    key={syl.syllabusId}
+                    key={subject.subjectId}
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.05 }}
-                    onClick={() => router.push(`/syllabus/${syl.syllabusCode}`)}
+                    onClick={() =>
+                      router.push(`/syllabus/${subject.subjectId}`)
+                    }
                     className="bg-white rounded-3xl p-6 border-2 border-gray-100 hover:border-[#6AB04C]/30 hover:shadow-lg transition-all group cursor-pointer"
                   >
                     <div className="flex justify-between items-start mb-4">
                       <div className="p-2.5 rounded-2xl bg-[#EBF5E4] group-hover:bg-[#6AB04C]/20 transition-colors">
-                        <BookOpen size={20} className="text-[#6AB04C]" strokeWidth={1.7} />
+                        <BookOpen
+                          size={20}
+                          className="text-[#6AB04C]"
+                          strokeWidth={1.7}
+                        />
                       </div>
                     </div>
 
-                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">{syl.syllabusCode}</p>
+                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">
+                      {subject.subjectCode}
+                    </p>
                     <h3 className="text-base font-bold text-gray-800 leading-tight mb-4">
-                      {syl.syllabusName}
+                      {subject.subjectName}
                     </h3>
 
-                    {syl.description && (
-                      <p className="text-sm text-gray-500 line-clamp-2 mb-4">{syl.description}</p>
+                    {subject.approvedDate && (
+                      <p className="text-xs text-gray-500 mb-3">
+                        Approved: {subject.approvedDate}
+                      </p>
                     )}
 
                     <div className="flex items-center gap-3 flex-wrap">
-                      {syl.credits !== undefined && (
-                        <div className="flex items-center gap-1.5 text-sm text-gray-500">
-                          <Award size={14} className="text-[#6AB04C]" />
-                          <span><span className="font-semibold text-gray-700">{syl.credits}</span> credits</span>
-                        </div>
-                      )}
-                      {syl.department && (
+                      {subject.department?.departmentName && (
                         <div className="flex items-center gap-1.5 text-sm text-gray-500">
                           <FileText size={14} />
-                          <span>{syl.department}</span>
+                          <span>{subject.department.departmentName}</span>
                         </div>
                       )}
                     </div>
@@ -276,14 +308,23 @@ function SyllabusContent() {
               className="flex flex-col items-center justify-center py-32 gap-4"
             >
               <div className="w-20 h-20 rounded-3xl bg-[#EBF5E4] flex items-center justify-center">
-                <BookOpen size={40} className="text-[#6AB04C]/50" strokeWidth={1} />
+                <BookOpen
+                  size={40}
+                  className="text-[#6AB04C]/50"
+                  strokeWidth={1}
+                />
               </div>
               <p className="text-gray-500 font-medium text-center">
-                {searchQuery ? `No syllabus found for "${searchQuery}"` : "No syllabus data available"}
+                {searchQuery
+                  ? `No subject found for "${searchQuery}"`
+                  : "No subject data available"}
               </p>
               {searchQuery && (
-                <button onClick={() => router.push("/syllabus")} className="text-[#6AB04C] text-sm font-semibold hover:underline">
-                  View all syllabuses
+                <button
+                  onClick={() => router.push("/syllabus")}
+                  className="text-[#6AB04C] text-sm font-semibold hover:underline"
+                >
+                  View all subjects
                 </button>
               )}
             </motion.div>
@@ -307,10 +348,11 @@ function SyllabusContent() {
                 <button
                   key={p}
                   onClick={() => goToPage(p)}
-                  className={`w-10 h-10 rounded-xl text-sm font-semibold transition-all ${p === page
-                    ? "bg-[#6AB04C] text-white shadow-sm"
-                    : "bg-white border border-gray-200 text-gray-600 hover:border-[#6AB04C]/40"
-                    }`}
+                  className={`w-10 h-10 rounded-xl text-sm font-semibold transition-all ${
+                    p === page
+                      ? "bg-[#6AB04C] text-white shadow-sm"
+                      : "bg-white border border-gray-200 text-gray-600 hover:border-[#6AB04C]/40"
+                  }`}
                 >
                   {p + 1}
                 </button>
@@ -332,12 +374,14 @@ function SyllabusContent() {
 
 export default function SyllabusPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-[#f8fafb] flex flex-col items-center justify-center gap-3">
-        <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#6AB04C]" />
-        <p className="text-sm text-gray-400">Loading...</p>
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-[#f8fafb] flex flex-col items-center justify-center gap-3">
+          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#6AB04C]" />
+          <p className="text-sm text-gray-400">Loading...</p>
+        </div>
+      }
+    >
       <SyllabusContent />
     </Suspense>
   );

@@ -62,7 +62,7 @@ export function ActionCard({
           onClick={() => router.push(path)}
           className="flex-1 flex items-center justify-center gap-2 bg-gray-50 hover:bg-[#4caf50] text-gray-800 hover:text-white text-sm font-semibold py-2.5 rounded-2xl border border-gray-100 hover:border-[#4caf50] shadow-sm transition-all hover:shadow-md active:scale-95"
         >
-          Xem ngay
+          View Now
           <ArrowRight size={15} />
         </button>
       </div>

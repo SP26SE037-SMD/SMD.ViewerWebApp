@@ -14,43 +14,50 @@ import {
   ChevronDown,
   ArrowLeft,
 } from "lucide-react";
-
-type Curriculum = {
-  curriculumId: string;
-  curriculumCode: string;
-  curriculumName: string;
-  startYear: number | null;
-  status: string;
-};
+import { CurriculumContentType } from "@/schemaValidations/curriculum.schema";
 
 function SearchContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const searchQuery = searchParams.get("search") || "";
-  const nameQuery = searchParams.get("name") || "";
-  const codeQuery = searchParams.get("code") || "";
+  const searchQuery =
+    searchParams.get("search") ||
+    searchParams.get("name") ||
+    searchParams.get("code") ||
+    "";
+  const searchByQuery =
+    searchParams.get("searchBy") ||
+    (searchParams.get("code") ? "code" : "name");
   const page = Number(searchParams.get("page")) || 0;
   const size = Number(searchParams.get("size")) || 12;
 
-  const [curriculums, setCurriculums] = useState<Curriculum[]>([]);
+  const [curriculums, setCurriculums] = useState<CurriculumContentType[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
-  const [localSearch, setLocalSearch] = useState(nameQuery || codeQuery || searchQuery);
-  const [searchType, setSearchType] = useState<"name" | "code">(codeQuery ? "code" : "name");
+  const [localSearch, setLocalSearch] = useState(searchQuery);
+  const [searchType, setSearchType] = useState<"name" | "code">(
+    searchByQuery === "code" ? "code" : "name",
+  );
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   useEffect(() => {
-    setLocalSearch(nameQuery || codeQuery || searchQuery);
-    if (codeQuery) setSearchType("code");
-    else setSearchType("name");
-  }, [nameQuery, codeQuery, searchQuery]);
+    setLocalSearch(searchQuery);
+    setSearchType(searchByQuery === "code" ? "code" : "name");
+  }, [searchByQuery, searchQuery]);
 
   useEffect(() => {
     const fetchCurriculums = async () => {
       setLoading(true);
       try {
-        const res = await curriculumApiRequest.getCurriculums("", searchType === "name" ? searchQuery || localSearch : "", searchType === "code" ? searchQuery || localSearch : "", page, size);
+        const res = await curriculumApiRequest.getCurriculums(
+          searchQuery,
+          searchByQuery === "code" ? "code" : "name",
+          "PUBLISHED",
+          page,
+          10,
+          "curriculumCode",
+          "asc",
+        );
         if (res?.payload?.data) {
           setCurriculums(res.payload.data.content || []);
           setTotalPages(res.payload.data.totalPages || 0);
@@ -67,13 +74,14 @@ function SearchContent() {
     };
 
     fetchCurriculums();
-  }, [searchQuery, nameQuery, codeQuery, page, size]);
+  }, [searchQuery, searchByQuery, page, size]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     const params = new URLSearchParams();
     if (localSearch.trim()) {
-      params.set(searchType, localSearch.trim());
+      params.set("search", localSearch.trim());
+      params.set("searchBy", searchType);
     }
     params.set("page", "0");
     router.push(`/curriculum?${params.toString()}`);
@@ -85,26 +93,32 @@ function SearchContent() {
     router.push(`/curriculum?${params.toString()}`);
   };
 
-
-
   return (
     <div className="min-h-screen bg-[#f8fafb] font-[Lexend]">
-      {/* ── Page Header ── */}
       <div className="bg-white border-b border-gray-100">
         <div className="max-w-6xl mx-auto px-4 py-8">
           <button
             onClick={() => router.back()}
             className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-800 mb-5 group transition-colors"
           >
-            <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
+            <ArrowLeft
+              size={18}
+              className="group-hover:-translate-x-1 transition-transform"
+            />
             Back
           </button>
           <div className="flex items-center gap-3 mb-1">
             <div className="p-2.5 rounded-2xl bg-[#4caf50]/10">
-              <BookMarked size={22} className="text-[#4caf50]" strokeWidth={1.7} />
+              <BookMarked
+                size={22}
+                className="text-[#4caf50]"
+                strokeWidth={1.7}
+              />
             </div>
             <div>
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Curriculum</p>
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">
+                Curriculum
+              </p>
               <h1 className="text-2xl font-bold text-gray-900 font-[Bricolage_Grotesque]">
                 Curriculum
               </h1>
@@ -112,14 +126,17 @@ function SearchContent() {
           </div>
           {totalElements > 0 && (
             <p className="text-sm text-gray-500 mt-2 ml-14">
-              {nameQuery || codeQuery ? `Search results — ` : ""}<span className="font-semibold text-gray-700">{totalElements}</span> curriculums
+              {searchQuery ? `Search results — ` : ""}
+              <span className="font-semibold text-gray-700">
+                {totalElements}
+              </span>{" "}
+              curriculums
             </p>
           )}
         </div>
       </div>
 
       <div className="max-w-6xl mx-auto px-4 py-8">
-        {/* ── Search bar ── */}
         <form onSubmit={handleSearch} className="mb-8">
           <div className="flex flex-col md:flex-row gap-3">
             <div className="flex-1 flex items-center bg-white rounded-3xl border border-gray-200 focus-within:border-[#4caf50]/50 focus-within:ring-2 focus-within:ring-[#4caf50]/20 shadow-sm transition-all p-1.5 min-w-0">
@@ -127,7 +144,7 @@ function SearchContent() {
                 <button
                   type="button"
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className="flex items-center gap-2 px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded-2xl text-sm font-bold text-gray-700 transition-all min-w-[80px] justify-between"
+                  className="flex items-center gap-2 px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded-2xl text-sm font-bold text-gray-700 transition-all min-w-20 justify-between"
                 >
                   {searchType === "name" ? "Name" : "Code"}
                   <motion.div
@@ -176,7 +193,11 @@ function SearchContent() {
                 <input
                   value={localSearch}
                   onChange={(e) => setLocalSearch(e.target.value)}
-                  placeholder={searchType === "name" ? "Enter curriculum name..." : "Enter curriculum code..."}
+                  placeholder={
+                    searchType === "name"
+                      ? "Enter curriculum name..."
+                      : "Enter curriculum code..."
+                  }
                   className="flex-1 text-sm outline-none text-gray-800 bg-transparent placeholder-gray-400"
                 />
                 {localSearch && (
@@ -184,10 +205,13 @@ function SearchContent() {
                     type="button"
                     onClick={() => {
                       setLocalSearch("");
-                      const params = new URLSearchParams(searchParams.toString());
+                      const params = new URLSearchParams(
+                        searchParams.toString(),
+                      );
+                      params.delete("search");
+                      params.delete("searchBy");
                       params.delete("name");
                       params.delete("code");
-                      params.delete("search");
                       router.push(`/curriculum?${params.toString()}`);
                     }}
                     className="p-1 hover:bg-gray-100 rounded-lg text-gray-400 transition-colors"
@@ -206,14 +230,17 @@ function SearchContent() {
           </div>
         </form>
 
-
-
-        {/* ── Content ── */}
         <AnimatePresence mode="wait">
           {loading ? (
-            <motion.div key="loading" exit={{ opacity: 0 }} className="flex flex-col items-center justify-center py-32 gap-4">
+            <motion.div
+              key="loading"
+              exit={{ opacity: 0 }}
+              className="flex flex-col items-center justify-center py-32 gap-4"
+            >
               <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#4caf50]" />
-              <p className="text-sm text-gray-400 font-medium">Loading data...</p>
+              <p className="text-sm text-gray-400 font-medium">
+                Loading data...
+              </p>
             </motion.div>
           ) : curriculums.length > 0 ? (
             <motion.div
@@ -222,35 +249,53 @@ function SearchContent() {
               animate={{ opacity: 1, y: 0 }}
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
             >
-              {curriculums.map((curr, i) => {
-                return (
-                  <motion.div
-                    key={curr.curriculumId}
-                    initial={{ opacity: 0, y: 15 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.05 }}
-                    onClick={() => router.push(`/curriculum/${curr.curriculumId}`)}
-                    className="bg-white rounded-3xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-all group cursor-pointer"
-                  >
-                    <div className="flex justify-between items-start mb-4">
-                      <div className="p-2.5 rounded-2xl bg-[#4caf50]/10 transition-colors">
-                        <BookMarked size={20} className="text-[#4caf50]" strokeWidth={1.7} />
-                      </div>
+              {curriculums.map((curr, i) => (
+                <motion.div
+                  key={curr.curriculumId}
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.05 }}
+                  onClick={() =>
+                    router.push(`/curriculum/${curr.curriculumId}`)
+                  }
+                  className="bg-white rounded-3xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-all group cursor-pointer"
+                >
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="p-2.5 rounded-2xl bg-[#4caf50]/10 transition-colors">
+                      <BookMarked
+                        size={20}
+                        className="text-[#4caf50]"
+                        strokeWidth={1.7}
+                      />
                     </div>
-                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">{curr.curriculumCode}</p>
-                    <h3 className="text-base font-bold text-gray-800 leading-tight mb-4 transition-colors">
-                      {curr.curriculumName}
-                    </h3>
-                    {curr.startYear && (
-                      <div className="flex items-center gap-2 text-sm text-gray-500 transition-colors">
-                        <Calendar size={14} />
-                        <span>From year <span className="font-semibold text-gray-700 transition-colors">{curr.startYear}</span></span>
-                      </div>
-                    )}
-                  </motion.div>
-
-                );
-              })}
+                  </div>
+                  <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">
+                    {curr.curriculumCode}
+                  </p>
+                  <h3 className="text-base font-bold text-gray-800 leading-tight mb-4 transition-colors">
+                    {curr.curriculumName}
+                  </h3>
+                  {curr.startYear !== null && curr.startYear !== undefined && (
+                    <div className="flex items-center gap-2 text-sm text-gray-500 transition-colors">
+                      <Calendar size={14} />
+                      <span>
+                        From year{" "}
+                        <span className="font-semibold text-gray-700 transition-colors">
+                          {curr.startYear}
+                        </span>
+                      </span>
+                    </div>
+                  )}
+                  {curr.major?.majorName && (
+                    <div className="mt-2 text-sm text-gray-500">
+                      Major:{" "}
+                      <span className="font-semibold text-gray-700">
+                        {curr.major.majorName}
+                      </span>
+                    </div>
+                  )}
+                </motion.div>
+              ))}
             </motion.div>
           ) : (
             <motion.div
@@ -260,13 +305,22 @@ function SearchContent() {
               className="flex flex-col items-center justify-center py-32 gap-4"
             >
               <div className="w-20 h-20 rounded-3xl bg-[#4caf50]/10 flex items-center justify-center">
-                <BookMarked size={40} className="text-[#4caf50]/50" strokeWidth={1} />
+                <BookMarked
+                  size={40}
+                  className="text-[#4caf50]/50"
+                  strokeWidth={1}
+                />
               </div>
               <p className="text-gray-500 font-medium text-center">
-                {nameQuery || codeQuery ? `No matching results found` : "No curriculum data available"}
+                {searchQuery
+                  ? "No matching results found"
+                  : "No curriculum data available"}
               </p>
-              {(nameQuery || codeQuery) && (
-                <button onClick={() => router.push("/curriculum")} className="text-[#3D7EE8] text-sm font-semibold hover:underline">
+              {searchQuery && (
+                <button
+                  onClick={() => router.push("/curriculum")}
+                  className="text-[#3D7EE8] text-sm font-semibold hover:underline"
+                >
                   View all curriculums
                 </button>
               )}
@@ -274,7 +328,6 @@ function SearchContent() {
           )}
         </AnimatePresence>
 
-        {/* ── Pagination ── */}
         {totalPages > 1 && (
           <div className="flex items-center justify-center gap-2 mt-10">
             <button
@@ -291,10 +344,11 @@ function SearchContent() {
                 <button
                   key={p}
                   onClick={() => goToPage(p)}
-                  className={`w-10 h-10 rounded-xl text-sm font-semibold transition-all ${p === page
-                    ? "bg-[#3D7EE8] text-white shadow-sm"
-                    : "bg-white border border-gray-200 text-gray-600 hover:border-[#3D7EE8]/40"
-                    }`}
+                  className={`w-10 h-10 rounded-xl text-sm font-semibold transition-all ${
+                    p === page
+                      ? "bg-[#3D7EE8] text-white shadow-sm"
+                      : "bg-white border border-gray-200 text-gray-600 hover:border-[#3D7EE8]/40"
+                  }`}
                 >
                   {p + 1}
                 </button>
@@ -316,12 +370,14 @@ function SearchContent() {
 
 export default function SearchCurriculum() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-[#f8fafb] flex flex-col items-center justify-center gap-3">
-        <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#3D7EE8]" />
-        <p className="text-sm text-gray-400">Loading...</p>
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-[#f8fafb] flex flex-col items-center justify-center gap-3">
+          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#3D7EE8]" />
+          <p className="text-sm text-gray-400">Loading...</p>
+        </div>
+      }
+    >
       <SearchContent />
     </Suspense>
   );
