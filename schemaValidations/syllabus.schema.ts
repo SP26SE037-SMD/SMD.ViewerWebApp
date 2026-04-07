@@ -11,20 +11,20 @@ export const SyllabusContent = z.object({
   syllabusId: z.string(),
   syllabusCode: z.string(),
   syllabusName: z.string(),
+  minAvgGrade: z.number().nullable().optional(),
+  createdAt: z.string().optional(),
+  approvedDate: z.string().nullable().optional(),
   status: SyllabusStatusEnum.optional(),
   subjectId: z.string(),
+  subjectCode: z.string().optional(),
+  subjectName: z.string().optional(),
+  credit: z.number().nullable().optional(),
 });
 
 export const SyllabusRes = z.object({
   status: z.number(),
   message: z.string(),
-  data: z.object({
-    content: z.array(SyllabusContent),
-    page: z.number(),
-    size: z.number(),
-    totalElements: z.number(),
-    totalPages: z.number(),
-  }),
+  data: SyllabusContent,
 });
 
 export type SyllabusContentType = z.infer<typeof SyllabusContent>;
