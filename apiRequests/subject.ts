@@ -5,6 +5,7 @@ import {
   SubjectDetailResType,
   SubjectSourceResType,
   SubjectResType,
+  CloResType,
 } from "@/schemaValidations/subject.schema";
 
 const subjectApiRequest = {
@@ -26,6 +27,9 @@ const subjectApiRequest = {
   },
   getSourcesBySubjectId: (subjectId: string) => {
     return http.get<SubjectSourceResType>(`/api/sources/subject/${subjectId}`);
+  },
+  getCloBySubjectId: (subjectId: string) => {
+    return http.get<CloResType>(`/api/clos/subject/${subjectId}`);
   },
   getCloPloMappingsBySubjectId: (subjectId: string) => {
     return http.get<CloPloMappingResType>(

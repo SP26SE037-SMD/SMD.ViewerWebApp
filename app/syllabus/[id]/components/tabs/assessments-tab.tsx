@@ -1,34 +1,64 @@
-import { SyllabusDetail } from "@/app/syllabus/[id]/types";
+import { useEffect, useState } from "react";
+import syllabusApiRequest from "@/apiRequests/syllabus";
 import SectionCard from "@/components/syllabus/section-card";
+import { SyllabusAssessmentType } from "@/schemaValidations/syllabus.schema";
 
 type Props = {
-  syllabus: SyllabusDetail;
+  syllabusId: string;
 };
 
-export default function AssessmentsTab({ syllabus }: Props) {
+export default function AssessmentsTab({ syllabusId }: Props) {
+  const [assessments, setAssessments] = useState<SyllabusAssessmentType[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchAssessments = async () => {
+      setLoading(true);
+      try {
+        const res = await syllabusApiRequest.getAssessmentsBySyllabusId(syllabusId);
+        setAssessments(res?.payload?.data ?? []);
+      } catch (error) {
+        console.error("Failed to fetch assessments", error);
+        setAssessments([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAssessments();
+  }, [syllabusId]);
+
   return (
     <SectionCard>
       <div className="px-6 py-5 border-b border-gray-100 bg-gray-50/50 flex items-center justify-between">
         <h3 className="font-bold text-gray-900">
-          Assessments ({syllabus.assessments.length})
+          Assessments ({assessments.length})
         </h3>
       </div>
       <div className="divide-y divide-gray-100">
-        {syllabus.assessments.map((ass, idx) => (
+        {loading && (
+          <div className="p-6 text-sm text-gray-500">Loading assessments...</div>
+        )}
+        {!loading && assessments.length === 0 && (
+          <div className="p-6 text-sm text-gray-500">
+            No assessments found for this syllabus.
+          </div>
+        )}
+        {!loading && assessments.map((ass) => (
           <div
-            key={idx}
+            key={ass.assessmentId}
             className="p-6 md:p-8 hover:bg-gray-50/30 transition-colors flex flex-col md:flex-row gap-6"
           >
             <div className="shrink-0 flex flex-col items-center justify-center p-6 bg-blue-50/50 rounded-2xl border border-blue-100 md:w-48 text-center gap-2">
               <span className="text-3xl font-black text-blue-600">
-                {ass.weight}
+                {ass.weight ?? 0}%
               </span>
               <div className="w-8 h-1 bg-blue-200 rounded-full" />
               <span className="text-sm font-bold text-blue-800 uppercase tracking-widest">
-                {ass.category}
+                {ass.categoryName || "N/A"}
               </span>
               <span className="text-[10px] font-bold text-blue-500 uppercase px-2 py-0.5 bg-blue-100 rounded">
-                Part {ass.part}
+                Part {ass.part ?? 0}
               </span>
             </div>
 
@@ -38,7 +68,7 @@ export default function AssessmentsTab({ syllabus }: Props) {
                   Type & Duration
                 </span>
                 <p className="text-sm text-gray-800 font-semibold">
-                  {ass.type} • {ass.duration}
+                  {ass.typeName || "N/A"} • {ass.duration ?? 0} min
                 </p>
               </div>
               <div>
@@ -46,7 +76,7 @@ export default function AssessmentsTab({ syllabus }: Props) {
                   Completion Criteria
                 </span>
                 <p className="text-sm text-gray-800 font-semibold">
-                  {ass.completionCriteria}
+                  {ass.completionCriteria || "-"}
                 </p>
               </div>
               <div className="sm:col-span-2">
@@ -54,17 +84,14 @@ export default function AssessmentsTab({ syllabus }: Props) {
                   Question Type & Distribution
                 </span>
                 <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
-                  {ass.questionType}
-                </p>
-                <p className="text-sm text-gray-600 mt-1 italic whitespace-pre-wrap">
-                  {ass.noQuestion}
+                  {ass.questionType || "-"}
                 </p>
               </div>
               <div className="sm:col-span-2 pt-4 border-t border-gray-100">
                 <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">
                   Grading Guide
                 </span>
-                <p className="text-sm text-gray-600">{ass.gradingGuide}</p>
+                <p className="text-sm text-gray-600">{ass.gradingGuide || "-"}</p>
               </div>
             </div>
           </div>

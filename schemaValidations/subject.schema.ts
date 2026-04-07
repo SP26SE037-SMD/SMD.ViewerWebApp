@@ -100,6 +100,21 @@ export const SubjectSourceRes = z.object({
   data: z.array(SubjectSource),
 });
 
+export const Clo = z.object({
+  cloId: z.string(),
+  cloName: z.string(),
+  description: z.string().nullable().optional(),
+  bloomLevel: z.string(),
+  status: z.string(),
+  createdAt: z.string(),
+});
+
+export const CloRes = z.object({
+  status: z.number(),
+  message: z.string(),
+  data: z.array(Clo),
+});
+
 export const CloPloMapping = z.object({
   id: z.string(),
   cloId: z.string(),
@@ -123,5 +138,7 @@ export type SubjectDetailType = z.infer<typeof SubjectContent>;
 export type SubjectDetailResType = z.infer<typeof SubjectDetailRes>;
 export type SubjectSourceType = z.infer<typeof SubjectSource>;
 export type SubjectSourceResType = z.infer<typeof SubjectSourceRes>;
+export type CloType = z.infer<typeof Clo>;
+export type CloResType = z.infer<typeof CloRes>;
 export type CloPloMappingType = z.infer<typeof CloPloMapping>;
 export type CloPloMappingResType = z.infer<typeof CloPloMappingRes>;

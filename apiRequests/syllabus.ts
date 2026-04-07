@@ -1,5 +1,10 @@
 import http from "@/lib/http";
-import { SyllabusResType } from "@/schemaValidations/syllabus.schema";
+import {
+  CloSessionMappingResType,
+  SyllabusAssessmentResType,
+  SyllabusResType,
+  SyllabusSessionResType,
+} from "@/schemaValidations/syllabus.schema";
 
 const syllabusApiRequest = {
   getSyllabuses: (
@@ -25,7 +30,22 @@ const syllabusApiRequest = {
     );
   },
   getSyllabusDetail: (syllabusId: string) => {
-    return http.get<SyllabusResType>(`/api/syllabuses/${syllabusId}`);
+    return http.get<SyllabusResType>(`/api/syllabus/${syllabusId}`);
+  },
+  getSessionsBySyllabusId: (syllabusId: string) => {
+    return http.get<SyllabusSessionResType>(
+      `/api/sessions/syllabus/${syllabusId}`,
+    );
+  },
+  getCloSessionMappingsBySessionId: (sessionId: string) => {
+    return http.get<CloSessionMappingResType>(
+      `/api/clo-session-mappings/session/${sessionId}`,
+    );
+  },
+  getAssessmentsBySyllabusId: (syllabusId: string) => {
+    return http.get<SyllabusAssessmentResType>(
+      `/api/assessments/syllabus/${syllabusId}`,
+    );
   },
 };
 
