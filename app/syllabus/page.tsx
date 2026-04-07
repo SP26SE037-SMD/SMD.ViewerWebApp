@@ -9,7 +9,6 @@ import {
   Search,
   X,
   BookOpen,
-  Award,
   ChevronLeft,
   ChevronRight,
   ChevronDown,
@@ -100,14 +99,14 @@ function SyllabusContent() {
       <div className="bg-white border-b border-gray-100">
         <div className="max-w-6xl mx-auto px-4 py-8">
           <button
-            onClick={() => router.back()}
+            onClick={() => router.push("/home")}
             className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-800 mb-5 group transition-colors"
           >
             <ArrowLeft
               size={18}
               className="group-hover:-translate-x-1 transition-transform"
             />
-            Back
+            Back To Home
           </button>
           <div className="flex items-center gap-3 mb-1">
             <div className="p-2.5 rounded-2xl bg-[#EBF5E4]">
@@ -118,11 +117,8 @@ function SyllabusContent() {
               />
             </div>
             <div>
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">
-                Syllabuses
-              </p>
               <h1 className="text-2xl font-bold text-gray-900 font-[Bricolage_Grotesque]">
-                Syllabus
+                Syllabus Management
               </h1>
             </div>
           </div>

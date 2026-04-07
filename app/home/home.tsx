@@ -2,64 +2,12 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import {
-  BookOpen,
-  Map,
-  Milestone,
-  GraduationCap,
-  Search,
-  X,
-  ArrowRight,
-  ChevronRight,
-  Sparkles,
-} from "lucide-react";
+import { Search, X, ArrowRight, ChevronRight, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/provider/store";
 import { ActionCard } from "@/components/ui/action-card";
-
-const items = [
-  {
-    id: 1,
-    title: "View Syllabus",
-    subtitle: "View Syllabus",
-    desc: "Explore a clearly structured learning path for your major.",
-    icon: BookOpen,
-    bg: "bg-white",
-    iconBg: "bg-[#6AB04C]",
-    path: "/syllabus",
-  },
-  {
-    id: 2,
-    title: "Curriculum",
-    subtitle: "Curriculum",
-    desc: "Detailed step-by-step guide in the training program.",
-    icon: Milestone,
-    bg: "bg-white",
-    iconBg: "bg-[#6AB04C]",
-    path: "/curriculum",
-  },
-  {
-    id: 3,
-    title: "Learning Path",
-    subtitle: "Learning Path",
-    desc: "View the entire roadmap and key milestones by semester.",
-    icon: Map,
-    bg: "bg-white",
-    iconBg: "bg-[#6AB04C]",
-    path: "/learning-path",
-  },
-  {
-    id: 4,
-    title: "Pre-requisite",
-    subtitle: "Pre-requisite",
-    desc: "Check mandatory subjects that must be completed first.",
-    icon: GraduationCap,
-    bg: "bg-white",
-    iconBg: "bg-[#6AB04C]",
-    path: "/pre-requisite",
-  },
-];
+import { homeItems } from "@/lib/data";
 
 export default function Home() {
   const router = useRouter();
@@ -111,7 +59,10 @@ export default function Home() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={() => { setSearchTarget(null); setSearchValue(""); }}
+            onClick={() => {
+              setSearchTarget(null);
+              setSearchValue("");
+            }}
             className="fixed inset-0 z-200 flex items-center justify-center bg-black/30 backdrop-blur-sm p-4"
           >
             <motion.div
@@ -134,28 +85,45 @@ export default function Home() {
                   className="flex-1 text-lg outline-none text-gray-800 bg-transparent placeholder-gray-400"
                   onKeyDown={(e) => {
                     if (e.key === "Enter" && searchValue.trim() !== "") {
-                      router.push(`${searchTarget}?search=${encodeURIComponent(searchValue.trim().toLowerCase())}`);
+                      router.push(
+                        `${searchTarget}?search=${encodeURIComponent(searchValue.trim().toLowerCase())}`,
+                      );
                       setSearchTarget(null);
                       setSearchValue("");
                     }
-                    if (e.key === "Escape") { setSearchTarget(null); setSearchValue(""); }
+                    if (e.key === "Escape") {
+                      setSearchTarget(null);
+                      setSearchValue("");
+                    }
                   }}
                 />
                 <button
-                  onClick={() => { setSearchTarget(null); setSearchValue(""); }}
+                  onClick={() => {
+                    setSearchTarget(null);
+                    setSearchValue("");
+                  }}
                   className="p-2 hover:bg-gray-100 rounded-xl text-gray-400 hover:text-gray-600 transition-colors"
                 >
                   <X size={20} />
                 </button>
               </div>
               <div className="p-5">
-                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Suggestions</p>
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
+                  Suggestions
+                </p>
                 <div className="flex flex-wrap gap-2">
-                  {["Calculus", "Web programming", "Database", "Computer networks"].map((hint) => (
+                  {[
+                    "Calculus",
+                    "Web programming",
+                    "Database",
+                    "Computer networks",
+                  ].map((hint) => (
                     <button
                       key={hint}
                       onClick={() => {
-                        router.push(`${searchTarget}?search=${encodeURIComponent(hint.toLowerCase())}`);
+                        router.push(
+                          `${searchTarget}?search=${encodeURIComponent(hint.toLowerCase())}`,
+                        );
                         setSearchTarget(null);
                         setSearchValue("");
                       }}
@@ -168,7 +136,9 @@ export default function Home() {
                 {searchValue && (
                   <button
                     onClick={() => {
-                      router.push(`${searchTarget}?search=${encodeURIComponent(searchValue.trim().toLowerCase())}`);
+                      router.push(
+                        `${searchTarget}?search=${encodeURIComponent(searchValue.trim().toLowerCase())}`,
+                      );
                       setSearchTarget(null);
                       setSearchValue("");
                     }}
@@ -186,7 +156,6 @@ export default function Home() {
 
       {/* ── Main Layout ── */}
       <main className="max-w-6xl mx-auto px-4 py-8 lg:py-12">
-
         {/* Welcome Banner */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
@@ -195,17 +164,17 @@ export default function Home() {
         >
           <div className="flex items-center gap-2 mb-1">
             <Sparkles size={18} className="text-[#6AB04C]" />
-            <span className="text-sm font-semibold text-[#6AB04C]">{greeting()},</span>
+            <span className="text-sm font-semibold text-[#6AB04C]">
+              {greeting()},
+            </span>
           </div>
           <h1 className="text-3xl font-bold text-gray-900 font-[Bricolage_Grotesque]">
             {displayName}! 👋
           </h1>
           <p className="text-gray-500 mt-1 text-base">
-            What do you want to explore in the curriculum today?
+            What do you want to explore today?
           </p>
         </motion.div>
-
-      
 
         {/* Cards Section */}
         <div>
@@ -215,12 +184,12 @@ export default function Home() {
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {items.map((item, index) => (
-              <ActionCard 
-                key={item.id} 
-                {...item} 
-                index={index} 
-                onSearchClick={setSearchTarget} 
+            {homeItems.map((item, index) => (
+              <ActionCard
+                key={item.id}
+                {...item}
+                index={index}
+                onSearchClick={setSearchTarget}
               />
             ))}
           </div>
@@ -239,7 +208,8 @@ export default function Home() {
           <div>
             <p className="text-sm font-semibold text-[#2D4A22]">Helpful Tips</p>
             <p className="text-xs text-[#4A7D37] mt-0.5">
-              Use the quick search bar above to look up subjects by name or course code.
+              Use the quick search bar above to look up subjects by name or
+              course code.
             </p>
           </div>
         </motion.div>

@@ -1,7 +1,9 @@
 import http from "@/lib/http";
 import {
   SubjectBodyType,
+  CloPloMappingResType,
   SubjectDetailResType,
+  SubjectSourceResType,
   SubjectResType,
 } from "@/schemaValidations/subject.schema";
 
@@ -21,6 +23,14 @@ const subjectApiRequest = {
   },
   getSubjectDetail: (subjectId: string) => {
     return http.get<SubjectDetailResType>(`/api/subjects/${subjectId}`);
+  },
+  getSourcesBySubjectId: (subjectId: string) => {
+    return http.get<SubjectSourceResType>(`/api/sources/subject/${subjectId}`);
+  },
+  getCloPloMappingsBySubjectId: (subjectId: string) => {
+    return http.get<CloPloMappingResType>(
+      `/api/clo-plo-mappings/subject/${subjectId}`,
+    );
   },
 };
 

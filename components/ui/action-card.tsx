@@ -1,12 +1,10 @@
-import React from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Search, LucideIcon } from "lucide-react";
+import { ArrowRight, LucideIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export interface ActionCardProps {
   id: string | number;
   title: string;
-  subtitle: string;
   desc: string;
   icon: LucideIcon;
   bg: string;
@@ -18,14 +16,12 @@ export interface ActionCardProps {
 
 export function ActionCard({
   title,
-  subtitle,
   desc,
   icon: Icon,
   bg,
   iconBg,
   path,
   index,
-  onSearchClick,
 }: ActionCardProps) {
   const router = useRouter();
 
@@ -45,9 +41,6 @@ export function ActionCard({
 
       {/* Text */}
       <div>
-        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">
-          {subtitle}
-        </p>
         <h3 className="text-lg font-bold text-gray-800 leading-tight mb-1">
           {title}
         </h3>
