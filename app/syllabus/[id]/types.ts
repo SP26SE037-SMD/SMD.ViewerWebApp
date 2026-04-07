@@ -89,7 +89,7 @@ export type Assessment = {
 export type TabId =
   | "general"
   | "sources"
-  | "los"
+  | "clos"
   | "sessions"
   | "chapterMaterials"
   | "questions"

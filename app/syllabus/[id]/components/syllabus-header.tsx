@@ -21,14 +21,14 @@ export default function SyllabusHeader({ syllabus, subjectDetail }: Props) {
             <ArrowLeft size={24} />
           </button>
           <div className="flex-1">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-2">
+              {subjectDetail?.subjectName || "N/A"}
+            </h1>
             <div className="flex items-center gap-2 mb-2 flex-wrap">
               <span className="inline-flex px-2.5 py-1 rounded bg-[#4caf50]/10 text-[#4caf50] text-xs font-bold uppercase tracking-widest shrink-0">
                 {syllabus?.syllabusName || "N/A"}
               </span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-2">
-              {subjectDetail?.subjectName || "N/A"}
-            </h1>
             <p className="text-sm text-gray-500 font-medium">
               {subjectDetail?.subjectCode || "N/A"}
             </p>

@@ -7,7 +7,7 @@ import SyllabusHeader from "@/app/syllabus/[id]/components/syllabus-header";
 import SyllabusTabs from "@/components/syllabus/syllabus-tabs";
 import GeneralTab from "@/app/syllabus/[id]/components/tabs/general-tab";
 import SourcesTab from "@/app/syllabus/[id]/components/tabs/sources-tab";
-import LosTab from "@/app/syllabus/[id]/components/tabs/los-tab";
+import ClosTab from "@/app/syllabus/[id]/components/tabs/clos-tab";
 import SessionsTab from "@/app/syllabus/[id]/components/tabs/sessions-tab";
 import ChapterMaterialsTab from "@/app/syllabus/[id]/components/tabs/chapter-materials-tab";
 import QuestionsTab from "@/app/syllabus/[id]/components/tabs/questions-tab";
@@ -54,7 +54,7 @@ export default function SyllabusDetailPage({
         <SyllabusTabs activeTab={activeTab} onChangeTab={setActiveTab} />
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4 py-8">
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}
@@ -67,9 +67,9 @@ export default function SyllabusDetailPage({
               <GeneralTab subjectDetail={subjectDetail} />
             )}
             {activeTab === "sources" && <SourcesTab subjectId={subjectId} />}
-            {activeTab === "los" && <LosTab subjectId={subjectId} />}
+            {activeTab === "clos" && <ClosTab subjectId={subjectId} />}
             {activeTab === "sessions" && syllabus && (
-              <SessionsTab syllabus={syllabus} />
+              <SessionsTab syllabusId={syllabus.syllabusId} />
             )}
             {activeTab === "chapterMaterials" && syllabus && (
               <ChapterMaterialsTab syllabus={syllabus} subjectId={subjectId} />
@@ -78,7 +78,7 @@ export default function SyllabusDetailPage({
               <QuestionsTab syllabus={syllabus} />
             )}
             {activeTab === "assessments" && syllabus && (
-              <AssessmentsTab syllabus={syllabus} />
+              <AssessmentsTab syllabusId={syllabus.syllabusId} />
             )}
           </motion.div>
         </AnimatePresence>
