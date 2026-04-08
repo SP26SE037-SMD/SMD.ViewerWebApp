@@ -2,7 +2,9 @@ import http from "@/lib/http";
 import {
   CloSessionMappingResType,
   SyllabusAssessmentResType,
+  SyllabusMaterialResType,
   SyllabusResType,
+  MaterialBlockResType,
   SyllabusSessionResType,
 } from "@/schemaValidations/syllabus.schema";
 
@@ -45,6 +47,23 @@ const syllabusApiRequest = {
   getAssessmentsBySyllabusId: (syllabusId: string) => {
     return http.get<SyllabusAssessmentResType>(
       `/api/assessments/syllabus/${syllabusId}`,
+    );
+  },
+  getMaterialsBySyllabusId: (syllabusId: string) => {
+    return http.get<SyllabusMaterialResType>(
+      `/api/materials/syllabus/${syllabusId}?status=PUBLISHED`,
+    );
+  },
+  getMaterialBlocksByMaterialId: (
+    materialId: string,
+    page = 1,
+    size = 10,
+  ) => {
+    const params = new URLSearchParams();
+    params.set("page", String(page));
+    params.set("size", String(size));
+    return http.get<MaterialBlockResType>(
+      `/api/blocks/material/${materialId}?${params.toString()}`,
     );
   },
 };
