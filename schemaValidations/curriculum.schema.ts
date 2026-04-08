@@ -50,8 +50,54 @@ export const CurriculumRes = z.object({
   }),
 });
 
+export const CurriculumPlo = z.object({
+  ploId: z.string(),
+  ploCode: z.string(),
+  description: z.string(),
+  status: z.string(),
+  createdAt: z.string().nullable().optional(),
+});
+
+export const CurriculumPloRes = z.object({
+  status: z.number(),
+  message: z.string(),
+  data: z.object({
+    content: z.array(CurriculumPlo),
+    page: z.number(),
+    size: z.number(),
+    totalElements: z.number(),
+    totalPages: z.number(),
+  }),
+});
+
+export const CurriculumSubject = z.object({
+  subjectId: z.string(),
+  subjectCode: z.string(),
+  subjectName: z.string(),
+  credits: z.number(),
+  semester: z.number(),
+});
+
+export const CurriculumSubjectRes = z.object({
+  status: z.number(),
+  message: z.string(),
+  data: z.object({
+    content: z.array(CurriculumSubject),
+    page: z.number(),
+    size: z.number(),
+    totalElements: z.number(),
+    totalPages: z.number(),
+  }),
+});
+
 export type CurriculumBodyType = z.infer<typeof CurriculumBody>;
 
 export type CurriculumContentType = z.infer<typeof CurriculumContent>;
 
 export type CurriculumResType = z.infer<typeof CurriculumRes>;
+
+export type CurriculumPloType = z.infer<typeof CurriculumPlo>;
+export type CurriculumPloResType = z.infer<typeof CurriculumPloRes>;
+
+export type CurriculumSubjectType = z.infer<typeof CurriculumSubject>;
+export type CurriculumSubjectResType = z.infer<typeof CurriculumSubjectRes>;

@@ -1,8 +1,11 @@
 import http from "@/lib/http";
-import { CurriculumResType } from "@/schemaValidations/curriculum.schema";
+import {
+  CurriculumPloResType,
+  CurriculumResType,
+  CurriculumSubjectResType,
+} from "@/schemaValidations/curriculum.schema";
 
 const curriculumApiRequest = {
-  // Uses local Next.js proxy at /api/curriculums to avoid CORS
   getCurriculums: (
     search?: string,
     searchBy: "name" | "code" = "name",
@@ -23,7 +26,27 @@ const curriculumApiRequest = {
     return http.get<CurriculumResType>(`/api/curriculums?${params.toString()}`);
   },
   getCurriculumById: (id: string) => {
-    return http.get<unknown>(`/api/curriculums/${id}`, { baseUrl: "" });
+    return http.get<CurriculumResType>(`/api/curriculums/${id}`);
+  },
+  getPlosByCurriculumId: (curriculumId: string, page = 0, size = 10) => {
+    const params = new URLSearchParams();
+    params.set("page", String(page));
+    params.set("size", String(size));
+    return http.get<CurriculumPloResType>(
+      `/api/plos/curriculum/${curriculumId}?${params.toString()}`,
+    );
+  },
+  getSubjectsByCurriculumId: (curriculumId: string, page = 0, size = 10) => {
+    const params = new URLSearchParams();
+    params.set("searchType", "curriculum");
+    params.set("searchId", curriculumId);
+    params.set("page", String(page));
+    params.set("size", String(size));
+    params.append("sort", "semester");
+    params.append("sort", "asc");
+    return http.get<CurriculumSubjectResType>(
+      `/api/curriculum-group-subjects/subjects?${params.toString()}`,
+    );
   },
 };
 
