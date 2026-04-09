@@ -1,5 +1,6 @@
 import http from "@/lib/http";
 import {
+  CurriculumDetailResType,
   CurriculumPloResType,
   CurriculumResType,
   CurriculumSubjectResType,
@@ -26,7 +27,7 @@ const curriculumApiRequest = {
     return http.get<CurriculumResType>(`/api/curriculums?${params.toString()}`);
   },
   getCurriculumById: (id: string) => {
-    return http.get<CurriculumResType>(`/api/curriculums/${id}`);
+    return http.get<CurriculumDetailResType>(`/api/curriculums/${id}`);
   },
   getPlosByCurriculumId: (curriculumId: string, page = 0, size = 10) => {
     const params = new URLSearchParams();

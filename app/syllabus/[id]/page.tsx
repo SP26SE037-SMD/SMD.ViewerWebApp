@@ -12,8 +12,8 @@ import SessionsTab from "@/app/syllabus/[id]/components/tabs/sessions-tab";
 import ChapterMaterialsTab from "@/app/syllabus/[id]/components/tabs/chapter-materials-tab";
 import QuestionsTab from "@/app/syllabus/[id]/components/tabs/questions-tab";
 import AssessmentsTab from "@/app/syllabus/[id]/components/tabs/assessments-tab";
-import { TabId } from "@/app/syllabus/[id]/types";
 import { useSyllabusDetail } from "@/app/syllabus/[id]/hooks/use-syllabus-detail";
+import { SyllabusTab } from "@/lib/type";
 
 export default function SyllabusDetailPage({
   params,
@@ -22,7 +22,7 @@ export default function SyllabusDetailPage({
 }) {
   const resolvedParams = use(params);
   const subjectId = decodeURIComponent(resolvedParams.id);
-  const [activeTab, setActiveTab] = useState<TabId>("general");
+  const [activeTab, setActiveTab] = useState<SyllabusTab>("general");
   const { loading, syllabus, subjectDetail } = useSyllabusDetail(subjectId);
 
   if (loading) {
@@ -63,8 +63,13 @@ export default function SyllabusDetailPage({
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
           >
-            {activeTab === "general" && (
+            {activeTab === "general" && subjectDetail && (
               <GeneralTab subjectDetail={subjectDetail} />
+            )}
+            {activeTab === "general" && !subjectDetail && (
+              <div className="bg-white rounded-3xl p-8 border border-gray-100 text-sm text-gray-500">
+                Subject information is not available.
+              </div>
             )}
             {activeTab === "sources" && <SourcesTab subjectId={subjectId} />}
             {activeTab === "clos" && <ClosTab subjectId={subjectId} />}

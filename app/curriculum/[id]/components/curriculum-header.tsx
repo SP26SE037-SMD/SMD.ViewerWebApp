@@ -1,12 +1,19 @@
-import { ArrowLeft } from "lucide-react";
+import {
+  ArrowLeft,
+  BookMarked,
+  Layers,
+  Target,
+  type LucideIcon,
+} from "lucide-react";
 import { motion } from "framer-motion";
-import { CurriculumDetail, TabKey } from "../types";
-import { TABS } from "../constants";
+import { CurriculumTab } from "@/lib/type";
+import { CurriculumDetailType } from "@/schemaValidations/curriculum.schema";
+import { TabCurriculum } from "@/lib/constants";
 
 type Props = {
-  curriculum: CurriculumDetail;
-  activeTab: TabKey;
-  onTabChange: (tab: TabKey) => void;
+  curriculum: CurriculumDetailType;
+  activeTab: CurriculumTab;
+  onTabChange: (tab: CurriculumTab) => void;
   onBack: () => void;
 };
 
@@ -40,7 +47,7 @@ export default function CurriculumHeader({
         </div>
 
         <div className="flex items-center gap-6 mt-4 relative">
-          {TABS.map((tab) => {
+          {TabCurriculum.map((tab) => {
             const isActive = activeTab === tab.key;
             const Icon = tab.icon;
 

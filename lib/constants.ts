@@ -6,10 +6,17 @@ import {
   FileText,
   HelpCircle,
   LucideIcon,
+  Globe,
+  Info,
+  Layers,
 } from "lucide-react";
-import { TabId } from "./types";
+import { CurriculumTab, SyllabusTab } from "@/lib/type";
 
-export const TABS: { id: TabId; label: string; icon: LucideIcon }[] = [
+export const TabSyllabus: {
+  id: SyllabusTab;
+  label: string;
+  icon: LucideIcon;
+}[] = [
   { id: "general", label: "General", icon: FileText },
   { id: "sources", label: "Sources", icon: BookOpen },
   { id: "clos", label: "CLOs", icon: Award },
@@ -17,4 +24,14 @@ export const TABS: { id: TabId; label: string; icon: LucideIcon }[] = [
   { id: "chapterMaterials", label: "Course Materials", icon: BookOpen },
   { id: "questions", label: "Constructive Questions", icon: HelpCircle },
   { id: "assessments", label: "Assessments", icon: FileCheck2 },
+];
+
+export const TabCurriculum: {
+  key: CurriculumTab;
+  label: string;
+  icon: typeof Info;
+}[] = [
+  { key: "general", label: "General", icon: Info },
+  { key: "plos", label: "PLOs", icon: Globe },
+  { key: "subjects", label: "Subjects", icon: Layers },
 ];

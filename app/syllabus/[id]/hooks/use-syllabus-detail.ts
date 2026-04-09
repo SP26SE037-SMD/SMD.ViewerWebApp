@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import subjectApiRequest from "@/apiRequests/subject";
 import syllabusApiRequest from "@/apiRequests/syllabus";
-import { SubjectDetailData, SyllabusDetail } from "../types";
+import { SubjectDetailType } from "@/schemaValidations/subject.schema";
+import { SyllabusContentType } from "@/schemaValidations/syllabus.schema";
 
 export function useSyllabusDetail(subjectId: string) {
-  const [syllabus, setSyllabus] = useState<SyllabusDetail | null>(null);
-  const [subjectDetail, setSubjectDetail] = useState<SubjectDetailData | null>(
+  const [syllabus, setSyllabus] = useState<SyllabusContentType | null>(null);
+  const [subjectDetail, setSubjectDetail] = useState<SubjectDetailType | null>(
     null,
   );
   const [loading, setLoading] = useState(true);
@@ -21,15 +22,23 @@ export function useSyllabusDetail(subjectId: string) {
 
         if (
           publishedSyllabusesRes.status === "fulfilled" &&
-          publishedSyllabusesRes.value?.payload?.data?.length
+          publishedSyllabusesRes.value?.payload?.data
         ) {
-          const selectedSyllabusId =
-            publishedSyllabusesRes.value.payload.data[0].syllabusId;
-          const syllabusRes =
-            await syllabusApiRequest.getSyllabusDetail(selectedSyllabusId);
-          setSyllabus(
-            (syllabusRes?.payload?.data ?? null) as SyllabusDetail | null,
-          );
+          const publishedData = publishedSyllabusesRes.value.payload.data;
+          const publishedList = Array.isArray(publishedData)
+            ? publishedData
+            : [publishedData];
+          const selectedSyllabusId = publishedList[0]?.syllabusId;
+          if (selectedSyllabusId) {
+            const syllabusRes =
+              await syllabusApiRequest.getSyllabusDetail(selectedSyllabusId);
+            setSyllabus(
+              (syllabusRes?.payload?.data ??
+                null) as SyllabusContentType | null,
+            );
+          } else {
+            setSyllabus(null);
+          }
         } else {
           setSyllabus(null);
         }

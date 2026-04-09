@@ -1,11 +1,17 @@
 import { useEffect, useMemo, useState } from "react";
 import curriculumApiRequest from "@/apiRequests/curriculum";
-import { CurriculumDetail, Subject, TabKey } from "../types";
+import { CurriculumTab } from "@/lib/type";
+import {
+  CurriculumDetailType,
+  CurriculumSubjectType,
+} from "@/schemaValidations/curriculum.schema";
 
 export function useCurriculumDetail(id: string) {
-  const [curriculum, setCurriculum] = useState<CurriculumDetail | null>(null);
+  const [curriculum, setCurriculum] = useState<CurriculumDetailType | null>(
+    null,
+  );
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<TabKey>("general");
+  const [activeTab, setActiveTab] = useState<CurriculumTab>("general");
   const [descExpanded, setDescExpanded] = useState(false);
   const [expandedSemesters, setExpandedSemesters] = useState<Set<number>>(
     new Set(),
@@ -17,13 +23,13 @@ export function useCurriculumDetail(id: string) {
       try {
         const res = await curriculumApiRequest.getCurriculumById(id);
         if (res?.payload?.data) {
-          setCurriculum(res.payload.data as CurriculumDetail);
+          setCurriculum(res.payload.data);
           const semesters = new Set(
-            ((res.payload.data as CurriculumDetail).subjects || []).map(
-              (s: Subject) => s.semester,
+            (res.payload.data.subjects || []).map(
+              (s: CurriculumSubjectType) => s.semester,
             ),
           );
-          setExpandedSemesters(semesters as Set<number>);
+          setExpandedSemesters(semesters);
         } else {
           setCurriculum(null);
         }
@@ -48,7 +54,7 @@ export function useCurriculumDetail(id: string) {
   };
 
   const groupedSubjects = useMemo(() => {
-    const result: Record<number, Subject[]> = {};
+    const result: Record<number, CurriculumSubjectType[]> = {};
     if (!curriculum?.subjects) return result;
 
     curriculum.subjects.forEach((s) => {

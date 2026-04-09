@@ -7,10 +7,10 @@ import {
   Hash,
 } from "lucide-react";
 import { motion } from "framer-motion";
-import { CurriculumDetail } from "../../types";
+import { CurriculumDetailType } from "@/schemaValidations/curriculum.schema";
 
 type Props = {
-  curriculum: CurriculumDetail;
+  curriculum: CurriculumDetailType;
   descExpanded: boolean;
   onToggleDescription: () => void;
 };

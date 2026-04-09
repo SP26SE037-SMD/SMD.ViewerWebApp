@@ -1,13 +1,13 @@
 import { BookOpen, CheckCircle2, FileText, Layers } from "lucide-react";
-import { SubjectDetailData } from "../../types";
+import { SubjectDetailType } from "@/schemaValidations/subject.schema";
 
 type Props = {
-  subjectDetail: SubjectDetailData | null;
+  subjectDetail: SubjectDetailType;
 };
 
 function getPreRequisiteText(
   preRequisite:
-    | SubjectDetailData["preRequisite"]
+    | SubjectDetailType["preRequisite"]
     | { prerequisiteSubjectCode?: string }[]
     | null
     | undefined,

@@ -212,7 +212,7 @@ export default function ChapterViewerPage({
         return (
           <h2
             key={block.id}
-            className="text-xl font-bold text-gray-800 mt-8 mb-4 text-blue-900 border-b pb-2 border-gray-100 flex items-center gap-2"
+            className="text-xl font-bold mt-8 mb-4 text-blue-900 border-b pb-2 border-gray-100 flex items-center gap-2"
           >
             {block.h2Number && (
               <span className="text-blue-500/80 mr-1">{block.h2Number}.</span>
@@ -587,7 +587,7 @@ export default function ChapterViewerPage({
         {pages.map((pageBlocks, pageIndex) => (
           <div
             key={pageIndex}
-            className="w-full max-w-[850px] bg-white rounded-sm shadow-[0_4px_24px_rgb(0,0,0,0.06)] ring-1 ring-gray-200 isolate relative flex flex-col"
+            className="w-full max-w-212.5 bg-white rounded-sm shadow-[0_4px_24px_rgb(0,0,0,0.06)] ring-1 ring-gray-200 isolate relative flex flex-col"
             style={{ minHeight: "1123px" }} // Standard A4 height at 96 PPI
           >
             {/* Document Content Area */}
@@ -619,7 +619,7 @@ export default function ChapterViewerPage({
       {/* ── Text Selection Quick Action Tooltip ── */}
       {selectionBox && (
         <div
-          className="fixed z-[60] flex items-center justify-center -translate-x-1/2 -translate-y-full animate-in fade-in zoom-in duration-150 pointer-events-auto shadow-2xl"
+          className="fixed z-60 flex items-center justify-center -translate-x-1/2 -translate-y-full animate-in fade-in zoom-in duration-150 pointer-events-auto shadow-2xl"
           style={{ left: selectionBox.x, top: selectionBox.y }}
         >
           <button
@@ -643,7 +643,7 @@ export default function ChapterViewerPage({
       {/* ── Image Lightbox Modal ── */}
       {enlargedImage && (
         <div
-          className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-sm flex items-center justify-center p-4 sm:p-8 animate-in fade-in duration-200"
+          className="fixed inset-0 z-100 bg-black/95 backdrop-blur-sm flex items-center justify-center p-4 sm:p-8 animate-in fade-in duration-200"
           onClick={() => setEnlargedImage(null)}
         >
           <div className="relative max-w-6xl w-full h-full flex flex-col items-center justify-center">
@@ -652,7 +652,7 @@ export default function ChapterViewerPage({
                 e.stopPropagation();
                 setEnlargedImage(null);
               }}
-              className="absolute top-0 right-0 p-3 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors z-[101]"
+              className="absolute top-0 right-0 p-3 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors z-101"
               title="Close (Esc)"
             >
               <X size={24} />

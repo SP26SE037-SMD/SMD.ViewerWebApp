@@ -31,6 +31,4 @@ export type LoginBodyType = z.infer<typeof LoginBody>;
 export type LoginResType = z.infer<typeof LoginRes>;
 
 export type LoginGoogleBodyType = z.infer<typeof LoginGoogleBody>;
-export type LoginGoogleResType = z.infer<typeof LoginRes>;
-
-
+export type LoginGoogleResType = LoginResType;

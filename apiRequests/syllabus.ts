@@ -22,9 +22,7 @@ const syllabusApiRequest = {
     if (code) params.set("code", code);
     params.set("page", String(page));
     params.set("size", String(size));
-    return http.get<SyllabusResType>(`/api/syllabuses?${params.toString()}`, {
-      baseUrl: "",
-    });
+    return http.get<SyllabusResType>(`/api/syllabuses?${params.toString()}`);
   },
   getPublishedSyllabusesBySubjectId: (subjectId: string) => {
     return http.get<SyllabusResType>(

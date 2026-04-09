@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import { BookOpen, CalendarClock, FileText } from "lucide-react";
 import { useRouter } from "next/navigation";
 import syllabusApiRequest from "@/apiRequests/syllabus";
-import { SyllabusMaterialType } from "@/schemaValidations/syllabus.schema";
-import { SyllabusDetail } from "@/app/syllabus/[id]/types";
+import {
+  SyllabusContentType,
+  SyllabusMaterialType,
+} from "@/schemaValidations/syllabus.schema";
 
 type Props = {
-  syllabus: SyllabusDetail;
+  syllabus: SyllabusContentType;
   subjectId: string;
 };
 

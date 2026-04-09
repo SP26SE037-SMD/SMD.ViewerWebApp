@@ -1,10 +1,11 @@
+import { SubjectDetailType } from "@/schemaValidations/subject.schema";
+import { SyllabusContentType } from "@/schemaValidations/syllabus.schema";
 import { Award, ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { SubjectDetailData, SyllabusDetail } from "../types";
 
 type Props = {
-  syllabus: SyllabusDetail | null;
-  subjectDetail: SubjectDetailData | null;
+  syllabus: SyllabusContentType | null;
+  subjectDetail: SubjectDetailType | null;
 };
 
 export default function SyllabusHeader({ syllabus, subjectDetail }: Props) {

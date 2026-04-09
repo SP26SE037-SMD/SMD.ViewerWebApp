@@ -93,8 +93,10 @@ export const CurriculumSubjectRes = z.object({
 export type CurriculumBodyType = z.infer<typeof CurriculumBody>;
 
 export type CurriculumContentType = z.infer<typeof CurriculumContent>;
+export type CurriculumDetailType = CurriculumContentType;
 
 export type CurriculumResType = z.infer<typeof CurriculumRes>;
+export type CurriculumDetailResType = CurriculumResType;
 
 export type CurriculumPloType = z.infer<typeof CurriculumPlo>;
 export type CurriculumPloResType = z.infer<typeof CurriculumPloRes>;

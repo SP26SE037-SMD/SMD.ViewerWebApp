@@ -11,15 +11,29 @@ export default function ComboDetailPage({
 }) {
   const resolvedParams = use(params);
   const router = useRouter();
-  
-  const curriculumId = resolvedParams.id;
+
   const comboCode = decodeURIComponent(resolvedParams.comboCode);
 
   // MOCK DATA for combo subjects (since there's no combo API yet)
   const mockSubjects = [
-    { subjectCode: `${comboCode}_1`, subjectName: `Foundational subject for ${comboCode}`, noCredit: 3, semester: 5 },
-    { subjectCode: `${comboCode}_2`, subjectName: `Core subject for group ${comboCode}`, noCredit: 3, semester: 6 },
-    { subjectCode: `${comboCode}_3`, subjectName: `Specialized project for ${comboCode}`, noCredit: 3, semester: 7 },
+    {
+      subjectCode: `${comboCode}_1`,
+      subjectName: `Foundational subject for ${comboCode}`,
+      noCredit: 3,
+      semester: 5,
+    },
+    {
+      subjectCode: `${comboCode}_2`,
+      subjectName: `Core subject for group ${comboCode}`,
+      noCredit: 3,
+      semester: 6,
+    },
+    {
+      subjectCode: `${comboCode}_3`,
+      subjectName: `Specialized project for ${comboCode}`,
+      noCredit: 3,
+      semester: 7,
+    },
   ];
 
   const totalCredits = mockSubjects.reduce((sum, s) => sum + s.noCredit, 0);
@@ -54,7 +68,6 @@ export default function ComboDetailPage({
       </div>
 
       <main className="max-w-4xl mx-auto px-4 py-8">
-        
         {/* Combo Info Card */}
         <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-gray-100 mb-8 flex flex-col sm:flex-row items-start sm:items-center gap-6 justify-between">
           <div>
@@ -62,12 +75,13 @@ export default function ComboDetailPage({
               Detailed Information
             </h2>
             <p className="text-gray-900 font-medium">
-              You are viewing the list of subjects belonging to {comboCode} in the current curriculum. 
+              You are viewing the list of subjects belonging to {comboCode} in
+              the current curriculum.
             </p>
           </div>
-          
+
           <div className="flex gap-4 shrink-0 mt-4 sm:mt-0">
-            <div className="bg-[#4caf50]/10 rounded-2xl p-4 flex flex-col items-center justify-center min-w-[100px]">
+            <div className="bg-[#4caf50]/10 rounded-2xl p-4 flex flex-col items-center justify-center min-w-25">
               <BookOpen size={24} className="text-[#4caf50] mb-2" />
               <div className="text-2xl font-black text-[#4caf50] leading-none mb-1">
                 {mockSubjects.length}
@@ -76,8 +90,8 @@ export default function ComboDetailPage({
                 Subjects
               </div>
             </div>
-            
-            <div className="bg-blue-50 rounded-2xl p-4 flex flex-col items-center justify-center min-w-[100px]">
+
+            <div className="bg-blue-50 rounded-2xl p-4 flex flex-col items-center justify-center min-w-25">
               <Layers size={24} className="text-blue-500 mb-2" />
               <div className="text-2xl font-black text-blue-500 leading-none mb-1">
                 {totalCredits}
@@ -91,67 +105,67 @@ export default function ComboDetailPage({
 
         {/* Subjects List */}
         <div className="bg-white rounded-3xl border border-gray-100 overflow-hidden shadow-sm">
-           {/* Desktop Table Header */}
-           <div className="hidden md:grid grid-cols-12 gap-4 px-6 py-4 bg-gray-50 text-xs font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">
-             <div className="col-span-3">Subject Code</div>
-             <div className="col-span-6">Subject Name</div>
-             <div className="col-span-2 text-center">Semester</div>
-             <div className="col-span-1 text-center">Credits</div>
-           </div>
-           
-           <div className="divide-y divide-gray-100">
-             {mockSubjects.map((subject) => (
-               <div key={subject.subjectCode} className="px-6 py-5 hover:bg-gray-50 transition-colors">
-                 
-                 {/* Desktop Row */}
-                 <div className="hidden md:grid grid-cols-12 gap-4 items-center">
-                   <div className="col-span-3">
-                     <span className="inline-flex px-3 py-1.5 rounded-lg bg-[#4caf50]/10 text-[#4caf50] text-sm font-bold font-mono">
-                       {subject.subjectCode}
-                     </span>
-                   </div>
-                   <div className="col-span-6">
-                     <p className="text-base font-semibold text-gray-900">
-                       {subject.subjectName}
-                     </p>
-                   </div>
-                   <div className="col-span-2 flex justify-center">
-                     <span className="inline-flex px-3 py-1 bg-gray-100 text-gray-600 text-xs font-bold rounded-full">
-                       HK {subject.semester}
-                     </span>
-                   </div>
-                   <div className="col-span-1 flex justify-center text-sm font-bold text-gray-700">
-                     {subject.noCredit}
-                   </div>
-                 </div>
+          {/* Desktop Table Header */}
+          <div className="hidden md:grid grid-cols-12 gap-4 px-6 py-4 bg-gray-50 text-xs font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">
+            <div className="col-span-3">Subject Code</div>
+            <div className="col-span-6">Subject Name</div>
+            <div className="col-span-2 text-center">Semester</div>
+            <div className="col-span-1 text-center">Credits</div>
+          </div>
 
-                 {/* Mobile Row */}
-                 <div className="md:hidden flex flex-col gap-2">
-                   <div className="flex items-center justify-between">
-                     <span className="inline-flex px-3 py-1 rounded-lg bg-[#4caf50]/10 text-[#4caf50] text-sm font-bold font-mono">
-                       {subject.subjectCode}
-                     </span>
-                     <div className="flex gap-2">
-                       <span className="inline-flex px-2 py-1 bg-gray-100 text-gray-600 text-[10px] font-bold rounded-lg items-center uppercase">
-                         Sem {subject.semester}
-                       </span>
-                       <span className="inline-flex px-2 py-1 bg-gray-100 text-gray-600 text-[10px] font-bold rounded-lg items-center">
-                         <Clock size={10} className="mr-1" />
-                         {subject.noCredit} TC
-                       </span>
-                     </div>
-                   </div>
-                   <p className="text-base font-semibold text-gray-900 mt-1">
-                     {subject.subjectName}
-                   </p>
-                 </div>
+          <div className="divide-y divide-gray-100">
+            {mockSubjects.map((subject) => (
+              <div
+                key={subject.subjectCode}
+                className="px-6 py-5 hover:bg-gray-50 transition-colors"
+              >
+                {/* Desktop Row */}
+                <div className="hidden md:grid grid-cols-12 gap-4 items-center">
+                  <div className="col-span-3">
+                    <span className="inline-flex px-3 py-1.5 rounded-lg bg-[#4caf50]/10 text-[#4caf50] text-sm font-bold font-mono">
+                      {subject.subjectCode}
+                    </span>
+                  </div>
+                  <div className="col-span-6">
+                    <p className="text-base font-semibold text-gray-900">
+                      {subject.subjectName}
+                    </p>
+                  </div>
+                  <div className="col-span-2 flex justify-center">
+                    <span className="inline-flex px-3 py-1 bg-gray-100 text-gray-600 text-xs font-bold rounded-full">
+                      HK {subject.semester}
+                    </span>
+                  </div>
+                  <div className="col-span-1 flex justify-center text-sm font-bold text-gray-700">
+                    {subject.noCredit}
+                  </div>
+                </div>
 
-               </div>
-             ))}
-           </div>
+                {/* Mobile Row */}
+                <div className="md:hidden flex flex-col gap-2">
+                  <div className="flex items-center justify-between">
+                    <span className="inline-flex px-3 py-1 rounded-lg bg-[#4caf50]/10 text-[#4caf50] text-sm font-bold font-mono">
+                      {subject.subjectCode}
+                    </span>
+                    <div className="flex gap-2">
+                      <span className="inline-flex px-2 py-1 bg-gray-100 text-gray-600 text-[10px] font-bold rounded-lg items-center uppercase">
+                        Sem {subject.semester}
+                      </span>
+                      <span className="inline-flex px-2 py-1 bg-gray-100 text-gray-600 text-[10px] font-bold rounded-lg items-center">
+                        <Clock size={10} className="mr-1" />
+                        {subject.noCredit} TC
+                      </span>
+                    </div>
+                  </div>
+                  <p className="text-base font-semibold text-gray-900 mt-1">
+                    {subject.subjectName}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </main>
-      
     </div>
   );
 }

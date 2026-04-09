@@ -1,17 +1,17 @@
+import { TabSyllabus } from "@/lib/constants";
+import { SyllabusTab } from "@/lib/type";
 import { motion } from "framer-motion";
-import { TABS } from "@/app/syllabus/[id]/constants";
-import { TabId } from "@/app/syllabus/[id]/types";
 
 type Props = {
-  activeTab: TabId;
-  onChangeTab: (tab: TabId) => void;
+  activeTab: SyllabusTab;
+  onChangeTab: (tab: SyllabusTab) => void;
 };
 
 export default function SyllabusTabs({ activeTab, onChangeTab }: Props) {
   return (
     <>
       <div className="hidden md:flex items-center gap-2 pb-3">
-        {TABS.map((tab) => {
+        {TabSyllabus.map((tab) => {
           const TabIcon = tab.icon;
           const isActive = activeTab === tab.id;
 
@@ -49,7 +49,7 @@ export default function SyllabusTabs({ activeTab, onChangeTab }: Props) {
 
       <div className="md:hidden bg-white border-b border-gray-100 sticky top-34.5 z-40 mb-6 shadow-sm shadow-[#4caf50]/5">
         <div className="flex overflow-x-auto no-scrollbar px-2 py-2 snap-x">
-          {TABS.map((tab) => {
+          {TabSyllabus.map((tab) => {
             const TabIcon = tab.icon;
             const isActive = activeTab === tab.id;
 
