@@ -3,14 +3,13 @@
 import { use, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { AlertCircle } from "lucide-react";
-import SyllabusHeader from "@/app/syllabus/[id]/components/syllabus-header";
+import SyllabusHeader from "@/components/syllabus/syllabus-header";
 import SyllabusTabs from "@/components/syllabus/syllabus-tabs";
 import GeneralTab from "@/app/syllabus/[id]/components/tabs/general-tab";
 import SourcesTab from "@/app/syllabus/[id]/components/tabs/sources-tab";
 import ClosTab from "@/app/syllabus/[id]/components/tabs/clos-tab";
 import SessionsTab from "@/app/syllabus/[id]/components/tabs/sessions-tab";
 import ChapterMaterialsTab from "@/app/syllabus/[id]/components/tabs/chapter-materials-tab";
-import QuestionsTab from "@/app/syllabus/[id]/components/tabs/questions-tab";
 import AssessmentsTab from "@/app/syllabus/[id]/components/tabs/assessments-tab";
 import { useSyllabusDetail } from "@/app/syllabus/[id]/hooks/use-syllabus-detail";
 import { SyllabusTab } from "@/lib/type";
@@ -78,9 +77,6 @@ export default function SyllabusDetailPage({
             )}
             {activeTab === "chapterMaterials" && syllabus && (
               <ChapterMaterialsTab syllabus={syllabus} subjectId={subjectId} />
-            )}
-            {activeTab === "questions" && syllabus && (
-              <QuestionsTab syllabus={syllabus} />
             )}
             {activeTab === "assessments" && syllabus && (
               <AssessmentsTab syllabusId={syllabus.syllabusId} />

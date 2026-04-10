@@ -2,12 +2,13 @@
 
 import { AnimatePresence } from "framer-motion";
 import { useParams, useRouter } from "next/navigation";
-import CurriculumHeader from "./components/curriculum-header";
+import CurriculumHeader from "../../../components/curriculum/curriculum-header";
+import CurriculumTabs from "@/components/curriculum/curriculum-tabs";
 import GeneralTab from "./components/tabs/general-tab";
 import PlosTab from "./components/tabs/plos-tab";
 import SubjectsTab from "./components/tabs/subjects-tab";
 import { useCurriculumDetail } from "./hooks/use-curriculum-detail";
-import { BookMarked, GitMerge } from "lucide-react";
+import { BookMarked } from "lucide-react";
 
 export default function CurriculumDetailPage() {
   const params = useParams();
@@ -50,12 +51,11 @@ export default function CurriculumDetailPage() {
 
   return (
     <div className="min-h-screen bg-[#f8fafb] font-[Lexend]">
-      <CurriculumHeader
-        curriculum={curriculum}
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-        onBack={() => router.back()}
-      />
+      <CurriculumHeader curriculum={curriculum} onBack={() => router.back()} />
+
+      <div className="max-w-6xl mx-auto px-4 py-6">
+        <CurriculumTabs activeTab={activeTab} onChangeTab={setActiveTab} />
+      </div>
 
       <div className="max-w-6xl mx-auto px-4 py-6">
         <AnimatePresence mode="wait">
@@ -83,19 +83,6 @@ export default function CurriculumDetailPage() {
             />
           )}
         </AnimatePresence>
-      </div>
-
-      {/* ── Bottom Button: Xem sơ đồ môn học ── */}
-      <div className="bottom-0 left-0 right-0 p-4 bg-linear-to-t from-white via-white to-transparent z-40 h-24 flex items-end">
-        <div className="max-w-6xl mx-auto w-full">
-          <button
-            onClick={() => router.push(`/curriculum/${id}/graph`)}
-            className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-[#059669] hover:bg-[#047857] text-white text-base font-bold shadow-lg hover:shadow-xl transition-all active:scale-[0.98]"
-          >
-            <GitMerge size={20} />
-            View subject graph
-          </button>
-        </div>
       </div>
     </div>
   );
