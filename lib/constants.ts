@@ -4,7 +4,6 @@ import {
   Calendar,
   FileCheck2,
   FileText,
-  HelpCircle,
   LucideIcon,
   Globe,
   Info,

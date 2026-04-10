@@ -3,8 +3,8 @@ import { BookOpen, Map, Milestone, GraduationCap } from "lucide-react";
 export const homeItems = [
   {
     id: 1,
-    title: "View Syllabus",
-    desc: "Explore a clearly structured learning path for your major.",
+    title: "Syllabus",
+    desc: "Detailed step-by-step guide in the training program.",
     icon: BookOpen,
     bg: "bg-white",
     iconBg: "bg-[#6AB04C]",
@@ -13,7 +13,7 @@ export const homeItems = [
   {
     id: 2,
     title: "Curriculum",
-    desc: "Detailed step-by-step guide in the training program.",
+    desc: "View the entire roadmap and key milestones by semester.",
     icon: Milestone,
     bg: "bg-white",
     iconBg: "bg-[#6AB04C]",
@@ -22,7 +22,7 @@ export const homeItems = [
   {
     id: 3,
     title: "Learning Path",
-    desc: "View the entire roadmap and key milestones by semester.",
+    desc: "Explore a clearly structured learning path for subject.",
     icon: Map,
     bg: "bg-white",
     iconBg: "bg-[#6AB04C]",
@@ -30,7 +30,7 @@ export const homeItems = [
   },
   {
     id: 4,
-    title: "Pre-requisite",
+    title: "Pre-requisites",
     desc: "Check mandatory subjects that must be completed first.",
     icon: GraduationCap,
     bg: "bg-white",
