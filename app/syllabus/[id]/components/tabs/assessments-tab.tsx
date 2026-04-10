@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import syllabusApiRequest from "@/apiRequests/syllabus";
-import SectionCard from "@/components/syllabus/section-card";
+import SectionCard from "@/components/section-card";
 import { SyllabusAssessmentType } from "@/schemaValidations/syllabus.schema";
 
 type Props = {

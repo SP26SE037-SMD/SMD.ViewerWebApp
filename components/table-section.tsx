@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import SectionCard from "./section-card";
+import SectionCard from "@/components/section-card";
 
 type Props = {
   title: ReactNode;

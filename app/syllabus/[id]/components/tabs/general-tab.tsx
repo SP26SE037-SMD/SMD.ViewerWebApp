@@ -33,6 +33,15 @@ export default function GeneralTab({ subjectDetail }: Props) {
           <div className="space-y-4">
             <div>
               <span className="text-xs font-bold uppercase tracking-wider text-gray-400 block mb-1">
+                Subject Name{" "}
+              </span>
+              <p className="text-sm text-gray-800 font-medium">
+                {subjectDetail?.subjectName || "N/A"}
+              </p>
+            </div>
+            <hr className="border-gray-50" />
+            <div>
+              <span className="text-xs font-bold uppercase tracking-wider text-gray-400 block mb-1">
                 Decison No
               </span>
               <p className="text-sm text-gray-800 font-medium">

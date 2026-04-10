@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import { Target } from "lucide-react";
 import curriculumApiRequest from "@/apiRequests/curriculum";
 import { CurriculumPloType } from "@/schemaValidations/curriculum.schema";
+import TableSection from "@/components/table-section";
 
 type Props = {
   curriculumId: string;
@@ -55,68 +54,54 @@ export default function PlosTab({ curriculumId }: Props) {
     fetchPlos();
   }, [curriculumId]);
 
-  if (loading) {
-    return (
-      <motion.div
-        key="plos"
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -12 }}
-        transition={{ duration: 0.2 }}
-      >
-        <div className="bg-white rounded-2xl p-10 border-2 border-gray-200 text-center">
-          <p className="text-gray-500 font-medium">Loading PLO data...</p>
-        </div>
-      </motion.div>
-    );
-  }
-
   return (
-    <motion.div
-      key="plos"
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -12 }}
-      transition={{ duration: 0.2 }}
-    >
-      {plos && plos.length > 0 ? (
-        <>
-          <div className="flex items-center gap-3 mb-5">
-            <span className="px-3 py-1 text-xs font-bold rounded-full bg-[#4caf50]/10 text-[#4caf50]">
-              {plos.length} PLOs
-            </span>
-            <p className="text-sm text-gray-400">Program Learning Outcomes</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {plos.map((plo, i) => (
-              <motion.div
-                key={plo.ploId}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.04 * i }}
-                className="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 group cursor-default"
-              >
-                <div className="flex items-center gap-3 mb-3">
-                  <span className="w-10 h-10 rounded-xl bg-[#4caf50]/10 flex items-center justify-center text-sm font-bold text-[#4caf50]">
-                    {i + 1}
-                  </span>
-                  <span className="text-sm font-bold text-[#4caf50]">
-                    {plo.ploCode}
-                  </span>
+    <TableSection title={`${plos.length} PLOs`} tableClassName="min-w-200">
+      <thead>
+        <tr className="bg-white border-b border-gray-100 text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+          <th className="px-6 py-4 whitespace-nowrap text-center">No</th>
+          <th className="px-6 py-4 w-48">PLO Code</th>
+          <th className="px-6 py-4">Description</th>
+        </tr>
+      </thead>
+      <tbody className="divide-y divide-gray-50">
+        {loading && (
+          <tr>
+            <td className="px-6 py-6 text-sm text-gray-500" colSpan={3}>
+              Loading PLO data...
+            </td>
+          </tr>
+        )}
+        {!loading && plos.length === 0 && (
+          <tr>
+            <td className="px-6 py-6 text-sm text-gray-500" colSpan={3}>
+              No PLO found for this syllabus.
+            </td>
+          </tr>
+        )}
+        {!loading &&
+          plos.map((plo, i) => (
+            <tr
+              key={plo.ploId}
+              className="hover:bg-gray-50/50 transition-colors group"
+            >
+              <td className="px-6 py-4 text-center align-top">
+                <span className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-sm font-bold text-gray-600 mx-auto">
+                  {i + 1}
+                </span>
+              </td>
+              <td className="px-6 py-4 align-top">
+                <span className="inline-flex px-2.5 py-1 bg-[#eaf7e8] text-[#3d6b2c] font-bold text-[10px] uppercase rounded-lg border border-[#3d6b2c]/20">
+                  {plo.ploCode}
+                </span>
+              </td>
+              <td className="px-6 py-4 align-top">
+                <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
+                  {plo.description || "-"}
                 </div>
-                <p className="text-xs text-gray-500 leading-relaxed line-clamp-4">
-                  {plo.description}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </>
-      ) : (
-        <div className="bg-white rounded-2xl p-10 border-2 border-gray-200 text-center">
-          <Target size={40} className="text-gray-300 mx-auto mb-3" />
-          <p className="text-gray-500 font-medium">No PLO data</p>
-        </div>
-      )}
-    </motion.div>
+              </td>
+            </tr>
+          ))}
+      </tbody>
+    </TableSection>
   );
 }

@@ -22,7 +22,6 @@ export const TabSyllabus: {
   { id: "clos", label: "CLOs", icon: Award },
   { id: "sessions", label: "Teaching Plan", icon: Calendar },
   { id: "chapterMaterials", label: "Course Materials", icon: BookOpen },
-  { id: "questions", label: "Constructive Questions", icon: HelpCircle },
   { id: "assessments", label: "Assessments", icon: FileCheck2 },
 ];
 

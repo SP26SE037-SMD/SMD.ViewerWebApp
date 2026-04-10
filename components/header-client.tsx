@@ -2,6 +2,7 @@
 
 import { Bell, Mail, ShieldCheck, User, LogOut } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import * as Popover from "@radix-ui/react-popover";
 import { motion } from "motion/react";
 import { useState, useEffect } from "react";
@@ -23,14 +24,22 @@ export default function HeaderClient({ account }: Props) {
     setIsMounted(true);
   }, []);
 
-  const avatarUrl = isMounted ? (reduxUser?.avatarUrl || account?.avatarUrl) : account?.avatarUrl;
-  const fullName = isMounted 
-    ? (reduxUser?.fullName || account?.fullName || "User")
-    : (account?.fullName || "User");
-  const email = isMounted ? (reduxUser?.email || account?.email || "") : (account?.email || "");
-  const roleName = isMounted 
-    ? ((typeof reduxUser?.role === 'string' ? reduxUser.role : reduxUser?.role?.roleName) || account?.role?.roleName || "GUEST")
-    : (account?.role?.roleName || "GUEST");
+  const avatarUrl = isMounted
+    ? reduxUser?.avatarUrl || account?.avatarUrl
+    : account?.avatarUrl;
+  const fullName = isMounted
+    ? reduxUser?.fullName || account?.fullName || "User"
+    : account?.fullName || "User";
+  const email = isMounted
+    ? reduxUser?.email || account?.email || ""
+    : account?.email || "";
+  const roleName = isMounted
+    ? (typeof reduxUser?.role === "string"
+        ? reduxUser.role
+        : reduxUser?.role?.roleName) ||
+      account?.role?.roleName ||
+      "GUEST"
+    : account?.role?.roleName || "GUEST";
 
   const initials = fullName
     .split(" ")
@@ -42,9 +51,8 @@ export default function HeaderClient({ account }: Props) {
   return (
     <nav className="sticky top-0 z-50 w-full bg-white border-b border-gray-100 shadow-sm">
       <div className="mx-auto max-w-6xl flex h-16 items-center justify-between px-4">
-
         {/* Logo */}
-        <div className="relative h-9 w-28 shrink-0">
+        <Link href="/home" className="relative h-9 w-28 shrink-0">
           <Image
             src="/smd-with-name.png"
             alt="SMD Logo"
@@ -52,7 +60,7 @@ export default function HeaderClient({ account }: Props) {
             priority
             className="object-contain"
           />
-        </div>
+        </Link>
 
         {/* Title */}
         <div className="hidden sm:block absolute left-1/2 -translate-x-1/2">
@@ -75,14 +83,24 @@ export default function HeaderClient({ account }: Props) {
               <button className="flex items-center gap-2.5 rounded-2xl border border-gray-200 bg-gray-50 hover:bg-gray-100 px-3 py-2 transition-all active:scale-95">
                 <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#6AB04C] text-white text-sm font-bold shrink-0">
                   {avatarUrl ? (
-                    <Image src={avatarUrl} alt={fullName} width={32} height={32} className="rounded-xl object-cover" />
+                    <Image
+                      src={avatarUrl}
+                      alt={fullName}
+                      width={32}
+                      height={32}
+                      className="rounded-xl object-cover"
+                    />
                   ) : (
                     <span>{initials}</span>
                   )}
                 </div>
                 <div className="hidden md:flex flex-col items-start">
-                  <span className="text-sm font-semibold text-gray-800 leading-none">{fullName.split(" ").pop()}</span>
-                  <span className="text-[10px] text-gray-400 mt-0.5 font-medium">{roleName}</span>
+                  <span className="text-sm font-semibold text-gray-800 leading-none">
+                    {fullName.split(" ").pop()}
+                  </span>
+                  <span className="text-[10px] text-gray-400 mt-0.5 font-medium">
+                    {roleName}
+                  </span>
                 </div>
               </button>
             </Popover.Trigger>
@@ -99,13 +117,21 @@ export default function HeaderClient({ account }: Props) {
                     <div className="flex items-center gap-4">
                       <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#6AB04C] text-white text-xl font-bold shadow-sm">
                         {avatarUrl ? (
-                          <Image src={avatarUrl} alt={fullName} width={56} height={56} className="rounded-2xl object-cover" />
+                          <Image
+                            src={avatarUrl}
+                            alt={fullName}
+                            width={56}
+                            height={56}
+                            className="rounded-2xl object-cover"
+                          />
                         ) : (
                           <span>{initials}</span>
                         )}
                       </div>
                       <div className="min-w-0">
-                        <p className="font-bold text-gray-900 text-base truncate">{fullName}</p>
+                        <p className="font-bold text-gray-900 text-base truncate">
+                          {fullName}
+                        </p>
                         {email && (
                           <p className="text-xs text-gray-500 flex items-center gap-1 mt-0.5 truncate">
                             <Mail size={11} />

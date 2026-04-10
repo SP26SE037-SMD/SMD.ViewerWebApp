@@ -4,7 +4,7 @@ import {
   CloSessionMappingType,
   SyllabusSessionType,
 } from "@/schemaValidations/syllabus.schema";
-import TableSection from "@/components/syllabus/table-section";
+import TableSection from "@/components/table-section";
 
 type Props = {
   syllabusId: string;

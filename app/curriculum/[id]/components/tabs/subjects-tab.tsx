@@ -1,13 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import subjectApiRequest from "@/apiRequests/subject";
-import { ChevronDown, Clock, Layers } from "lucide-react";
+import { ChevronDown, Clock, GitMerge, Layers } from "lucide-react";
 import curriculumApiRequest from "@/apiRequests/curriculum";
 import { CurriculumSubjectType } from "@/schemaValidations/curriculum.schema";
+import { useParams, useRouter } from "next/navigation";
 
 type Props = {
   curriculumId: string;
-  onNavigateSyllabus: (subjectCode: string) => void;
+  onNavigateSyllabus: (subjectId: string) => void;
   onNavigateCombo: (subjectCode: string) => void;
 };
 
@@ -20,6 +21,9 @@ export default function SubjectsTab({
   onNavigateSyllabus,
   onNavigateCombo,
 }: Props) {
+  const router = useRouter();
+  const params = useParams();
+  const id = params.id as string;
   const [subjects, setSubjects] = useState<CurriculumSubjectType[]>([]);
   const [subjectPrerequisites, setSubjectPrerequisites] = useState<
     Record<string, string[]>
@@ -153,10 +157,17 @@ export default function SubjectsTab({
     >
       {sortedSemesters.length > 0 ? (
         <>
-          <div className="flex items-center gap-3 mb-5">
+          <div className="flex items-center justify-between gap-3 mb-5">
             <span className="px-3 py-1 text-xs font-bold rounded-full bg-[#4caf50]/10 text-[#4caf50]">
               {totalSubjects} subjects · {totalCredits} credits
             </span>
+            <button
+              onClick={() => router.push(`/curriculum/${id}/graph`)}
+              className="hidden md:inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#059669] hover:bg-[#047857] text-white text-sm font-bold shadow-sm transition-all"
+            >
+              <GitMerge size={16} />
+              View subject graph
+            </button>
           </div>
 
           <div className="space-y-4">
@@ -236,7 +247,7 @@ export default function SubjectsTab({
                                   if (isCombo) {
                                     onNavigateCombo(subject.subjectCode);
                                   } else {
-                                    onNavigateSyllabus(subject.subjectCode);
+                                    onNavigateSyllabus(subject.subjectId);
                                   }
                                 }}
                                 className={`px-5 py-4 transition-colors group cursor-pointer ${

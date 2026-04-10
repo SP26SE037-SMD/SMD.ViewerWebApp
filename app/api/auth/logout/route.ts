@@ -39,7 +39,7 @@ export async function POST(request: Request) {
     const result = await authApiRequest.logoutFromNextServerToServer(
       sessionToken.value,
     );
-    return Response.json(result.payload, {
+    return Response.json(result?.payload, {
       status: 200,
       headers: {
         // Xóa cookie sessionToken khi đăng xuất

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import subjectApiRequest from "@/apiRequests/subject";
-import TableSection from "@/components/syllabus/table-section";
+import TableSection from "@/components/table-section";
 import { SubjectSourceType } from "@/schemaValidations/subject.schema";
 import { ExternalLink } from "lucide-react";
 
