@@ -1,22 +1,21 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import curriculumApiRequest from "@/apiRequests/curriculum";
 import { motion, AnimatePresence } from "framer-motion";
+import SearchBar from "@/components/search-bar";
+import PageHeader from "@/components/page-header";
 import {
-  Search,
-  X,
+  ArrowRight,
   BookMarked,
   Calendar,
   ChevronLeft,
   ChevronRight,
-  ChevronDown,
-  ArrowLeft,
 } from "lucide-react";
 import { CurriculumContentType } from "@/schemaValidations/curriculum.schema";
 
-function SearchContent() {
+export default function CurriculumContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const searchQuery =
@@ -38,7 +37,6 @@ function SearchContent() {
   const [searchType, setSearchType] = useState<"name" | "code">(
     searchByQuery === "code" ? "code" : "name",
   );
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   useEffect(() => {
     setLocalSearch(searchQuery);
@@ -95,140 +93,37 @@ function SearchContent() {
 
   return (
     <div className="min-h-screen bg-[#f8fafb] font-[Lexend]">
-      <div className="bg-white border-b border-gray-100">
-        <div className="max-w-6xl mx-auto px-4 py-8">
-          <button
-            onClick={() => router.back()}
-            className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-800 mb-5 group transition-colors"
-          >
-            <ArrowLeft
-              size={18}
-              className="group-hover:-translate-x-1 transition-transform"
-            />
-            Back
-          </button>
-          <div className="flex items-center gap-3 mb-1">
-            <div className="p-2.5 rounded-2xl bg-[#4caf50]/10">
-              <BookMarked
-                size={22}
-                className="text-[#4caf50]"
-                strokeWidth={1.7}
-              />
-            </div>
-            <div>
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">
-                Curriculum
-              </p>
-              <h1 className="text-2xl font-bold text-gray-900 font-[Bricolage_Grotesque]">
-                Curriculum
-              </h1>
-            </div>
-          </div>
-          {totalElements > 0 && (
-            <p className="text-sm text-gray-500 mt-2 ml-14">
-              {searchQuery ? `Search results — ` : ""}
-              <span className="font-semibold text-gray-700">
-                {totalElements}
-              </span>{" "}
-              curriculums
-            </p>
-          )}
-        </div>
-      </div>
+      <PageHeader
+        title="Curriculum"
+        description="Search Curriculum"
+        icon={
+          <BookMarked size={22} className="text-[#4caf50]" strokeWidth={1.7} />
+        }
+      />
 
       <div className="max-w-6xl mx-auto px-4 py-8">
-        <form onSubmit={handleSearch} className="mb-8">
-          <div className="flex flex-col md:flex-row gap-3">
-            <div className="flex-1 flex items-center bg-white rounded-3xl border border-gray-200 focus-within:border-[#4caf50]/50 focus-within:ring-2 focus-within:ring-[#4caf50]/20 shadow-sm transition-all p-1.5 min-w-0">
-              <div className="relative">
-                <button
-                  type="button"
-                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className="flex items-center gap-2 px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded-2xl text-sm font-bold text-gray-700 transition-all min-w-20 justify-between"
-                >
-                  {searchType === "name" ? "Name" : "Code"}
-                  <motion.div
-                    animate={{ rotate: isDropdownOpen ? 180 : 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <ChevronDown size={16} className="text-gray-400" />
-                  </motion.div>
-                </button>
-
-                <AnimatePresence>
-                  {isDropdownOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 5, scale: 1 }}
-                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                      className="absolute top-full left-0 z-50 mt-1 w-32 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden"
-                    >
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setSearchType("name");
-                          setIsDropdownOpen(false);
-                        }}
-                        className={`w-full text-left px-4 py-3 text-sm font-bold transition-colors ${searchType === "name" ? "bg-[#4caf50]/10 text-[#4caf50]" : "hover:bg-gray-50 text-gray-600"}`}
-                      >
-                        Name
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setSearchType("code");
-                          setIsDropdownOpen(false);
-                        }}
-                        className={`w-full text-left px-4 py-3 text-sm font-bold transition-colors ${searchType === "code" ? "bg-[#4caf50]/10 text-[#4caf50]" : "hover:bg-gray-50 text-gray-600"}`}
-                      >
-                        Code
-                      </button>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-
-              <div className="flex-1 flex items-center px-4 gap-3">
-                <Search size={18} className="text-gray-400 shrink-0" />
-                <input
-                  value={localSearch}
-                  onChange={(e) => setLocalSearch(e.target.value)}
-                  placeholder={
-                    searchType === "name"
-                      ? "Enter curriculum name..."
-                      : "Enter curriculum code..."
-                  }
-                  className="flex-1 text-sm outline-none text-gray-800 bg-transparent placeholder-gray-400"
-                />
-                {localSearch && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setLocalSearch("");
-                      const params = new URLSearchParams(
-                        searchParams.toString(),
-                      );
-                      params.delete("search");
-                      params.delete("searchBy");
-                      params.delete("name");
-                      params.delete("code");
-                      router.push(`/curriculum?${params.toString()}`);
-                    }}
-                    className="p-1 hover:bg-gray-100 rounded-lg text-gray-400 transition-colors"
-                  >
-                    <X size={16} />
-                  </button>
-                )}
-              </div>
-            </div>
-            <button
-              type="submit"
-              className="px-10 py-4 bg-[#4caf50] hover:bg-[#43a047] text-white text-sm font-bold rounded-3xl shadow-xl shadow-[#4caf50]/20 transition-all active:scale-95 shrink-0"
-            >
-              Search
-            </button>
-          </div>
-        </form>
+        <SearchBar
+          className="mb-8"
+          value={localSearch}
+          onValueChange={setLocalSearch}
+          searchType={searchType}
+          onSearchTypeChange={setSearchType}
+          onSubmit={handleSearch}
+          onClear={() => {
+            setLocalSearch("");
+            const params = new URLSearchParams(searchParams.toString());
+            params.delete("search");
+            params.delete("searchBy");
+            params.delete("name");
+            params.delete("code");
+            router.push(`/curriculum?${params.toString()}`);
+          }}
+          namePlaceholder="Enter curriculum name..."
+          codePlaceholder="Enter curriculum code..."
+          inputWrapperClassName="focus-within:border-[#4caf50]/50 focus-within:ring-2 focus-within:ring-[#4caf50]/20"
+          submitButtonClassName="bg-[#4caf50] hover:bg-[#43a047] shadow-xl shadow-[#4caf50]/20"
+          activeOptionClassName="bg-[#4caf50]/10 text-[#4caf50]"
+        />
 
         <AnimatePresence mode="wait">
           {loading ? (
@@ -268,6 +163,7 @@ function SearchContent() {
                         strokeWidth={1.7}
                       />
                     </div>
+                    <ArrowRight size={18} className="text-[#4caf50]" />
                   </div>
                   <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">
                     {curr.curriculumCode}
@@ -365,20 +261,5 @@ function SearchContent() {
         )}
       </div>
     </div>
-  );
-}
-
-export default function SearchCurriculum() {
-  return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen bg-[#f8fafb] flex flex-col items-center justify-center gap-3">
-          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#3D7EE8]" />
-          <p className="text-sm text-gray-400">Loading...</p>
-        </div>
-      }
-    >
-      <SearchContent />
-    </Suspense>
   );
 }
