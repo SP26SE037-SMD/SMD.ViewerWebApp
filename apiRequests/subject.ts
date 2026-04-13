@@ -6,7 +6,6 @@ import {
   SubjectSourceResType,
   SubjectResType,
   CloResType,
-  SubjectPrerequisiteRequirementResType,
 } from "@/schemaValidations/subject.schema";
 
 const subjectApiRequest = {
@@ -35,11 +34,6 @@ const subjectApiRequest = {
   getCloPloMappingsBySubjectId: (subjectId: string) => {
     return http.get<CloPloMappingResType>(
       `/api/clo-plo-mappings/subject/${subjectId}`,
-    );
-  },
-  getPrerequisitesBySubjectId: (subjectId: string) => {
-    return http.get<SubjectPrerequisiteRequirementResType>(
-      `/api/prerequisites/${subjectId}/requirements`,
     );
   },
 };

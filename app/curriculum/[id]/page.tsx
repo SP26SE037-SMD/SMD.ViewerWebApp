@@ -2,13 +2,13 @@
 
 import { AnimatePresence } from "framer-motion";
 import { useParams, useRouter } from "next/navigation";
-import CurriculumHeader from "../../../components/curriculum/curriculum-header";
 import CurriculumTabs from "@/components/curriculum/curriculum-tabs";
-import GeneralTab from "./components/tabs/general-tab";
-import PlosTab from "./components/tabs/plos-tab";
-import SubjectsTab from "./components/tabs/subjects-tab";
-import { useCurriculumDetail } from "./hooks/use-curriculum-detail";
 import { BookMarked } from "lucide-react";
+import SubjectsTab from "@/app/curriculum/[id]/components/tabs/subjects-tab";
+import { useCurriculumDetail } from "@/app/curriculum/[id]/hooks/use-curriculum-detail";
+import CurriculumHeader from "@/components/curriculum/curriculum-header";
+import GeneralTab from "@/app/curriculum/[id]/components/tabs/general-tab";
+import PlosTab from "@/app/curriculum/[id]/components/tabs/plos-tab";
 
 export default function CurriculumDetailPage() {
   const params = useParams();
@@ -74,11 +74,8 @@ export default function CurriculumDetailPage() {
           {activeTab === "subjects" && (
             <SubjectsTab
               curriculumId={curriculum.curriculumId}
-              onNavigateSyllabus={(subjectCode) =>
-                router.push(`/syllabus/${subjectCode}`)
-              }
-              onNavigateCombo={(subjectCode) =>
-                router.push(`/curriculum/${id}/combo/${subjectCode}`)
+              onNavigateSyllabus={(subjectId) =>
+                router.push(`/syllabus/${subjectId}`)
               }
             />
           )}
