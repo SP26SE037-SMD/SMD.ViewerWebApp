@@ -316,7 +316,7 @@ export default function PrerequisiteGraphPage() {
             {comboGroups.length > 0 && (
               <div className="flex items-center gap-2">
                 <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">
-                  Combo group
+                  Combo:
                 </span>
                 <div className="relative">
                   <select
@@ -326,7 +326,7 @@ export default function PrerequisiteGraphPage() {
                     }
                     className="appearance-none w-56 rounded-xl border border-gray-200 bg-white px-3 py-2 pr-10 text-sm text-gray-700 shadow-sm focus:border-[#4caf50] focus:outline-none"
                   >
-                    <option value="">Hide combo rows</option>
+                    <option value="">No Combo selected</option>
                     {comboGroups.map((group) => (
                       <option key={group.groupId} value={group.groupId}>
                         {group.groupCode} - {group.groupName}

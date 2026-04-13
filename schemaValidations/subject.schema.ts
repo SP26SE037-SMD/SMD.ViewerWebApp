@@ -46,6 +46,22 @@ export const SubjectPreRequisite = z.object({
   createdAt: z.string(),
 });
 
+export const SubjectPrerequisiteRequirement = z.object({
+  id: z.string(),
+  subjectCode: z.string(),
+  subjectName: z.string(),
+  prerequisiteSubjectCode: z.string(),
+  prerequisiteSubjectName: z.string(),
+  isMandatory: z.boolean(),
+  createdAt: z.string(),
+});
+
+export const SubjectPrerequisiteRequirementsRes = z.object({
+  status: z.number(),
+  message: z.string(),
+  data: z.array(SubjectPrerequisiteRequirement),
+});
+
 export const SubjectContent = z.object({
   subjectId: z.string(),
   subjectCode: z.string(),
@@ -142,3 +158,9 @@ export type CloType = z.infer<typeof Clo>;
 export type CloResType = z.infer<typeof CloRes>;
 export type CloPloMappingType = z.infer<typeof CloPloMapping>;
 export type CloPloMappingResType = z.infer<typeof CloPloMappingRes>;
+export type SubjectPrerequisiteRequirementType = z.infer<
+  typeof SubjectPrerequisiteRequirement
+>;
+export type SubjectPrerequisiteRequirementsResType = z.infer<
+  typeof SubjectPrerequisiteRequirementsRes
+>;

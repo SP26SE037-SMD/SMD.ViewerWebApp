@@ -3,6 +3,7 @@ import {
   SubjectBodyType,
   CloPloMappingResType,
   SubjectDetailResType,
+  SubjectPrerequisiteRequirementsResType,
   SubjectSourceResType,
   SubjectResType,
   CloResType,
@@ -34,6 +35,26 @@ const subjectApiRequest = {
   getCloPloMappingsBySubjectId: (subjectId: string) => {
     return http.get<CloPloMappingResType>(
       `/api/clo-plo-mappings/subject/${subjectId}`,
+    );
+  },
+  getPrerequisiteRequirementsByCode: (subjectCode: string) => {
+    return http.get<SubjectPrerequisiteRequirementsResType>(
+      `/api/prerequisites/code/${encodeURIComponent(subjectCode)}/requirements`,
+      {
+        headers: {
+          accept: "*/*",
+        },
+      },
+    );
+  },
+  getDependentSubjectsByPrerequisiteCode: (subjectCode: string) => {
+    return http.get<SubjectPrerequisiteRequirementsResType>(
+      `/api/prerequisites/dependents/code/${encodeURIComponent(subjectCode)}/dependents`,
+      {
+        headers: {
+          accept: "*/*",
+        },
+      },
     );
   },
 };

@@ -22,7 +22,7 @@ export const homeItems = [
   {
     id: 3,
     title: "Learning Path",
-    desc: "Explore a clearly structured learning path for subject.",
+    desc: "Check mandatory subjects that must be completed first.",
     icon: Map,
     bg: "bg-white",
     iconBg: "bg-[#6AB04C]",
@@ -30,8 +30,8 @@ export const homeItems = [
   },
   {
     id: 4,
-    title: "Pre-requisites",
-    desc: "Check mandatory subjects that must be completed first.",
+    title: "Is Pre-Requisite",
+    desc: "Explore that subject is the pre-requisite of which subjects.",
     icon: GraduationCap,
     bg: "bg-white",
     iconBg: "bg-[#6AB04C]",
