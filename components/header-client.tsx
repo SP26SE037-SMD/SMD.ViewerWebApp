@@ -1,15 +1,15 @@
 "use client";
 
-import { Bell, Mail, ShieldCheck, User, LogOut } from "lucide-react";
+import { Mail, ShieldCheck, LogOut } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import * as Popover from "@radix-ui/react-popover";
 import { motion } from "motion/react";
-import { useState, useEffect } from "react";
 import type { AccountMeResType } from "@/schemaValidations/account.schema";
 import ButtonLogout from "./button-logout";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/provider/store";
+import Notification from "./notification";
 
 type Props = {
   account: AccountMeResType["data"] | null;
@@ -18,28 +18,15 @@ type Props = {
 export default function HeaderClient({ account }: Props) {
   const reduxUser = useSelector((state: RootState) => state.user.user);
 
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  const avatarUrl = isMounted
-    ? reduxUser?.avatarUrl || account?.avatarUrl
-    : account?.avatarUrl;
-  const fullName = isMounted
-    ? reduxUser?.fullName || account?.fullName || "User"
-    : account?.fullName || "User";
-  const email = isMounted
-    ? reduxUser?.email || account?.email || ""
-    : account?.email || "";
-  const roleName = isMounted
-    ? (typeof reduxUser?.role === "string"
-        ? reduxUser.role
-        : reduxUser?.role?.roleName) ||
-      account?.role?.roleName ||
-      "GUEST"
-    : account?.role?.roleName || "GUEST";
+  const avatarUrl = reduxUser?.avatarUrl || account?.avatarUrl;
+  const fullName = reduxUser?.fullName || account?.fullName || "User";
+  const email = reduxUser?.email || account?.email || "";
+  const roleName =
+    (typeof reduxUser?.role === "string"
+      ? reduxUser.role
+      : reduxUser?.role?.roleName) ||
+    account?.role?.roleName ||
+    "GUEST";
 
   const initials = fullName
     .split(" ")
@@ -71,11 +58,7 @@ export default function HeaderClient({ account }: Props) {
 
         {/* Right side */}
         <div className="flex items-center gap-2">
-          {/* Notification */}
-          <button className="relative p-2 rounded-xl text-gray-500 hover:bg-gray-100 transition-colors">
-            <Bell size={20} strokeWidth={1.7} />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-red-500 border-2 border-white" />
-          </button>
+          <Notification />
 
           {/* Account */}
           <Popover.Root>
