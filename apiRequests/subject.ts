@@ -3,10 +3,10 @@ import {
   SubjectBodyType,
   CloPloMappingResType,
   SubjectDetailResType,
+  SubjectPrerequisiteRequirementsResType,
   SubjectSourceResType,
   SubjectResType,
   CloResType,
-  SubjectPrerequisiteRequirementResType,
 } from "@/schemaValidations/subject.schema";
 
 const subjectApiRequest = {
@@ -37,9 +37,24 @@ const subjectApiRequest = {
       `/api/clo-plo-mappings/subject/${subjectId}`,
     );
   },
-  getPrerequisitesBySubjectId: (subjectId: string) => {
-    return http.get<SubjectPrerequisiteRequirementResType>(
-      `/api/prerequisites/${subjectId}/requirements`,
+  getPrerequisiteRequirementsByCode: (subjectCode: string) => {
+    return http.get<SubjectPrerequisiteRequirementsResType>(
+      `/api/prerequisites/code/${encodeURIComponent(subjectCode)}/requirements`,
+      {
+        headers: {
+          accept: "*/*",
+        },
+      },
+    );
+  },
+  getDependentSubjectsByPrerequisiteCode: (subjectCode: string) => {
+    return http.get<SubjectPrerequisiteRequirementsResType>(
+      `/api/prerequisites/dependents/code/${encodeURIComponent(subjectCode)}/dependents`,
+      {
+        headers: {
+          accept: "*/*",
+        },
+      },
     );
   },
 };

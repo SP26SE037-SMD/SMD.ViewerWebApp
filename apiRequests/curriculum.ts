@@ -1,9 +1,10 @@
 import http from "@/lib/http";
 import {
+  CurriculumGroupResType,
   CurriculumDetailResType,
   CurriculumPloResType,
   CurriculumResType,
-  CurriculumSubjectResType,
+  CurriculumSemesterMappingsResType,
 } from "@/schemaValidations/curriculum.schema";
 
 const curriculumApiRequest = {
@@ -29,24 +30,22 @@ const curriculumApiRequest = {
   getCurriculumById: (id: string) => {
     return http.get<CurriculumDetailResType>(`/api/curriculums/${id}`);
   },
+  getSemesterMappingsByCurriculumId: (curriculumId: string) => {
+    const params = new URLSearchParams();
+    params.set("curriculumId", curriculumId);
+    return http.get<CurriculumSemesterMappingsResType>(
+      `/api/curriculum-group-subjects/semester-mappings?${params.toString()}`,
+    );
+  },
+  getGroupById: (groupId: string) => {
+    return http.get<CurriculumGroupResType>(`/api/group/${groupId}`);
+  },
   getPlosByCurriculumId: (curriculumId: string, page = 0, size = 10) => {
     const params = new URLSearchParams();
     params.set("page", String(page));
     params.set("size", String(size));
     return http.get<CurriculumPloResType>(
       `/api/plos/curriculum/${curriculumId}?${params.toString()}`,
-    );
-  },
-  getSubjectsByCurriculumId: (curriculumId: string, page = 0, size = 10) => {
-    const params = new URLSearchParams();
-    params.set("searchType", "curriculum");
-    params.set("searchId", curriculumId);
-    params.set("page", String(page));
-    params.set("size", String(size));
-    params.append("sort", "semester");
-    params.append("sort", "asc");
-    return http.get<CurriculumSubjectResType>(
-      `/api/curriculum-group-subjects/subjects?${params.toString()}`,
     );
   },
 };
