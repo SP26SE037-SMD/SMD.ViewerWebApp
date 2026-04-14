@@ -118,6 +118,7 @@ export const SubjectSourceRes = z.object({
 
 export const Clo = z.object({
   cloId: z.string(),
+  cloCode: z.string(),
   cloName: z.string(),
   description: z.string().nullable().optional(),
   bloomLevel: z.string(),
@@ -134,10 +135,7 @@ export const CloRes = z.object({
 export const CloPloMapping = z.object({
   id: z.string(),
   cloId: z.string(),
-  cloName: z.string(),
   ploId: z.string(),
-  ploName: z.string(),
-  contributionLevel: z.string(),
   createdAt: z.string(),
 });
 

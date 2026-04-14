@@ -1,15 +1,24 @@
 import { SubjectDetailType } from "@/schemaValidations/subject.schema";
 import { SyllabusContentType } from "@/schemaValidations/syllabus.schema";
-import { Award, ArrowLeft } from "lucide-react";
+import { ArrowLeft, BellPlus } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 type Props = {
   syllabus: SyllabusContentType | null;
   subjectDetail: SubjectDetailType | null;
+  isWishlisted?: boolean;
 };
 
-export default function SyllabusHeader({ syllabus, subjectDetail }: Props) {
+export default function SyllabusHeader({
+  syllabus,
+  subjectDetail,
+  isWishlisted = false,
+}: Props) {
   const router = useRouter();
+
+  const wishlistButtonClassName = isWishlisted
+    ? "shrink-0 inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border-2 border-white bg-[#059669] text-white text-xs font-bold shadow-sm transition-colors hover:bg-[#047857]"
+    : "shrink-0 inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border-2 border-[#059669] bg-white text-[#059669] text-xs font-bold transition-colors hover:bg-[#ecfdf5]";
 
   return (
     <div className="bg-white border-b border-gray-100 top-0 z-30">
@@ -30,13 +39,15 @@ export default function SyllabusHeader({ syllabus, subjectDetail }: Props) {
                 {syllabus?.syllabusName || "N/A"}
               </p>
             </div>
-            {/* <p className="text-sm text-gray-500 font-medium">
-              {subjectDetail?.subjectCode || "N/A"}
-            </p> */}
           </div>
-          <span className="shrink-0 px-4 py-1.5 rounded-full bg-[#4caf50]/10 text-[#4caf50] text-xs font-bold border border-[#4caf50]/30">
-            {subjectDetail?.credits || "N/A"} Credits
-          </span>
+          <button
+            type="button"
+            className={wishlistButtonClassName}
+            aria-label="Subscribe subject"
+            title="Subscribe subject"
+          >
+            <BellPlus size={14} />
+          </button>
         </div>
       </div>
     </div>

@@ -48,6 +48,9 @@ const curriculumApiRequest = {
       `/api/plos/curriculum/${curriculumId}?${params.toString()}`,
     );
   },
+  getPloDetail: (ploId: string) => {
+    return http.get<CurriculumPloResType>(`/api/plos/${ploId}`);
+  },
 };
 
 export default curriculumApiRequest;

@@ -6,4 +6,5 @@ export type SyllabusTab =
   | "clos"
   | "sessions"
   | "chapterMaterials"
-  | "assessments";
+  | "assessments"
+  | "compare";

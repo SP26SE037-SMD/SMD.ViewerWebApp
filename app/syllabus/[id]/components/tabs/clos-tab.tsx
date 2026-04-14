@@ -1,13 +1,44 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import subjectApiRequest from "@/apiRequests/subject";
-import { CloPloMappingType } from "@/schemaValidations/subject.schema";
-import { CloType } from "@/schemaValidations/subject.schema";
+import curriculumApiRequest from "@/apiRequests/curriculum";
+import TableSection from "@/components/table-section";
+import { CloPloMappingType, CloType } from "@/schemaValidations/subject.schema";
+import { CurriculumPloType } from "@/schemaValidations/curriculum.schema";
+
 type Props = {
   subjectId: string;
 };
 
+const unwrapArray = (payload: unknown) => {
+  if (!payload || typeof payload !== "object") return [];
+
+  const firstData = (payload as { data?: unknown }).data;
+  if (Array.isArray(firstData)) return firstData;
+
+  if (firstData && typeof firstData === "object") {
+    const nestedData = (firstData as { content?: unknown; data?: unknown })
+      .content;
+    if (Array.isArray(nestedData)) return nestedData;
+
+    const nestedData2 = (firstData as { data?: unknown }).data;
+    if (Array.isArray(nestedData2)) return nestedData2;
+  }
+
+  return [];
+};
+
+const unwrapSingle = (payload: unknown) => {
+  if (!payload || typeof payload !== "object") return null;
+
+  const firstData = (payload as { data?: unknown }).data;
+  if (!firstData || typeof firstData !== "object") return null;
+
+  return firstData as Record<string, unknown>;
+};
+
 export default function ClosTab({ subjectId }: Props) {
   const [clos, setClos] = useState<CloType[]>([]);
+  const [plos, setPlos] = useState<CurriculumPloType[]>([]);
   const [mappings, setMappings] = useState<CloPloMappingType[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -15,33 +46,46 @@ export default function ClosTab({ subjectId }: Props) {
     const fetchMappings = async () => {
       setLoading(true);
       try {
-        const cloRes = await subjectApiRequest.getCloBySubjectId(subjectId);
-        const mappingRes =
-          await subjectApiRequest.getCloPloMappingsBySubjectId(subjectId);
+        const [cloRes, mappingRes] = await Promise.all([
+          subjectApiRequest.getCloBySubjectId(subjectId),
+          subjectApiRequest.getCloPloMappingsBySubjectId(subjectId),
+        ]);
 
-        const unwrapArray = (payload: unknown) => {
-          if (!payload || typeof payload !== "object") return [];
-
-          const firstData = (payload as { data?: unknown }).data;
-          if (Array.isArray(firstData)) return firstData;
-
-          if (firstData && typeof firstData === "object") {
-            const nestedData = (firstData as { data?: unknown }).data;
-            if (Array.isArray(nestedData)) return nestedData;
-          }
-
-          return [];
-        };
-
-        const mappingData = unwrapArray(mappingRes?.payload) as CloPloMappingType[];
+        const mappingData = unwrapArray(
+          mappingRes?.payload,
+        ) as CloPloMappingType[];
         const cloData = unwrapArray(cloRes?.payload) as CloType[];
+
+        const uniquePloIds = Array.from(
+          new Set(mappingData.map((mapping) => mapping.ploId)),
+        );
+
+        const ploResults = await Promise.all(
+          uniquePloIds.map(async (ploId) => {
+            try {
+              const ploRes = await curriculumApiRequest.getPloDetail(ploId);
+              const ploPayload = unwrapSingle(ploRes?.payload);
+
+              if (ploPayload && Array.isArray(ploPayload.content)) {
+                return ploPayload.content[0] as CurriculumPloType | undefined;
+              }
+
+              return ploPayload as CurriculumPloType | null;
+            } catch (error) {
+              console.error(`Failed to fetch PLO detail for ${ploId}`, error);
+              return null;
+            }
+          }),
+        );
 
         setMappings(mappingData);
         setClos(cloData);
+        setPlos(ploResults.filter(Boolean) as CurriculumPloType[]);
       } catch (error) {
         console.error("Failed to fetch CLO-PLO mappings", error);
         setMappings([]);
         setClos([]);
+        setPlos([]);
       } finally {
         setLoading(false);
       }
@@ -50,56 +94,104 @@ export default function ClosTab({ subjectId }: Props) {
     fetchMappings();
   }, [subjectId]);
 
-  const cloById = new Map(clos.map((clo) => [clo.cloId, clo]));
-  const uniqueMappingsByCloId = Array.from(
-    new Map(mappings.map((mapping) => [mapping.cloId, mapping])).values(),
+  const cloById = useMemo(
+    () => new Map(clos.map((clo) => [clo.cloId, clo])),
+    [clos],
+  );
+
+  const ploById = useMemo(
+    () => new Map(plos.map((plo) => [plo.ploId, plo])),
+    [plos],
+  );
+
+  const mappingByCloId = useMemo(() => {
+    const grouped = new Map<string, CloPloMappingType[]>();
+
+    mappings.forEach((mapping) => {
+      const current = grouped.get(mapping.cloId) || [];
+      current.push(mapping);
+      grouped.set(mapping.cloId, current);
+    });
+
+    return grouped;
+  }, [mappings]);
+
+  const allCloIds = useMemo(
+    () =>
+      Array.from(
+        new Set([
+          ...clos.map((clo) => clo.cloId),
+          ...mappings.map((mapping) => mapping.cloId),
+        ]),
+      ),
+    [clos, mappings],
   );
 
   return (
-    <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
-      <div className="px-6 py-5 border-b border-gray-100 bg-gray-50/50 flex items-center justify-between">
-        <h3 className="font-bold text-gray-900">
-          CLO - PLO Mappings ({uniqueMappingsByCloId.length})
-        </h3>
-      </div>
-      <div className="divide-y divide-gray-100">
+    <TableSection title={`${allCloIds.length} CLOs`}>
+      <thead>
+        <tr className="bg-white border-b border-gray-100 text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+          <th className="px-6 py-4">CLO Code</th>
+          <th className="px-6 py-4 w-220">CLO Description</th>
+          <th className="px-6 py-4">PLO Mapping</th>
+        </tr>
+      </thead>
+      <tbody className="divide-y divide-gray-50">
         {loading && (
-          <div className="p-6 text-sm text-gray-500">Loading mappings...</div>
+          <tr>
+            <td className="px-6 py-6 text-sm text-gray-500" colSpan={6}>
+              Loading clo...
+            </td>
+          </tr>
         )}
         {!loading && clos.length === 0 && (
-          <div className="p-6 text-sm text-gray-500">
-            No CLOs available for this subject.
-          </div>
+          <tr>
+            <td className="px-6 py-6 text-sm text-gray-500" colSpan={6}>
+              No clo found for this syllabus.
+            </td>
+          </tr>
         )}
-        {!loading && clos.length > 0 && uniqueMappingsByCloId.length === 0 && (
-          <div className="p-6 text-sm text-gray-500">
-            No CLO - PLO mappings found for this subject.
-          </div>
-        )}
-        {!loading && clos.length > 0 &&
-          uniqueMappingsByCloId.map((mapping) => (
-            <div
-              key={mapping.cloId}
-              className="p-6 flex flex-col sm:flex-row gap-4 sm:gap-6 hover:bg-gray-50/30 transition-colors"
-            >
-              <div className="shrink-0">
-                <span className="inline-flex px-3 py-1.5 rounded-xl border border-[#4caf50]/30 bg-white text-[#4caf50] font-bold text-sm min-w-20 justify-center tracking-widest">
-                  {mapping.cloName}
-                </span>
-                <span className="inline-flex px-3 py-1.5 rounded-xl border border-[#4caf50]/30 bg-white text-[#4caf50] font-bold text-sm min-w-20 justify-center tracking-widest">
-                  {cloById.get(mapping.cloId)?.description ||
-                    "No description available"}
-                </span>
-              </div>
-              <div className="flex-1 text-sm text-gray-700 leading-relaxed font-medium space-y-1">
-                <p>
-                  <span className="font-semibold text-gray-900">PLO:</span>{" "}
-                  {mapping.ploName}
-                </p>
-              </div>
-            </div>
-          ))}
-      </div>
-    </div>
+        {!loading &&
+          allCloIds.map((cloId) => {
+            const clo = cloById.get(cloId);
+            const mappingRows = mappingByCloId.get(cloId) || [];
+
+            return (
+              <tr
+                key={cloId}
+                className="align-top hover:bg-[#f8fff8] transition-colors"
+              >
+                <td className="px-6 py-4 font-semibold text-gray-900 whitespace-nowrap">
+                  {clo?.cloCode || "N/A"}
+                </td>
+                <td className="px-6 py-4 text-gray-700">
+                  {clo?.description || "N/A"}
+                </td>
+                <td className="px-6 py-4 text-gray-700 space-y-2">
+                  {mappingRows.length > 0 ? (
+                    mappingRows.map((mapping) => {
+                      const plo = ploById.get(mapping.ploId);
+                      const ploDescription = plo?.description || "N/A";
+
+                      return (
+                        <div key={mapping.id} className="space-y-1">
+                          <div
+                            className="font-semibold text-gray-900 cursor-help"
+                            title={ploDescription}
+                          >
+                            {plo?.ploCode || "N/A"}
+                          </div>
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <span>N/A</span>
+                  )}
+                </td>
+              </tr>
+            );
+          })}
+      </tbody>
+    </TableSection>
   );
 }
