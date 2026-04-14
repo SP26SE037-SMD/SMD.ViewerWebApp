@@ -4,11 +4,10 @@ import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, BookOpen, AlertCircle, X, Copy } from "lucide-react";
 import { toast } from "sonner";
-
-import { renderChapterBlock } from "./_components/chapter-block-renderer";
-import { useChapterViewerData } from "./_hooks/use-chapter-viewer-data";
-import { mapMaterialBlocks } from "./_utils/block-mappers";
-import { paginateBlocks } from "./_utils/pagination";
+import { useChapterViewerData } from "@/app/syllabus/[id]/chapter/[chapterId]/hooks/use-chapter-viewer-data";
+import { mapMaterialBlocks } from "@/app/syllabus/[id]/chapter/[chapterId]/utils/block-mappers";
+import { paginateBlocks } from "@/app/syllabus/[id]/chapter/[chapterId]/utils/pagination";
+import { renderChapterBlock } from "@/app/syllabus/[id]/chapter/[chapterId]/components/chapter-block-renderer";
 
 export default function ChapterViewerPage({
   params,

@@ -75,7 +75,7 @@ export default function SourcesTab({ subjectId }: Props) {
                 </p>
                 <div className="mt-2 sm:hidden">
                   <span className="inline-flex px-2.5 py-1 bg-[#eaf7e8] text-[#3d6b2c] text-[10px] font-bold uppercase rounded-lg border border-[#3d6b2c]/20">
-                    {source.type || "-"}
+                    {source.type || "N/A"}
                   </span>
                 </div>
                 <div className="mt-2 space-y-1 text-xs text-gray-500 md:hidden">

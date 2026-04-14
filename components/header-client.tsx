@@ -1,6 +1,6 @@
 "use client";
 
-import { Mail, ShieldCheck, LogOut } from "lucide-react";
+import { Mail, ShieldCheck, LogOut, BellPlus } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import * as Popover from "@radix-ui/react-popover";
@@ -130,8 +130,16 @@ export default function HeaderClient({ account }: Props) {
                   </div>
 
                   {/* Actions */}
+
                   <div className="p-2">
-                    <ButtonLogout className="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold text-red-500 hover:bg-red-50 transition-colors">
+                    <Link
+                      href="/wishlist"
+                      className="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold text-emerald-500 hover:bg-emerald-100 transition-colors"
+                    >
+                      <BellPlus />
+                      Wishlist
+                    </Link>
+                    <ButtonLogout className="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold text-red-500 hover:bg-red-100 transition-colors">
                       <LogOut size={17} />
                       Log out
                     </ButtonLogout>

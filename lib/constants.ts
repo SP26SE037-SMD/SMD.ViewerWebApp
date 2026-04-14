@@ -22,6 +22,7 @@ export const TabSyllabus: {
   { id: "sessions", label: "Teaching Plan", icon: Calendar },
   { id: "chapterMaterials", label: "Course Materials", icon: BookOpen },
   { id: "assessments", label: "Assessments", icon: FileCheck2 },
+  { id: "compare", label: "Compare", icon: Info },
 ];
 
 export const TabCurriculum: {

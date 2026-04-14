@@ -87,7 +87,7 @@ export default function SessionsTab({ syllabusId }: Props) {
           sessions.map((s) => (
             <tr
               key={s.sessionId}
-              className="hover:bg-gray-50/50 transition-colors group"
+              className="hover:bg-[#f8fff8] transition-colors group"
             >
               <td className="px-6 py-4 text-center align-top">
                 <span className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-sm font-bold text-gray-600 mx-auto">
