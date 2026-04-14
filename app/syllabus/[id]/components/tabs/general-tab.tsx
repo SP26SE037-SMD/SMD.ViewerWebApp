@@ -73,7 +73,7 @@ export default function GeneralTab({ subjectDetail }: Props) {
                 Pre-Requisite
               </span>
               {getPreRequisiteText(subjectDetail?.preRequisite) !== "None" ? (
-                <span className="inline-flex px-2.5 py-1 rounded bg-red-50 text-red-600 text-xs font-bold uppercase tracking-wider">
+                <span className="inline-flex px-2.5 py-1 rounded bg-emerald-100 text-emerald-600 text-xs font-bold uppercase tracking-wider">
                   {getPreRequisiteText(subjectDetail?.preRequisite)}
                 </span>
               ) : (

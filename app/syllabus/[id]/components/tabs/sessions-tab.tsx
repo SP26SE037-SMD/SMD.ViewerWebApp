@@ -61,7 +61,7 @@ export default function SessionsTab({ syllabusId }: Props) {
       <thead>
         <tr className="bg-white border-b border-gray-100 text-[11px] font-bold text-gray-400 uppercase tracking-wider">
           <th className="px-6 py-4 whitespace-nowrap text-center">No</th>
-          <th className="px-6 py-4 w-1/3">Topic</th>
+          <th className="px-6 py-4 w-1/4">Topic</th>
           <th className="px-6 py-4">Teaching Methods</th>
           <th className="px-6 py-4">CLO</th>
           <th className="px-6 py-4">Content</th>
@@ -119,6 +119,11 @@ export default function SessionsTab({ syllabusId }: Props) {
                   ) : (
                     <span className="text-sm text-gray-400">-</span>
                   )}
+                </div>
+              </td>
+              <td className="px-6 py-4 align-top">
+                <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
+                  {s.content || "-"}
                 </div>
               </td>
               <td className="px-6 py-4 align-top">

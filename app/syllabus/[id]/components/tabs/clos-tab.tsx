@@ -33,7 +33,9 @@ export default function ClosTab({ subjectId }: Props) {
           return [];
         };
 
-        const mappingData = unwrapArray(mappingRes?.payload) as CloPloMappingType[];
+        const mappingData = unwrapArray(
+          mappingRes?.payload,
+        ) as CloPloMappingType[];
         const cloData = unwrapArray(cloRes?.payload) as CloType[];
 
         setMappings(mappingData);
@@ -59,7 +61,8 @@ export default function ClosTab({ subjectId }: Props) {
     <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
       <div className="px-6 py-5 border-b border-gray-100 bg-gray-50/50 flex items-center justify-between">
         <h3 className="font-bold text-gray-900">
-          CLO - PLO Mappings ({uniqueMappingsByCloId.length})
+          {/* CLO - PLO Mappings ({uniqueMappingsByCloId.length}) */}
+          CLO - PLO Mappings
         </h3>
       </div>
       <div className="divide-y divide-gray-100">
@@ -76,7 +79,8 @@ export default function ClosTab({ subjectId }: Props) {
             No CLO - PLO mappings found for this subject.
           </div>
         )}
-        {!loading && clos.length > 0 &&
+        {!loading &&
+          clos.length > 0 &&
           uniqueMappingsByCloId.map((mapping) => (
             <div
               key={mapping.cloId}
