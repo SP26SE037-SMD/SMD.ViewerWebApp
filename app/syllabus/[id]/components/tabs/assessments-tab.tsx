@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import syllabusApiRequest from "@/apiRequests/syllabus";
-import SectionCard from "@/components/section-card";
-import { SyllabusAssessmentType } from "@/schemaValidations/syllabus.schema";
+import TableSection from "@/components/table-section";
+import {
+  SyllabusAssessmentType,
+  CloAssessmentMappingType,
+} from "@/schemaValidations/syllabus.schema";
 
 type Props = {
   syllabusId: string;
@@ -9,6 +12,9 @@ type Props = {
 
 export default function AssessmentsTab({ syllabusId }: Props) {
   const [assessments, setAssessments] = useState<SyllabusAssessmentType[]>([]);
+  const [cloMappings, setCloMappings] = useState<
+    Record<string, CloAssessmentMappingType[]>
+  >({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -17,10 +23,28 @@ export default function AssessmentsTab({ syllabusId }: Props) {
       try {
         const res =
           await syllabusApiRequest.getAssessmentsBySyllabusId(syllabusId);
-        setAssessments(res?.payload?.data ?? []);
+        const assessmentsList = res?.payload?.data ?? [];
+        setAssessments(assessmentsList);
+
+        // Fetch CLO mappings for all assessments in parallel
+        const mappingsMap: Record<string, CloAssessmentMappingType[]> = {};
+        const promises = assessmentsList.map((ass) =>
+          syllabusApiRequest
+            .getCloAssessmentMappingsByAssessmentId(ass.assessmentId)
+            .then((res) => {
+              mappingsMap[ass.assessmentId] = res?.payload?.data ?? [];
+            })
+            .catch(() => {
+              mappingsMap[ass.assessmentId] = [];
+            }),
+        );
+
+        await Promise.all(promises);
+        setCloMappings(mappingsMap);
       } catch (error) {
         console.error("Failed to fetch assessments", error);
         setAssessments([]);
+        setCloMappings({});
       } finally {
         setLoading(false);
       }
@@ -30,79 +54,104 @@ export default function AssessmentsTab({ syllabusId }: Props) {
   }, [syllabusId]);
 
   return (
-    <SectionCard>
-      <div className="px-6 py-5 border-b border-gray-100 bg-gray-50/50 flex items-center justify-between">
-        <h3 className="font-bold text-gray-900">
-          Assessments ({assessments.length})
-        </h3>
-      </div>
-      <div className="divide-y divide-gray-100">
+    <TableSection title={`Assessments (${assessments.length})`}>
+      <thead>
+        <tr className="bg-white border-b border-gray-100 text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+          <th className="px-4 py-4">Category</th>
+          <th className="px-4 py-4">Type</th>
+          <th className="px-4 py-4">Part</th>
+          <th className="px-4 py-4">Weight</th>
+          <th className="px-4 py-4">Completion Criteria</th>
+          <th className="px-4 py-4">Duration</th>
+          <th className="px-4 py-4">CLO</th>
+          <th className="px-4 py-4">Question Type</th>
+          <th className="px-4 py-4">Knowledge Skill</th>
+          <th className="px-4 py-4">Grading Guide</th>
+          <th className="px-4 py-4">Note</th>
+        </tr>
+      </thead>
+      <tbody className="divide-y divide-gray-50">
         {loading && (
-          <div className="p-6 text-sm text-gray-500">
-            Loading assessments...
-          </div>
+          <tr>
+            <td className="px-4 py-6 text-sm text-gray-500" colSpan={11}>
+              Loading assessments...
+            </td>
+          </tr>
         )}
         {!loading && assessments.length === 0 && (
-          <div className="p-6 text-sm text-gray-500">
-            No assessments found for this syllabus.
-          </div>
+          <tr>
+            <td className="px-4 py-6 text-sm text-gray-500" colSpan={11}>
+              No assessments found for this syllabus.
+            </td>
+          </tr>
         )}
         {!loading &&
-          assessments.map((ass) => (
-            <div
-              key={ass.assessmentId}
-              className="p-6 md:p-8 hover:bg-gray-50/30 transition-colors flex flex-col md:flex-row gap-6"
-            >
-              <div className="shrink-0 flex flex-col items-center justify-center p-6 bg-blue-50/50 rounded-2xl border border-blue-100 md:w-48 text-center gap-2">
-                <span className="text-3xl font-black text-blue-600">
-                  {ass.weight ?? 0}%
-                </span>
-                <div className="w-8 h-1 bg-blue-200 rounded-full" />
-                <span className="text-sm font-bold text-blue-800 uppercase tracking-widest">
-                  {ass.categoryName || "N/A"}
-                </span>
-                <span className="text-[10px] font-bold text-blue-500 uppercase px-2 py-0.5 bg-blue-100 rounded">
-                  Part {ass.part ?? 0}
-                </span>
-              </div>
+          assessments.map((ass) => {
+            const cloCodes = (cloMappings[ass.assessmentId] ?? [])
+              .map((mapping) => mapping.cloCode)
+              .join(", ");
 
-              <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-8">
-                <div>
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">
-                    Type & Duration
+            return (
+              <tr
+                key={ass.assessmentId}
+                className="align-top hover:bg-[#f8fff8] transition-colors"
+              >
+                <td className="px-4 py-4 text-sm text-gray-800">
+                  {ass.categoryName || "-"}
+                </td>
+                <td className="px-4 py-4 text-sm text-gray-800">
+                  {ass.typeName || "-"}
+                </td>
+                <td className="px-4 py-4 text-sm text-gray-800">
+                  {ass.part ?? "-"}
+                </td>
+                <td className="px-4 py-4 text-sm text-gray-800 font-semibold">
+                  {ass.weight ?? "-"}%
+                </td>
+                <td className="px-4 py-4 text-sm text-gray-700">
+                  {ass.completionCriteria || "-"}
+                </td>
+                <td className="px-4 py-4 text-sm text-gray-800">
+                  <span className="inline-flex px-2.5 py-1 bg-[#eaf7e8] text-[#3d6b2c] font-bold text-[10px] uppercase rounded-lg border border-[#3d6b2c]/20">
+                    {ass.duration ?? 0} min
+                  </span>{" "}
+                </td>
+                <td
+                  className="px-4 py-4 text-sm text-gray-700 max-w-xs truncate"
+                  title={cloCodes || "N/A"}
+                >
+                  <span className="px-2 py-0.5 bg-orange-50 text-orange-600 font-medium text-[10px] rounded border border-orange-100">
+                    {cloCodes || "N/A"}
                   </span>
-                  <p className="text-sm text-gray-800 font-semibold">
-                    {ass.typeName || "N/A"} • {ass.duration ?? 0} min
-                  </p>
-                </div>
-                <div>
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">
-                    Completion Criteria
-                  </span>
-                  <p className="text-sm text-gray-800 font-semibold">
-                    {ass.completionCriteria || "-"}
-                  </p>
-                </div>
-                <div className="sm:col-span-2">
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">
-                    Question Type & Distribution
-                  </span>
-                  <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
-                    {ass.questionType || "-"}
-                  </p>
-                </div>
-                <div className="sm:col-span-2 pt-4 border-t border-gray-100">
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">
-                    Grading Guide
-                  </span>
-                  <p className="text-sm text-gray-600">
-                    {ass.gradingGuide || "-"}
-                  </p>
-                </div>
-              </div>
-            </div>
-          ))}
-      </div>
-    </SectionCard>
+                </td>
+                <td
+                  className="px-4 py-4 text-sm text-gray-700 max-w-xs truncate"
+                  title={ass.questionType || "-"}
+                >
+                  {ass.questionType || "-"}
+                </td>
+                <td
+                  className="px-4 py-4 text-sm text-gray-700 max-w-xs truncate"
+                  title={(ass as any).knowledgeSkill || "-"}
+                >
+                  {(ass as any).knowledgeSkill || "-"}
+                </td>
+                <td
+                  className="px-4 py-4 text-sm text-gray-700 max-w-xs truncate"
+                  title={ass.gradingGuide || "-"}
+                >
+                  {ass.gradingGuide || "-"}
+                </td>
+                <td
+                  className="px-4 py-4 text-sm text-gray-700 max-w-xs truncate"
+                  title={(ass as any).note || "-"}
+                >
+                  {(ass as any).note || "-"}
+                </td>
+              </tr>
+            );
+          })}
+      </tbody>
+    </TableSection>
   );
 }

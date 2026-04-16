@@ -395,7 +395,7 @@ function CompareAssessmentsColumn({
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1 min-w-0">
               <p className="font-semibold text-sm text-gray-900">
-                {assessment.categoryName || assessment.typeName}
+                {assessment.categoryName}
               </p>
               {assessment.completionCriteria && (
                 <p className="text-xs text-gray-600 mt-1 line-clamp-2">

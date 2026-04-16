@@ -1,6 +1,7 @@
 import http from "@/lib/http";
 import {
   CloSessionMappingResType,
+  CloAssessmentMappingResType,
   SyllabusAssessmentResType,
   SyllabusMaterialResType,
   SyllabusResType,
@@ -42,6 +43,11 @@ const syllabusApiRequest = {
       `/api/clo-session-mappings/session/${sessionId}`,
     );
   },
+  getCloAssessmentMappingsByAssessmentId: (assessmentId: string) => {
+    return http.get<CloAssessmentMappingResType>(
+      `/api/clo-assessment-mappings/assessment/${assessmentId}`,
+    );
+  },
   getAssessmentsBySyllabusId: (syllabusId: string) => {
     return http.get<SyllabusAssessmentResType>(
       `/api/assessments/syllabus/${syllabusId}`,
@@ -52,11 +58,7 @@ const syllabusApiRequest = {
       `/api/materials/syllabus/${syllabusId}?status=PUBLISHED`,
     );
   },
-  getMaterialBlocksByMaterialId: (
-    materialId: string,
-    page = 1,
-    size = 10,
-  ) => {
+  getMaterialBlocksByMaterialId: (materialId: string, page = 1, size = 10) => {
     const params = new URLSearchParams();
     params.set("page", String(page));
     params.set("size", String(size));

@@ -55,7 +55,7 @@ export default function SessionsTab({ syllabusId }: Props) {
 
   return (
     <TableSection
-      title={`${sessions.length} Sessions`}
+      title={`Sessions (${sessions.length})`}
       tableClassName="min-w-200"
     >
       <thead>
