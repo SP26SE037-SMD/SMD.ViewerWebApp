@@ -63,6 +63,23 @@ export const CloSessionMappingRes = z.object({
   data: z.array(CloSessionMapping),
 });
 
+export const CloAssessmentMapping = z.object({
+  id: z.string(),
+  cloId: z.string(),
+  cloCode: z.string(),
+  cloName: z.string().nullable().optional(),
+  assessmentId: z.string(),
+  assessmentPart: z.number().nullable().optional(),
+  assessmentStatus: z.string().nullable().optional(),
+  syllabusId: z.string(),
+});
+
+export const CloAssessmentMappingRes = z.object({
+  status: z.number(),
+  message: z.string(),
+  data: z.array(CloAssessmentMapping),
+});
+
 export const SyllabusAssessment = z.object({
   assessmentId: z.string(),
   categoryId: z.string().nullable().optional(),
@@ -131,6 +148,10 @@ export type SyllabusSessionType = z.infer<typeof SyllabusSession>;
 export type SyllabusSessionResType = z.infer<typeof SyllabusSessionRes>;
 export type CloSessionMappingType = z.infer<typeof CloSessionMapping>;
 export type CloSessionMappingResType = z.infer<typeof CloSessionMappingRes>;
+export type CloAssessmentMappingType = z.infer<typeof CloAssessmentMapping>;
+export type CloAssessmentMappingResType = z.infer<
+  typeof CloAssessmentMappingRes
+>;
 export type SyllabusAssessmentType = z.infer<typeof SyllabusAssessment>;
 export type SyllabusAssessmentResType = z.infer<typeof SyllabusAssessmentRes>;
 export type SyllabusMaterialType = z.infer<typeof SyllabusMaterial>;

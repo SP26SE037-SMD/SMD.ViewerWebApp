@@ -32,7 +32,7 @@ export default function SourcesTab({ subjectId }: Props) {
   return (
     <TableSection title={`Source List (${sources.length})`}>
       <thead>
-        <tr className="bg-white border-b border-gray-100 text-[11px] font-bold text-gray-400 uppercase tracking-[0.08em]">
+        <tr className="bg-white border-b border-gray-100 text-[11px] font-bold text-gray-400 uppercase tracking-wider">
           <th className="px-6 py-4 whitespace-nowrap hidden sm:table-cell">
             Type
           </th>

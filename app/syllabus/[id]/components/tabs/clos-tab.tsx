@@ -128,7 +128,7 @@ export default function ClosTab({ subjectId }: Props) {
   );
 
   return (
-    <TableSection title={`${allCloIds.length} CLOs`}>
+    <TableSection title={`CLOs (${allCloIds.length})`}>
       <thead>
         <tr className="bg-white border-b border-gray-100 text-[11px] font-bold text-gray-400 uppercase tracking-wider">
           <th className="px-6 py-4">CLO Code</th>
