@@ -162,7 +162,9 @@ export default function ClosTab({ subjectId }: Props) {
                 className="align-top hover:bg-[#f8fff8] transition-colors"
               >
                 <td className="px-6 py-4 font-semibold text-gray-900 whitespace-nowrap">
-                  {clo?.cloCode || "N/A"}
+                  <span className="px-2 py-0.5 bg-orange-50 text-orange-600 font-medium text-[10px] rounded border border-orange-100">
+                    {clo?.cloCode || "N/A"}
+                  </span>{" "}
                 </td>
                 <td className="px-6 py-4 text-gray-700">
                   {clo?.description || "N/A"}

@@ -4,9 +4,12 @@ import {
   CloAssessmentMappingResType,
   SyllabusAssessmentResType,
   SyllabusMaterialResType,
+  SyllabusListResType,
+  SyllabusCompareResType,
   SyllabusResType,
   MaterialBlockResType,
   SyllabusSessionResType,
+  SessionMaterialBlockDetailResType,
 } from "@/schemaValidations/syllabus.schema";
 
 const syllabusApiRequest = {
@@ -28,6 +31,18 @@ const syllabusApiRequest = {
   getPublishedSyllabusesBySubjectId: (subjectId: string) => {
     return http.get<SyllabusResType>(
       `/api/syllabus/subject/${subjectId}?status=PUBLISHED`,
+    );
+  },
+  getSyllabusesBySubjectId: (subjectId: string) => {
+    return http.get<SyllabusListResType>(`/api/syllabus/subject/${subjectId}`);
+  },
+  compareSyllabuses: (oldSyllabusId: string, newSyllabusId: string) => {
+    const params = new URLSearchParams();
+    params.set("oldSyllabusId", oldSyllabusId);
+    params.set("newSyllabusId", newSyllabusId);
+    return http.post<SyllabusCompareResType>(
+      `/api/syllabus/compare?${params.toString()}`,
+      null,
     );
   },
   getSyllabusDetail: (syllabusId: string) => {
@@ -64,6 +79,13 @@ const syllabusApiRequest = {
     params.set("size", String(size));
     return http.get<MaterialBlockResType>(
       `/api/blocks/material/${materialId}?${params.toString()}`,
+    );
+  },
+  getSessionMaterialBlockDetailBySessionId: (sessionId: string) => {
+    const params = new URLSearchParams();
+    params.set("sessionId", sessionId);
+    return http.get<SessionMaterialBlockDetailResType>(
+      `/api/session-material-blocks/detail?${params.toString()}`,
     );
   },
 };
