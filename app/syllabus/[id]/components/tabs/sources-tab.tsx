@@ -3,6 +3,7 @@ import subjectApiRequest from "@/apiRequests/subject";
 import TableSection from "@/components/table-section";
 import { SubjectSourceType } from "@/schemaValidations/subject.schema";
 import { ExternalLink } from "lucide-react";
+import Link from "next/link";
 
 type Props = {
   subjectId: string;
@@ -86,16 +87,16 @@ export default function SourcesTab({ subjectId }: Props) {
                     Publisher: {source.publisher || "-"}
                   </p>
                   {source.url ? (
-                    <a
+                    <Link
                       href={source.url}
                       target="_blank"
                       rel="noopener noreferrer"
                       title={source.url}
-                      className="inline-flex items-center gap-1.5 text-[#2f7dff] hover:text-[#1f5ed1] underline underline-offset-2 break-all"
+                      className="text-sm font-medium text-[#3d6b2c] hover:underline"
                     >
                       <span className="line-clamp-2">{source.url}</span>
                       <ExternalLink size={12} className="shrink-0" />
-                    </a>
+                    </Link>
                   ) : (
                     <p>URL: -</p>
                   )}
@@ -128,15 +129,15 @@ export default function SourcesTab({ subjectId }: Props) {
               </td>
               <td className="px-6 py-4 align-top hidden md:table-cell">
                 {source.url && (
-                  <a
+                  <Link
                     href={source.url}
                     target="_blank"
                     rel="noopener noreferrer"
                     title={source.url}
-                    className="inline-flex items-center gap-1.5 text-sm text-[#2f7dff] hover:text-[#1f5ed1] underline underline-offset-2 break-all"
+                    className="text-sm font-medium text-[#3d6b2c] hover:underline"
                   >
                     <span className="line-clamp-2">{source.url || "-"}</span>
-                  </a>
+                  </Link>
                 )}
                 {!source.url && <span className="text-gray-300">-</span>}
               </td>

@@ -13,7 +13,7 @@ import ChapterMaterialsTab from "@/app/syllabus/[id]/components/tabs/chapter-mat
 import AssessmentsTab from "@/app/syllabus/[id]/components/tabs/assessments-tab";
 import { useSyllabusDetail } from "@/app/syllabus/[id]/hooks/use-syllabus-detail";
 import { SyllabusTab } from "@/lib/type";
-import CompareTab from "@/app/syllabus/[id]/components/tabs/compare-tab";
+import CompareTab from "./components/tabs/compare-tab";
 
 export default function SyllabusDetailPage({
   params,
@@ -74,7 +74,10 @@ export default function SyllabusDetailPage({
             {activeTab === "sources" && <SourcesTab subjectId={subjectId} />}
             {activeTab === "clos" && <ClosTab subjectId={subjectId} />}
             {activeTab === "sessions" && syllabus && (
-              <SessionsTab syllabusId={syllabus.syllabusId} />
+              <SessionsTab
+                syllabusId={syllabus.syllabusId}
+                subjectId={subjectId}
+              />
             )}
             {activeTab === "chapterMaterials" && syllabus && (
               <ChapterMaterialsTab syllabus={syllabus} subjectId={subjectId} />
@@ -83,7 +86,7 @@ export default function SyllabusDetailPage({
               <AssessmentsTab syllabusId={syllabus.syllabusId} />
             )}
             {activeTab === "compare" && syllabus && (
-              <CompareTab syllabusId={syllabus.syllabusId} />
+              <CompareTab subjectId={subjectId} />
             )}
           </motion.div>
         </AnimatePresence>

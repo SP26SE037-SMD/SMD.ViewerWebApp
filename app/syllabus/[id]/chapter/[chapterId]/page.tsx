@@ -8,6 +8,7 @@ import { useChapterViewerData } from "@/app/syllabus/[id]/chapter/[chapterId]/ho
 import { mapMaterialBlocks } from "@/app/syllabus/[id]/chapter/[chapterId]/utils/block-mappers";
 import { paginateBlocks } from "@/app/syllabus/[id]/chapter/[chapterId]/utils/pagination";
 import { renderChapterBlock } from "@/app/syllabus/[id]/chapter/[chapterId]/components/chapter-block-renderer";
+import Sidebar from "@/app/syllabus/[id]/chapter/[chapterId]/components/sidebar";
 
 export default function ChapterViewerPage({
   params,
@@ -111,6 +112,10 @@ export default function ChapterViewerPage({
 
   const blocks = mapMaterialBlocks(materialBlocks);
   const pages = paginateBlocks(blocks);
+  const globalIndexById = new Map<string, number>();
+  blocks.forEach((block, index) => {
+    globalIndexById.set(block.id, index);
+  });
 
   return (
     <div className="min-h-screen bg-[#f0f2f5] font-[Lexend] text-gray-900">
@@ -127,7 +132,7 @@ export default function ChapterViewerPage({
             </button>
             <div className="flex flex-col truncate cursor-default">
               <div className="flex items-center gap-2 mb-0.5">
-                <BookOpen size={14} className="text-blue-600" />
+                <BookOpen size={14} className="text-[#4caf50]" />
                 <h1 className="text-sm font-bold text-gray-800 truncate">
                   {syllabus.syllabusCode} • {syllabus.syllabusName}
                 </h1>
@@ -145,41 +150,46 @@ export default function ChapterViewerPage({
       </header>
 
       {/* ── Word-like Paginated Document Container ── */}
-      <div className="pt-8 md:pt-12 px-2 sm:px-4 pb-20 flex flex-col items-center gap-8 md:gap-12">
-        {pages.map((pageBlocks, pageIndex) => (
-          <div
-            key={pageIndex}
-            className="w-full max-w-212.5 bg-white rounded-sm shadow-[0_4px_24px_rgb(0,0,0,0.06)] ring-1 ring-gray-200 isolate relative flex flex-col"
-            style={{ minHeight: "1123px" }} // Standard A4 height at 96 PPI
-          >
-            {/* Document Content Area */}
-            <article className="px-10 py-12 sm:px-16 sm:py-16 md:px-20 md:py-20 flex-1">
-              {/* Title block only on the first page */}
-              {pageIndex === 0 && (
-                <div className="mb-10 border-b-2 border-gray-100 pb-8 text-center">
-                  <p className="text-sm font-bold tracking-widest uppercase text-gray-400 mb-3">
-                    {syllabus.syllabusCode}
-                  </p>
-                  <h1 className="text-3xl md:text-4xl font-black text-gray-900 leading-tight mb-4">
-                    {chapterName}
-                  </h1>
+      <div className="pt-8 md:pt-12 px-2 sm:px-4 pb-20">
+        <div className="max-w-400 mx-auto flex flex-col lg:flex-row items-start gap-6 md:gap-8">
+          <Sidebar blocks={blocks} className="order-2 lg:order-1" />
+
+          <div className="order-1 lg:order-2 flex-1 w-full flex flex-col items-center gap-8 md:gap-12 lg:ml-80 xl:ml-88">
+            {pages.map((pageBlocks, pageIndex) => (
+              <div
+                key={pageIndex}
+                className="w-full max-w-212.5 bg-white rounded-sm shadow-[0_4px_24px_rgb(0,0,0,0.06)] ring-1 ring-gray-200 isolate relative flex flex-col"
+                style={{ minHeight: "1123px" }} // Standard A4 height at 96 PPI
+              >
+                {/* Document Content Area */}
+                <article className="px-10 py-12 sm:px-16 sm:py-16 md:px-20 md:py-20 flex-1">
+                  {/* Blocks renderer */}
+                  <div className="space-y-1">
+                    {pageBlocks.map((block, index) => {
+                      const globalIndex =
+                        globalIndexById.get(block.id) ?? index;
+                      return (
+                        <div id={`chapter-block-${block.id}`} key={block.id}>
+                          {renderChapterBlock(
+                            block,
+                            globalIndex,
+                            blocks,
+                            setEnlargedImage,
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </article>
+
+                {/* Page Footer */}
+                <div className="absolute bottom-8 left-0 right-0 text-center text-xs font-medium text-gray-400 font-mono tracking-widest pointer-events-none">
+                  — {pageIndex + 1} —
                 </div>
-              )}
-
-              {/* Blocks renderer */}
-              <div className="space-y-1">
-                {pageBlocks.map((block, index, allBlocks) =>
-                  renderChapterBlock(block, index, allBlocks, setEnlargedImage),
-                )}
               </div>
-            </article>
-
-            {/* Page Footer */}
-            <div className="absolute bottom-8 left-0 right-0 text-center text-xs font-medium text-gray-400 font-mono tracking-widest pointer-events-none">
-              — {pageIndex + 1} —
-            </div>
+            ))}
           </div>
-        ))}
+        </div>
       </div>
 
       {/* ── Text Selection Quick Action Tooltip ── */}

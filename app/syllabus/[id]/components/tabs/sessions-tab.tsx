@@ -2,18 +2,24 @@ import { useEffect, useState } from "react";
 import syllabusApiRequest from "@/apiRequests/syllabus";
 import {
   CloSessionMappingType,
+  SessionMaterialItemType,
   SyllabusSessionType,
 } from "@/schemaValidations/syllabus.schema";
 import TableSection from "@/components/table-section";
+import Link from "next/link";
 
 type Props = {
   syllabusId: string;
+  subjectId: string;
 };
 
-export default function SessionsTab({ syllabusId }: Props) {
+export default function SessionsTab({ syllabusId, subjectId }: Props) {
   const [sessions, setSessions] = useState<SyllabusSessionType[]>([]);
   const [sessionCloMappings, setSessionCloMappings] = useState<
     Record<string, CloSessionMappingType[]>
+  >({});
+  const [sessionMaterials, setSessionMaterials] = useState<
+    Record<string, SessionMaterialItemType[]>
   >({});
   const [loading, setLoading] = useState(true);
 
@@ -40,11 +46,30 @@ export default function SessionsTab({ syllabusId }: Props) {
           }),
         );
 
+        const materialResults = await Promise.all(
+          sessionData.map(async (session) => {
+            try {
+              const materialRes =
+                await syllabusApiRequest.getSessionMaterialBlockDetailBySessionId(
+                  session.sessionId,
+                );
+              return [
+                session.sessionId,
+                materialRes?.payload?.data?.material ?? [],
+              ] as const;
+            } catch {
+              return [session.sessionId, []] as const;
+            }
+          }),
+        );
+
         setSessionCloMappings(Object.fromEntries(cloMappingResults));
+        setSessionMaterials(Object.fromEntries(materialResults));
       } catch (error) {
         console.error("Failed to fetch sessions", error);
         setSessions([]);
         setSessionCloMappings({});
+        setSessionMaterials({});
       } finally {
         setLoading(false);
       }
@@ -65,20 +90,21 @@ export default function SessionsTab({ syllabusId }: Props) {
           <th className="px-6 py-4">Teaching Methods</th>
           <th className="px-6 py-4">CLO</th>
           <th className="px-6 py-4">Content</th>
+          <th className="px-6 py-4">Material</th>
           <th className="px-6 py-4">Duration</th>
         </tr>
       </thead>
       <tbody className="divide-y divide-gray-50">
         {loading && (
           <tr>
-            <td className="px-6 py-6 text-sm text-gray-500" colSpan={6}>
+            <td className="px-6 py-6 text-sm text-gray-500" colSpan={7}>
               Loading sessions...
             </td>
           </tr>
         )}
         {!loading && sessions.length === 0 && (
           <tr>
-            <td className="px-6 py-6 text-sm text-gray-500" colSpan={6}>
+            <td className="px-6 py-6 text-sm text-gray-500" colSpan={7}>
               No sessions found for this syllabus.
             </td>
           </tr>
@@ -124,6 +150,23 @@ export default function SessionsTab({ syllabusId }: Props) {
               <td className="px-6 py-4 align-top">
                 <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
                   {s.content || "-"}
+                </div>
+              </td>
+              <td className="px-6 py-4 align-top">
+                <div className="flex flex-col gap-1.5">
+                  {(sessionMaterials[s.sessionId] ?? []).length > 0 ? (
+                    (sessionMaterials[s.sessionId] ?? []).map((material) => (
+                      <Link
+                        key={material.materialId}
+                        href={`/syllabus/${encodeURIComponent(subjectId)}/chapter/${material.materialId}`}
+                        className="text-sm font-medium text-[#3d6b2c] hover:underline"
+                      >
+                        {material.materialName}
+                      </Link>
+                    ))
+                  ) : (
+                    <span className="text-sm text-gray-400">-</span>
+                  )}
                 </div>
               </td>
               <td className="px-6 py-4 align-top">

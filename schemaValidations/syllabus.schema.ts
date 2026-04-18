@@ -27,6 +27,26 @@ export const SyllabusRes = z.object({
   data: SyllabusContent,
 });
 
+export const SyllabusListRes = z.object({
+  status: z.number(),
+  message: z.string(),
+  data: z.array(SyllabusContent),
+});
+
+export const SyllabusCompareData = z.object({
+  removed_concepts: z.array(z.unknown()),
+  added_concepts: z.array(z.unknown()),
+  modified_concepts: z.unknown().nullable().optional(),
+  risk_assessment: z.string().nullable().optional(),
+  risk_reason: z.string().nullable().optional(),
+});
+
+export const SyllabusCompareRes = z.object({
+  status: z.number(),
+  message: z.string(),
+  data: SyllabusCompareData,
+});
+
 export const SyllabusSession = z.object({
   sessionId: z.string(),
   syllabusId: z.string(),
@@ -142,8 +162,38 @@ export const MaterialBlockRes = z.object({
   }),
 });
 
+export const SessionMaterialItem = z.object({
+  materialId: z.string(),
+  materialName: z.string(),
+});
+
+export const SessionBlockItem = z.object({
+  blockId: z.string(),
+  content: z.string(),
+  idx: z.number(),
+});
+
+export const SessionMaterialBlockDetail = z.object({
+  session: z.string(),
+  sessionNumber: z.number(),
+  sessionTitle: z.string(),
+  teachingMethods: z.string().nullable().optional(),
+  duration: z.number().nullable().optional(),
+  material: z.array(SessionMaterialItem),
+  block: z.array(SessionBlockItem),
+});
+
+export const SessionMaterialBlockDetailRes = z.object({
+  status: z.number(),
+  message: z.string(),
+  data: SessionMaterialBlockDetail,
+});
+
 export type SyllabusContentType = z.infer<typeof SyllabusContent>;
 export type SyllabusResType = z.infer<typeof SyllabusRes>;
+export type SyllabusListResType = z.infer<typeof SyllabusListRes>;
+export type SyllabusCompareDataType = z.infer<typeof SyllabusCompareData>;
+export type SyllabusCompareResType = z.infer<typeof SyllabusCompareRes>;
 export type SyllabusSessionType = z.infer<typeof SyllabusSession>;
 export type SyllabusSessionResType = z.infer<typeof SyllabusSessionRes>;
 export type CloSessionMappingType = z.infer<typeof CloSessionMapping>;
@@ -158,3 +208,11 @@ export type SyllabusMaterialType = z.infer<typeof SyllabusMaterial>;
 export type SyllabusMaterialResType = z.infer<typeof SyllabusMaterialRes>;
 export type MaterialBlockType = z.infer<typeof MaterialBlock>;
 export type MaterialBlockResType = z.infer<typeof MaterialBlockRes>;
+export type SessionMaterialItemType = z.infer<typeof SessionMaterialItem>;
+export type SessionBlockItemType = z.infer<typeof SessionBlockItem>;
+export type SessionMaterialBlockDetailType = z.infer<
+  typeof SessionMaterialBlockDetail
+>;
+export type SessionMaterialBlockDetailResType = z.infer<
+  typeof SessionMaterialBlockDetailRes
+>;
