@@ -127,8 +127,10 @@ export default function ClosTab({ subjectId }: Props) {
     [clos, mappings],
   );
 
+  const shouldRenderRows = !loading && clos.length > 0;
+
   return (
-    <TableSection title={`CLOs (${allCloIds.length})`}>
+    <TableSection title={`CLOs (${shouldRenderRows ? allCloIds.length : 0})`}>
       <thead>
         <tr className="bg-white border-b border-gray-100 text-[11px] font-bold text-gray-400 uppercase tracking-wider">
           <th className="px-6 py-4">CLO Code</th>
@@ -151,7 +153,7 @@ export default function ClosTab({ subjectId }: Props) {
             </td>
           </tr>
         )}
-        {!loading &&
+        {shouldRenderRows &&
           allCloIds.map((cloId) => {
             const clo = cloById.get(cloId);
             const mappingRows = mappingByCloId.get(cloId) || [];
