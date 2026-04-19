@@ -5,13 +5,22 @@ import { motion } from "framer-motion";
 type Props = {
   activeTab: SyllabusTab;
   onChangeTab: (tab: SyllabusTab) => void;
+  canViewCompare: boolean;
 };
 
-export default function SyllabusTabs({ activeTab, onChangeTab }: Props) {
+export default function SyllabusTabs({
+  activeTab,
+  onChangeTab,
+  canViewCompare,
+}: Props) {
+  const visibleTabs = canViewCompare
+    ? TabSyllabus
+    : TabSyllabus.filter((tab) => tab.id !== "compare");
+
   return (
     <>
       <div className="hidden md:flex items-center gap-2 pb-3">
-        {TabSyllabus.map((tab) => {
+        {visibleTabs.map((tab) => {
           const TabIcon = tab.icon;
           const isActive = activeTab === tab.id;
 
@@ -49,7 +58,7 @@ export default function SyllabusTabs({ activeTab, onChangeTab }: Props) {
 
       <div className="md:hidden bg-white border-b border-gray-100 sticky top-34.5 z-40 mb-6 shadow-sm shadow-[#4caf50]/5">
         <div className="flex overflow-x-auto no-scrollbar px-2 py-2 snap-x">
-          {TabSyllabus.map((tab) => {
+          {visibleTabs.map((tab) => {
             const TabIcon = tab.icon;
             const isActive = activeTab === tab.id;
 

@@ -3,6 +3,7 @@
 import { use, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { AlertCircle } from "lucide-react";
+import { useSelector } from "react-redux";
 import SyllabusHeader from "@/components/syllabus/syllabus-header";
 import SyllabusTabs from "@/components/syllabus/syllabus-tabs";
 import GeneralTab from "@/app/syllabus/[id]/components/tabs/general-tab";
@@ -13,6 +14,7 @@ import ChapterMaterialsTab from "@/app/syllabus/[id]/components/tabs/chapter-mat
 import AssessmentsTab from "@/app/syllabus/[id]/components/tabs/assessments-tab";
 import { useSyllabusDetail } from "@/app/syllabus/[id]/hooks/use-syllabus-detail";
 import { SyllabusTab } from "@/lib/type";
+import { RootState } from "@/provider/store";
 import CompareTab from "./components/tabs/compare-tab";
 
 export default function SyllabusDetailPage({
@@ -24,6 +26,12 @@ export default function SyllabusDetailPage({
   const subjectId = decodeURIComponent(resolvedParams.id);
   const [activeTab, setActiveTab] = useState<SyllabusTab>("general");
   const { loading, syllabus, subjectDetail } = useSyllabusDetail(subjectId);
+  const reduxUser = useSelector((state: RootState) => state.user.user);
+  const userRole =
+    typeof reduxUser?.role === "string"
+      ? reduxUser.role
+      : reduxUser?.role?.roleName;
+  const canViewCompare = userRole === "LECTURER";
 
   if (loading) {
     return (
@@ -51,7 +59,11 @@ export default function SyllabusDetailPage({
     <div className="min-h-screen bg-[#f8fafb] font-[Lexend] pb-24">
       <SyllabusHeader syllabus={syllabus} subjectDetail={subjectDetail} />
       <div className="max-w-6xl mx-auto px-4">
-        <SyllabusTabs activeTab={activeTab} onChangeTab={setActiveTab} />
+        <SyllabusTabs
+          activeTab={activeTab}
+          onChangeTab={setActiveTab}
+          canViewCompare={canViewCompare}
+        />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 py-8">
@@ -85,7 +97,7 @@ export default function SyllabusDetailPage({
             {activeTab === "assessments" && syllabus && (
               <AssessmentsTab syllabusId={syllabus.syllabusId} />
             )}
-            {activeTab === "compare" && syllabus && (
+            {canViewCompare && activeTab === "compare" && syllabus && (
               <CompareTab subjectId={subjectId} />
             )}
           </motion.div>
