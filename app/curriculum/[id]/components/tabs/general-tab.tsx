@@ -33,6 +33,19 @@ export default function GeneralTab({
       className=""
     >
       <SectionCard className="p-6 space-y-6">
+        <div className="rounded-2xl p-6 border border-gray-200 shadow-sm">
+          <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">
+            Full Name
+          </p>
+          <h2 className="text-base font-bold text-gray-900 leading-relaxed mb-1">
+            {curriculum.curriculumName}
+          </h2>
+          {curriculum.englishName && (
+            <p className="text-sm text-gray-500 italic">
+              {curriculum.englishName}
+            </p>
+          )}
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <div className="rounded-2xl p-5 border border-gray-200 shadow-sm flex items-center gap-4">
             <div className="p-3 rounded-xl bg-[#4caf50]/10">
@@ -58,10 +71,10 @@ export default function GeneralTab({
             </div>
             <div>
               <p className="text-xs text-gray-400 font-semibold">
-                Total Subjects
+                Start Year - End Year
               </p>
               <p className="text-xl font-bold text-gray-900">
-                {curriculum.totalSubjects}
+                {curriculum.startYear || "N/A"} - {curriculum.endYear || "N/A"}
               </p>
             </div>
           </div>
@@ -71,42 +84,12 @@ export default function GeneralTab({
               <Award size={22} className="text-[#4caf50]" />
             </div>
             <div>
-              <p className="text-xs text-gray-400 font-semibold">
-                Total Credits
-              </p>
+              <p className="text-xs text-gray-400 font-semibold">Major</p>
               <p className="text-xl font-bold text-gray-900">
-                {curriculum.totalCredits}
+                {curriculum.major?.majorName || "N/A"}
               </p>
             </div>
           </div>
-
-          {curriculum.decisionNo && (
-            <div className="rounded-2xl p-5 border border-gray-200 shadow-sm flex items-center gap-4 sm:col-span-2 lg:col-span-3">
-              <div className="p-3 rounded-xl bg-[#4caf50]/10">
-                <FileText size={22} className="text-[#4caf50]" />
-              </div>
-              <div className="min-w-0">
-                <p className="text-xs text-gray-400 font-semibold">Decision</p>
-                <p className="text-sm font-bold text-gray-900">
-                  {curriculum.decisionNo}
-                </p>
-              </div>
-            </div>
-          )}
-        </div>
-
-        <div className="rounded-2xl p-6 border border-gray-200 shadow-sm">
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">
-            Full Name
-          </p>
-          <h2 className="text-base font-bold text-gray-900 leading-relaxed mb-1">
-            {curriculum.curriculumName}
-          </h2>
-          {curriculum.englishName && (
-            <p className="text-sm text-gray-500 italic">
-              {curriculum.englishName}
-            </p>
-          )}
         </div>
 
         {curriculum.description && (
