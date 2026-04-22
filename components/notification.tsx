@@ -313,7 +313,7 @@ export default function Notification() {
               {!isNotificationLoading &&
                 !notificationError &&
                 notifications.length === 0 && (
-                  <div className="h-24 rounded-2xl border border-gray-100 bg-gray-50 flex items-center justify-center text-gray-500 text-sm">
+                  <div className="h-24 rounded-2xl flex items-center justify-center text-gray-500 text-sm">
                     No notifications found.
                   </div>
                 )}
