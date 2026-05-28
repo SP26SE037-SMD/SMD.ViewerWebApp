@@ -8,6 +8,7 @@ import { motion } from "motion/react";
 import type { AccountMeResType } from "@/schemaValidations/account.schema";
 import ButtonLogout from "./button-logout";
 import { useSelector } from "react-redux";
+import { useState, useEffect } from "react";
 import type { RootState } from "@/provider/store";
 import Notification from "./notification";
 
@@ -17,16 +18,28 @@ type Props = {
 
 export default function HeaderClient({ account }: Props) {
   const reduxUser = useSelector((state: RootState) => state.user.user);
+  const [mounted, setMounted] = useState(false);
 
-  const avatarUrl = reduxUser?.avatarUrl || account?.avatarUrl;
-  const fullName = reduxUser?.fullName || account?.fullName || "User";
-  const email = reduxUser?.email || account?.email || "";
-  const roleName =
-    (typeof reduxUser?.role === "string"
-      ? reduxUser.role
-      : reduxUser?.role?.roleName) ||
-    account?.role?.roleName ||
-    "GUEST";
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const avatarUrl = mounted
+    ? reduxUser?.avatarUrl || account?.avatarUrl
+    : account?.avatarUrl;
+  const fullName = mounted
+    ? reduxUser?.fullName || account?.fullName || "User"
+    : account?.fullName || "User";
+  const email = mounted
+    ? reduxUser?.email || account?.email || ""
+    : account?.email || "";
+  const roleName = mounted
+    ? (typeof reduxUser?.role === "string"
+        ? reduxUser.role
+        : reduxUser?.role?.roleName) ||
+      account?.role?.roleName ||
+      "GUEST"
+    : account?.role?.roleName || "GUEST";
 
   const initials = fullName
     .split(" ")
@@ -45,6 +58,7 @@ export default function HeaderClient({ account }: Props) {
             alt="SMD Logo"
             fill
             priority
+            sizes="112px"
             className="object-contain"
           />
         </Link>

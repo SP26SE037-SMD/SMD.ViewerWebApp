@@ -19,15 +19,7 @@ export const homeItems = [
     iconBg: "bg-[#6AB04C]",
     path: "/curriculum",
   },
-  {
-    id: 3,
-    title: "Learning Path",
-    desc: "Check mandatory subjects that must be completed first.",
-    icon: Map,
-    bg: "bg-white",
-    iconBg: "bg-[#6AB04C]",
-    path: "/learning-path",
-  },
+
   {
     id: 4,
     title: "Is Pre-Requisite",
