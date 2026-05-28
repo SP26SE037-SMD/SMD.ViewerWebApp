@@ -1,7 +1,7 @@
 "use client";
 
 import * as Popover from "@radix-ui/react-popover";
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import {
   Bell,
   Search,
@@ -17,7 +17,7 @@ import notiApiRequest from "@/apiRequests/noti";
 import type { NotificationItemType } from "@/schemaValidations/noti.schema";
 
 export default function Notification() {
-  const PAGE_SIZE = 5;
+  const PAGE_SIZE = 3;
 
   const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
@@ -37,6 +37,14 @@ export default function Notification() {
   const [selectedNotification, setSelectedNotification] =
     useState<NotificationItemType | null>(null);
   const [notificationError, setNotificationError] = useState("");
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalNotifications, setModalNotifications] = useState<NotificationItemType[]>([]);
+  const [modalPage, setModalPage] = useState(0);
+  const [modalTotalPages, setModalTotalPages] = useState(0);
+  const [isModalLoading, setIsModalLoading] = useState(false);
+  const MODAL_PAGE_SIZE = 10;
+
 
   const formatNotificationTime = (isoDate: string) => {
     const date = new Date(isoDate);
@@ -65,7 +73,7 @@ export default function Notification() {
 
     const fetchUnreadIndicator = async () => {
       try {
-        const response = await notiApiRequest.getMyNotifications(0, PAGE_SIZE);
+        const response = await notiApiRequest.getMyNotifications(0, 10);
         const hasUnread = response.payload.data.content.some(
           (notification) => !notification.isRead,
         );
@@ -159,11 +167,35 @@ export default function Notification() {
     selectedNotification,
   ]);
 
+  useEffect(() => {
+    if (!isModalOpen) return;
+    let isActive = true;
+    const loadModalNotifications = async () => {
+      setIsModalLoading(true);
+      try {
+        const response = await notiApiRequest.getMyNotifications(modalPage, MODAL_PAGE_SIZE);
+        if (isActive) {
+          setModalNotifications(response.payload.data.content);
+          setModalTotalPages(response.payload.data.totalPages);
+        }
+      } catch (error) {
+        console.error("Failed to load modal notifications", error);
+      } finally {
+        if (isActive) setIsModalLoading(false);
+      }
+    };
+    loadModalNotifications();
+    return () => { isActive = false; };
+  }, [isModalOpen, modalPage]);
+
   const handleMarkAllAsRead = async () => {
     setIsMarkAllLoading(true);
     try {
       await notiApiRequest.markAllAsRead();
       setNotifications((prev) =>
+        prev.map((item) => ({ ...item, isRead: true })),
+      );
+      setModalNotifications((prev) =>
         prev.map((item) => ({ ...item, isRead: true })),
       );
       setHasUnreadNotifications(false);
@@ -190,6 +222,13 @@ export default function Notification() {
         setHasUnreadNotifications(next.some((item) => !item.isRead));
         return next;
       });
+      setModalNotifications((prev) =>
+        prev.map((item) =>
+          item.notificationId === notificationId
+            ? { ...item, isRead: true }
+            : item,
+        ),
+      );
       setSelectedNotification((prev) =>
         prev && prev.notificationId === notificationId
           ? { ...prev, isRead: true }
@@ -215,7 +254,8 @@ export default function Notification() {
   };
 
   return (
-    <Popover.Root
+    <>
+      <Popover.Root
       open={isNotificationOpen}
       onOpenChange={(open) => {
         setIsNotificationOpen(open);
@@ -383,38 +423,17 @@ export default function Notification() {
                 ))}
             </div>
 
-            <div className="mt-3 flex items-center justify-between px-1">
+            <div className="mt-3 flex items-center justify-center px-1">
               <button
                 type="button"
-                onClick={() =>
-                  setNotificationPage((prev) => Math.max(0, prev - 1))
-                }
-                disabled={notificationPage === 0 || isNotificationLoading}
-                className="inline-flex items-center gap-1 rounded-xl border border-gray-200 px-2.5 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                onClick={() => {
+                  setIsNotificationOpen(false);
+                  setIsModalOpen(true);
+                  setModalPage(0);
+                }}
+                className="w-full rounded-xl bg-gray-50/50 py-2.5 text-sm font-semibold text-[#6AB04C] hover:bg-[#EBF5E4]/80 transition-colors"
               >
-                <ChevronLeft size={13} /> Prev
-              </button>
-              <span className="text-xs text-gray-500">
-                Page {notificationTotalPages === 0 ? 0 : notificationPage + 1}/
-                {notificationTotalPages}
-              </span>
-              <button
-                type="button"
-                onClick={() =>
-                  setNotificationPage((prev) =>
-                    notificationTotalPages > 0
-                      ? Math.min(notificationTotalPages - 1, prev + 1)
-                      : prev,
-                  )
-                }
-                disabled={
-                  notificationTotalPages === 0 ||
-                  notificationPage >= notificationTotalPages - 1 ||
-                  isNotificationLoading
-                }
-                className="inline-flex items-center gap-1 rounded-xl border border-gray-200 px-2.5 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                Next <ChevronRight size={13} />
+                View all notifications
               </button>
             </div>
 
@@ -423,5 +442,110 @@ export default function Notification() {
         </Popover.Content>
       </Popover.Portal>
     </Popover.Root>
+      <AnimatePresence>
+        {isModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]"
+            >
+              <div className="p-5 border-b flex justify-between items-center bg-[#f8faf7]">
+                <h2 className="text-lg font-bold text-gray-800 font-[Lexend]">All Notifications</h2>
+                <button onClick={() => setIsModalOpen(false)} className="text-gray-500 hover:text-gray-800 p-2 text-xl leading-none">
+                  ✕
+                </button>
+              </div>
+              <div className="p-4 overflow-y-auto flex-1 space-y-3 bg-gray-50/50">
+                {isModalLoading ? (
+                  <div className="flex justify-center p-10"><Loader2 className="animate-spin text-gray-400" /></div>
+                ) : (
+                  modalNotifications.length === 0 ? (
+                    <div className="flex justify-center text-gray-500 py-10">No notifications found.</div>
+                  ) : (
+                    modalNotifications.map(notification => (
+                      <div
+                        key={notification.notificationId}
+                        className={`rounded-2xl border p-4 transition-colors ${
+                          notification.isRead
+                            ? "border-gray-200 bg-white"
+                            : "border-[#6AB04C]/30 bg-[#EBF5E4]/60"
+                        }`}
+                      >
+                         <div className="flex items-start justify-between gap-3">
+                            <div className="min-w-0 flex-1">
+                              <p className="text-sm font-semibold text-gray-800">
+                                {notification.title}
+                              </p>
+                              <p className="mt-1 text-sm leading-relaxed text-gray-600">
+                                {notification.message}
+                              </p>
+                              <p className="mt-2 text-xs text-gray-400">
+                                {formatNotificationTime(notification.createdAt)}
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-2 shrink-0">
+                              <button
+                                type="button"
+                                title="Mark as read"
+                                disabled={
+                                  notification.isRead ||
+                                  actionLoadingId === notification.notificationId
+                                }
+                                onClick={() =>
+                                  handleMarkAsRead(notification.notificationId)
+                                }
+                                className="h-8 w-8 rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center"
+                              >
+                                {actionLoadingId === notification.notificationId ? (
+                                  <Loader2 size={14} className="animate-spin" />
+                                ) : (
+                                  <Check size={14} />
+                                )}
+                              </button>
+                            </div>
+                          </div>
+                      </div>
+                    ))
+                  )
+                )}
+              </div>
+              <div className="p-4 border-t flex justify-between items-center bg-white">
+                <button
+                  type="button"
+                  onClick={() => setModalPage((prev) => Math.max(0, prev - 1))}
+                  disabled={modalPage === 0 || isModalLoading}
+                  className="px-4 py-2 rounded-xl border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  Previous
+                </button>
+                <span className="text-sm text-gray-500">
+                  Page {modalTotalPages === 0 ? 0 : modalPage + 1} of {modalTotalPages}
+                </span>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setModalPage((prev) =>
+                      modalTotalPages > 0
+                        ? Math.min(modalTotalPages - 1, prev + 1)
+                        : prev,
+                    )
+                  }
+                  disabled={
+                    modalTotalPages === 0 ||
+                    modalPage >= modalTotalPages - 1 ||
+                    isModalLoading
+                  }
+                  className="px-4 py-2 rounded-xl border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  Next
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }
