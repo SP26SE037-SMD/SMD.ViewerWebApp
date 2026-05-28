@@ -108,6 +108,10 @@ export default function Login() {
               console.error("Failed to decode Google Token", err);
             }
 
+            // Save token first so that HTTP client can use it for updateAccount
+            await authApiRequest.auth({ sessionToken: token });
+            localStorage.setItem("sessionToken", token);
+
             // Sync with backend
             try {
               await accountApiRequest.updateAccount(String(account.accountId), {
@@ -119,7 +123,6 @@ export default function Login() {
               console.error("Failed to update avatar on backend", updateErr);
             }
 
-            localStorage.setItem("sessionToken", token);
             dispatch(setUser({
               accountId: String(account.accountId),
               email: account.email,
