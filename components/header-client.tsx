@@ -72,7 +72,6 @@ export default function HeaderClient({ account }: Props) {
 
         {/* Right side */}
         <div className="flex items-center gap-2">
-          <Notification />
 
           {/* Account */}
           <Popover.Root>
@@ -146,13 +145,6 @@ export default function HeaderClient({ account }: Props) {
                   {/* Actions */}
 
                   <div className="p-2">
-                    <Link
-                      href="/wishlist"
-                      className="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold text-emerald-500 hover:bg-emerald-100 transition-colors"
-                    >
-                      <BellPlus />
-                      Wishlist
-                    </Link>
                     <ButtonLogout className="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold text-red-500 hover:bg-red-100 transition-colors">
                       <LogOut size={17} />
                       Log out
