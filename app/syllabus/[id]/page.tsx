@@ -15,7 +15,6 @@ import AssessmentsTab from "@/app/syllabus/[id]/components/tabs/assessments-tab"
 import { useSyllabusDetail } from "@/app/syllabus/[id]/hooks/use-syllabus-detail";
 import { SyllabusTab } from "@/lib/type";
 import { RootState } from "@/provider/store";
-import CompareTab from "./components/tabs/compare-tab";
 
 export default function SyllabusDetailPage({
   params,
@@ -98,7 +97,9 @@ export default function SyllabusDetailPage({
               <AssessmentsTab syllabusId={syllabus.syllabusId} />
             )}
             {canViewCompare && activeTab === "compare" && syllabus && (
-              <CompareTab subjectId={subjectId} />
+              <div className="bg-white rounded-3xl p-8 border border-gray-100 text-sm text-gray-500">
+                Compare view is not available.
+              </div>
             )}
           </motion.div>
         </AnimatePresence>

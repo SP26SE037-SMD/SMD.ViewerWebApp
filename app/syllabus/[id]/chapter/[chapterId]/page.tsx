@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, use } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, BookOpen, AlertCircle, X, Copy } from "lucide-react";
 import { toast } from "sonner";
@@ -230,9 +231,11 @@ export default function ChapterViewerPage({
             >
               <X size={24} />
             </button>
-            <img
-              src={enlargedImage}
+            <Image
+              src={enlargedImage || ""}
               alt="Enlarged"
+              width={1200}
+              height={800}
               className="max-w-full max-h-full object-contain rounded-md shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             />
