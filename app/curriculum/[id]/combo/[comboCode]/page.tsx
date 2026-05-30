@@ -14,7 +14,6 @@ export default function ComboDetailPage({
 
   const comboCode = decodeURIComponent(resolvedParams.comboCode);
 
-  // MOCK DATA for combo subjects (since there's no combo API yet)
   const mockSubjects = [
     {
       subjectCode: `${comboCode}_1`,

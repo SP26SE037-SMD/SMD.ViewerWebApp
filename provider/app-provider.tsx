@@ -1,15 +1,8 @@
 "use client";
 
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
 
-// User type supports both login (role: string) and me endpoint (role: { roleName: string })
+
 export type User = {
   accountId: string;
   email: string;

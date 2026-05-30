@@ -10,7 +10,6 @@ export async function POST(req: NextRequest) {
         return Response.json({ message: "idToken is required" }, { status: 400 });
     }
 
-    // Gọi Backend Server → Server-to-Server (không bị CORS)
     const backendRes = await fetch(`${BACKEND_URL}/api/auth/login-google`, {
         method: "POST",
         headers: { "Content-Type": "application/json", accept: "*/*" },
@@ -23,7 +22,6 @@ export async function POST(req: NextRequest) {
         return Response.json(data, { status: backendRes.status });
     }
 
-    // Lấy token từ response của backend (data.data.token)
     const sessionToken = data?.data?.token as string | undefined;
 
     if (!sessionToken) {
@@ -33,7 +31,6 @@ export async function POST(req: NextRequest) {
         );
     }
 
-    // Tính thời gian hết hạn (1 giờ từ bây giờ, hoặc parse từ JWT nếu cần)
     const expires = new Date(Date.now() + 60 * 60 * 1000).toUTCString();
 
     return Response.json(data, {

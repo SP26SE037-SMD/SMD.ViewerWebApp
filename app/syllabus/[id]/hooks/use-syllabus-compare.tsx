@@ -1,4 +1,3 @@
-// app/syllabus/[id]/hooks/use-syllabi-compare.ts
 import { useEffect, useState } from "react";
 import {
   SyllabusContentType,
@@ -32,10 +31,7 @@ export function useSyllabiCompare(subjectId: string) {
       setLoading(true);
       setError(null);
       try {
-        // TODO: API endpoint không có sẵn
-        // Đợi backend tạo endpoint để compare syllabuses
-        // const res = await syllabusApiRequest.compareSyllabuses(subjectId);
-
+       
         setComparison(null);
       } catch (err) {
         setError(

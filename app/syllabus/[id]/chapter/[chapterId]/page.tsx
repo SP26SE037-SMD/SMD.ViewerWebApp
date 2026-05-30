@@ -29,7 +29,6 @@ export default function ChapterViewerPage({
     text: string;
   } | null>(null);
 
-  // Handle global text selection for the copying tooltip
   useEffect(() => {
     const handleMouseUp = () => {
       const selection = window.getSelection();
@@ -48,12 +47,11 @@ export default function ChapterViewerPage({
         const range = currSelection.getRangeAt(0);
         const rect = range.getBoundingClientRect();
 
-        // Don't show if the selection is outside the viewport
         if (rect.top === 0 && rect.left === 0) return;
 
         setSelectionBox({
           x: rect.left + rect.width / 2,
-          y: Math.max(8, rect.top - 8), // Keep it purely fixed viewport coordinate!
+          y: Math.max(8, rect.top - 8), 
           text,
         });
       }, 0);
@@ -66,7 +64,6 @@ export default function ChapterViewerPage({
     document.addEventListener("mouseup", handleMouseUp);
     window.addEventListener("scroll", handleScroll, true);
 
-    // Clear selection early if they start a new drag or scroll
     const handleSelectionChange = () => {
       const selection = window.getSelection();
       if (!selection || selection.isCollapsed) {
@@ -159,7 +156,7 @@ export default function ChapterViewerPage({
               <div
                 key={pageIndex}
                 className="w-full max-w-212.5 bg-white rounded-sm shadow-[0_4px_24px_rgb(0,0,0,0.06)] ring-1 ring-gray-200 isolate relative flex flex-col"
-                style={{ minHeight: "1123px" }} // Standard A4 height at 96 PPI
+                style={{ minHeight: "1123px" }} 
               >
                 {/* Document Content Area */}
                 <article className="px-10 py-12 sm:px-16 sm:py-16 md:px-20 md:py-20 flex-1">

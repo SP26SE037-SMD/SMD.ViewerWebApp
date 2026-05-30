@@ -135,6 +135,30 @@ export const CurriculumGroupRes = z.object({
   data: CurriculumGroup,
 });
 
+export const CurriculumIdsRes = z.object({
+  status: z.number(),
+  message: z.string(),
+  data: z.array(z.string()),
+});
+
+export const CloPloMappingDetail = z.object({
+  id: z.string(),
+  cloId: z.string(),
+  cloCode: z.string(),
+  cloDescription: z.string(),
+  ploId: z.string(),
+  ploCode: z.string(),
+  ploDescription: z.string(),
+  contributionLevel: z.string(),
+  createdAt: z.string(),
+});
+
+export const CloPloMappingsRes = z.object({
+  status: z.number(),
+  message: z.string(),
+  data: z.array(CloPloMappingDetail),
+});
+
 export type CurriculumBodyType = z.infer<typeof CurriculumBody>;
 
 export type CurriculumContentType = z.infer<typeof CurriculumContent>;
@@ -157,3 +181,6 @@ export type CurriculumSemesterMappingsResType = z.infer<
   typeof CurriculumSemesterMappingsRes
 >;
 export type CurriculumGroupResType = z.infer<typeof CurriculumGroupRes>;
+export type CurriculumIdsResType = z.infer<typeof CurriculumIdsRes>;
+export type CloPloMappingDetailType = z.infer<typeof CloPloMappingDetail>;
+export type CloPloMappingsResType = z.infer<typeof CloPloMappingsRes>;

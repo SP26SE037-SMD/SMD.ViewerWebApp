@@ -1,7 +1,9 @@
 import http from "@/lib/http";
 import {
+  CloPloMappingsResType,
   CurriculumGroupResType,
   CurriculumDetailResType,
+  CurriculumIdsResType,
   CurriculumPloResType,
   CurriculumResType,
   CurriculumSemesterMappingsResType,
@@ -35,6 +37,19 @@ const curriculumApiRequest = {
     params.set("curriculumId", curriculumId);
     return http.get<CurriculumSemesterMappingsResType>(
       `/api/curriculum-group-subjects/semester-mappings?${params.toString()}`,
+    );
+  },
+  getCurriculaBySubjectId: (subjectId: string) => {
+    return http.get<CurriculumIdsResType>(
+      `/api/curriculum-group-subjects/subjects/${subjectId}/curricula`,
+    );
+  },
+  getCloPloMappingsBySubjectAndCurriculum: (
+    subjectId: string,
+    curriculumId: string,
+  ) => {
+    return http.get<CloPloMappingsResType>(
+      `/api/clo-plo-mappings/subject/${subjectId}/curriculum/${curriculumId}`,
     );
   },
   getGroupById: (groupId: string) => {

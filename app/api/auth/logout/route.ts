@@ -3,7 +3,6 @@ import { HttpError } from "@/lib/http";
 import { cookies } from "next/headers";
 
 export async function POST(request: Request) {
-  // 1. Buộc đăng xuất ví dụ như khi token hết hạn
   const res = await request.json();
   const force = res?.force as boolean | undefined;
   if (force) {
@@ -16,14 +15,12 @@ export async function POST(request: Request) {
       {
         status: 200,
         headers: {
-          // Xóa cookie sessionToken khi đăng xuất
           "Set-Cookie": "sessionToken=; Path=/; HttpOnly; Max-Age=0",
         },
       },
     );
   }
 
-  // 2. Nếu là logout chủ động, lấy token từ cookie để gọi Backend
   const cookieStore = await cookies();
   const sessionToken = cookieStore.get("sessionToken");
 
@@ -35,14 +32,12 @@ export async function POST(request: Request) {
   }
 
   try {
-    // Gọi Backend để hủy token (Server-to-Server)
     const result = await authApiRequest.logoutFromNextServerToServer(
       sessionToken.value,
     );
     return Response.json(result?.payload, {
       status: 200,
       headers: {
-        // Xóa cookie sessionToken khi đăng xuất
         "Set-Cookie": "sessionToken=; Path=/; HttpOnly; Max-Age=0",
       },
     });

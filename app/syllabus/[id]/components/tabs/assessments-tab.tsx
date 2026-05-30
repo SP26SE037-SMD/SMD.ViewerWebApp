@@ -26,7 +26,6 @@ export default function AssessmentsTab({ syllabusId }: Props) {
         const assessmentsList = res?.payload?.data ?? [];
         setAssessments(assessmentsList);
 
-        // Fetch CLO mappings for all assessments in parallel
         const mappingsMap: Record<string, CloAssessmentMappingType[]> = {};
         const promises = assessmentsList.map((ass) =>
           syllabusApiRequest

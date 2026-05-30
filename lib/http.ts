@@ -73,8 +73,6 @@ const request = async <Response>(
     }
   }
 
-  // If baseUrl is not passed (or baseUrl = undefined), get it from envConfig.NEXT_PUBLIC_API_ENDPOINT
-  // If baseUrl is passed, use that value, passing '' means calling the API to the Next.js Server
   const baseUrl =
     options?.baseUrl === undefined
       ? envConfig.NEXT_PUBLIC_API_ENDPOINT
@@ -94,8 +92,6 @@ const request = async <Response>(
     method,
   });
 
-  // Inceptor is where we process request and response before returning to the component
-  // Safely handle cases where API doesn't return a body (e.g., 204 No Content)
   let payload: Response;
   const contentType = res.headers.get("Content-Type");
   if (contentType && contentType.includes("application/json")) {
@@ -110,7 +106,6 @@ const request = async <Response>(
   };
 
   if (!res.ok) {
-    // Handle horizontal error (422 Unprocessable Entity)
     if (res.status === ENTITY_ERROR_STATUS) {
       throw new EntityError(
         data as {
@@ -120,7 +115,6 @@ const request = async <Response>(
       );
     }
 
-    // Handle authentication error (401 Unauthorized)
     if (res.status === AUTHENTICATION_ERROR_STATUS) {
       if (isClient()) {
         if (!clientLogoutRequest) {
@@ -130,7 +124,6 @@ const request = async <Response>(
             headers: { "Content-Type": "application/json", ...baseHeaders },
           });
 
-          // Handle logout
           try {
             await clientLogoutRequest;
           } catch (error) {
@@ -144,14 +137,13 @@ const request = async <Response>(
           }
         }
       } else {
-        // Safer to extract token on the server
         const authHeader = (options?.headers as Record<string, string>)
           ?.Authorization;
         const sessionToken = authHeader?.split("Bearer ")?.[1];
         if (sessionToken) {
           redirect(`/logout?sessionToken=${sessionToken}`);
         } else {
-          redirect("/login"); // Fallback if no token
+          redirect("/login");
         }
       }
     }

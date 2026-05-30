@@ -9,9 +9,7 @@ export async function POST(request: Request) {
       { status: 400 },
     );
   }
-  // Giải mã token để lấy trường 'exp'
   const decoded = jwtDecode<{ exp: number }>(sessionToken);
-  // JWT exp tính bằng giây, JS Date tính bằng miligiây
   const expirationDate = new Date(decoded.exp * 1000).toUTCString();
 
   return Response.json(body, {

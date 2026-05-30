@@ -11,7 +11,6 @@ export default function StoreProvider({
 }) {
   const isInitialized = useRef(false);
   
-  // Hydrate store from localStorage on mount
   if (!isInitialized.current) {
     if (typeof window !== "undefined") {
       const storedUser = localStorage.getItem("user");
@@ -22,7 +21,6 @@ export default function StoreProvider({
     isInitialized.current = true;
   }
 
-  // Double check in useEffect to catch any mismatch
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {

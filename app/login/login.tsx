@@ -33,7 +33,6 @@ export default function Login() {
   const router = useRouter();
   const dispatch = useDispatch();
 
-  // Simulate or check session for the first time
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 500);
     return () => clearTimeout(timer);
@@ -108,11 +107,9 @@ export default function Login() {
               console.error("Failed to decode Google Token", err);
             }
 
-            // Save token first so that HTTP client can use it for updateAccount
             await authApiRequest.auth({ sessionToken: token });
             localStorage.setItem("sessionToken", token);
 
-            // Sync with backend
             try {
               await accountApiRequest.updateAccount(String(account.accountId), {
                 fullName: account.fullName || "",
@@ -476,7 +473,7 @@ export default function Login() {
                       }
                       theme="outline"
                       shape="pill"
-                      width="100%" // Để nó tự co giãn theo card
+                      width="100%" 
                     />
                   </div>
                 )}
