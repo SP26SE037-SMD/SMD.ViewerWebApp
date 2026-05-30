@@ -19,7 +19,7 @@ export const TabSyllabus: {
   { id: "general", label: "General", icon: FileText },
   { id: "sources", label: "Sources", icon: BookOpen },
   { id: "clos", label: "CLOs", icon: Award },
-  { id: "sessions", label: "Teaching Plan", icon: Calendar },
+  { id: "sessions", label: "Session", icon: Calendar },
   { id: "chapterMaterials", label: "Course Materials", icon: BookOpen },
   { id: "assessments", label: "Assessments", icon: FileCheck2 },
   { id: "compare", label: "Compare", icon: Info },
