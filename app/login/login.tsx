@@ -114,13 +114,15 @@ export default function Login() {
 
             // Sync with backend
             try {
-              await accountApiRequest.updateAccount(String(account.accountId), {
-                fullName: account.fullName || "",
-                phoneNumber: account.phoneNumber || "",
-                avatarUrl: googleAvatarUrl || "",
-              });
+              const updateBody: any = {
+                fullName: account.fullName || "Google User",
+              };
+              if (account.phoneNumber) updateBody.phoneNumber = account.phoneNumber;
+              if (googleAvatarUrl) updateBody.avatarUrl = googleAvatarUrl;
+
+              await accountApiRequest.updateAccount(String(account.accountId), updateBody);
             } catch (updateErr) {
-              console.error("Failed to update avatar on backend", updateErr);
+              console.warn("Failed to sync avatar with backend:", updateErr);
             }
 
             dispatch(setUser({
@@ -150,17 +152,6 @@ export default function Login() {
     }
   };
 
-  useGoogleOneTapLogin({
-    onSuccess: (credentialResponse) => {
-      const idToken = credentialResponse.credential;
-      if (idToken) {
-        handleGoogleSuccess(idToken);
-      }
-    },
-    onError: () => {
-      console.error("One Tap Login Failed or modal closed by user");
-    },
-  });
 
   return (
     <div className="h-screen w-screen flex items-center justify-center bg-[#f0f7ed] p-4 lg:p-8">
@@ -476,7 +467,6 @@ export default function Login() {
                       }
                       theme="outline"
                       shape="pill"
-                      width="100%" // Để nó tự co giãn theo card
                     />
                   </div>
                 )}
