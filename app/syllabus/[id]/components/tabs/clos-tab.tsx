@@ -52,7 +52,7 @@ function HoverPopover({
   content,
   maxWidth = "max-w-xs",
 }: {
-  children: React.ReactElement;
+  children: React.ReactElement<any, any>;
   content: React.ReactNode;
   maxWidth?: string;
 }) {
@@ -73,12 +73,14 @@ function HoverPopover({
   return (
     <Popover.Root open={open} onOpenChange={setOpen}>
       <Popover.Trigger asChild>
-        {React.cloneElement(children, {
-          onPointerEnter: handleEnter,
-          onPointerLeave: handleLeave,
-          onFocus: handleEnter,
-          onBlur: handleLeave,
-        })}
+        {React.isValidElement(children)
+          ? React.cloneElement(children as React.ReactElement<any>, {
+              onPointerEnter: handleEnter,
+              onPointerLeave: handleLeave,
+              onFocus: handleEnter,
+              onBlur: handleLeave,
+            })
+          : children}
       </Popover.Trigger>
 
       <Popover.Portal>
