@@ -23,14 +23,14 @@ export default function StudentCompareModal({ isOpen, onClose, syllabusId }: Pro
       setError(null);
       try {
         const response = await syllabusApiRequest.getSyllabusCompareStudent(syllabusId);
-        if (response.payload?.data) {
+        if (response?.payload?.data) {
           setData(response.payload.data);
         } else {
-          setError("No comparison data available.");
+          setError("No previous syllabus version to compare.");
         }
       } catch (err: any) {
         console.error("Failed to fetch compare data", err);
-        setError("Failed to fetch comparison data. Please try again.");
+        setError("No previous syllabus version to compare.");
       } finally {
         setLoading(false);
       }
@@ -104,8 +104,8 @@ export default function StudentCompareModal({ isOpen, onClose, syllabusId }: Pro
               <p className="text-gray-500 mt-4">Loading changes...</p>
             </div>
           ) : error ? (
-            <div className="text-center py-20 text-red-500">
-              <AlertTriangle className="w-12 h-12 mx-auto mb-3 opacity-50" />
+            <div className="text-center py-20 text-gray-500">
+              <Info className="w-12 h-12 mx-auto mb-3 opacity-50" />
               <p>{error}</p>
             </div>
           ) : data ? (
