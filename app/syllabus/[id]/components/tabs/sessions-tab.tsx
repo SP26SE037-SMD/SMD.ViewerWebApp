@@ -18,9 +18,7 @@ export default function SessionsTab({ syllabusId, subjectId }: Props) {
   const [sessionCloMappings, setSessionCloMappings] = useState<
     Record<string, CloSessionMappingType[]>
   >({});
-  const [sessionMaterials, setSessionMaterials] = useState<
-    Record<string, SessionMaterialItemType[]>
-  >({});
+
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -46,30 +44,12 @@ export default function SessionsTab({ syllabusId, subjectId }: Props) {
           }),
         );
 
-        const materialResults = await Promise.all(
-          sessionData.map(async (session) => {
-            try {
-              const materialRes =
-                await syllabusApiRequest.getSessionMaterialBlockDetailBySessionId(
-                  session.sessionId,
-                );
-              return [
-                session.sessionId,
-                materialRes?.payload?.data?.material ?? [],
-              ] as const;
-            } catch {
-              return [session.sessionId, []] as const;
-            }
-          }),
-        );
 
         setSessionCloMappings(Object.fromEntries(cloMappingResults));
-        setSessionMaterials(Object.fromEntries(materialResults));
       } catch (error) {
         console.error("Failed to fetch sessions", error);
         setSessions([]);
         setSessionCloMappings({});
-        setSessionMaterials({});
       } finally {
         setLoading(false);
       }
@@ -86,11 +66,13 @@ export default function SessionsTab({ syllabusId, subjectId }: Props) {
       <thead>
         <tr className="bg-white border-b border-gray-100 text-[11px] font-bold text-gray-400 uppercase tracking-wider">
           <th className="px-6 py-4 whitespace-nowrap text-center">No</th>
-          <th className="px-6 py-4 w-1/4">Topic</th>
+          <th className="px-6 py-4 w-1/4">Title</th>
+          <th className="px-6 py-4">Topic</th>
+          <th className="px-6 py-4">Type</th>
           <th className="px-6 py-4">Teaching Methods</th>
           <th className="px-6 py-4">CLO</th>
-          <th className="px-6 py-4">Content</th>
-          <th className="px-6 py-4">Material</th>
+
+
           <th className="px-6 py-4">Duration</th>
         </tr>
       </thead>
@@ -127,6 +109,16 @@ export default function SessionsTab({ syllabusId, subjectId }: Props) {
               </td>
               <td className="px-6 py-4 align-top">
                 <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
+                  {s.sessionTopic || "-"}
+                </div>
+              </td>
+              <td className="px-6 py-4 align-top">
+                <span className="inline-flex px-2 py-1 bg-blue-50 text-blue-600 font-medium text-[10px] uppercase rounded-md border border-blue-100">
+                  {s.sessionType || "-"}
+                </span>
+              </td>
+              <td className="px-6 py-4 align-top">
+                <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
                   {s.teachingMethods || "-"}
                 </div>
               </td>
@@ -147,28 +139,8 @@ export default function SessionsTab({ syllabusId, subjectId }: Props) {
                   )}
                 </div>
               </td>
-              <td className="px-6 py-4 align-top">
-                <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
-                  {s.content || "-"}
-                </div>
-              </td>
-              <td className="px-6 py-4 align-top">
-                <div className="flex flex-col gap-1.5">
-                  {(sessionMaterials[s.sessionId] ?? []).length > 0 ? (
-                    (sessionMaterials[s.sessionId] ?? []).map((material) => (
-                      <Link
-                        key={material.materialId}
-                        href={`/syllabus/${encodeURIComponent(subjectId)}/chapter/${material.materialId}`}
-                        className="text-sm font-medium text-[#3d6b2c] hover:underline"
-                      >
-                        {material.materialName}
-                      </Link>
-                    ))
-                  ) : (
-                    <span className="text-sm text-gray-400">-</span>
-                  )}
-                </div>
-              </td>
+
+
               <td className="px-6 py-4 align-top">
                 <span className="inline-flex px-2.5 py-1 bg-[#eaf7e8] text-[#3d6b2c] font-bold text-[10px] uppercase rounded-lg border border-[#3d6b2c]/20">
                   {s.duration ?? 0} min
