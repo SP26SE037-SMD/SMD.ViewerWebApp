@@ -71,6 +71,8 @@ export const SyllabusSession = z.object({
   content: z.string().nullable().optional(),
   teachingMethods: z.string().nullable().optional(),
   duration: z.number().nullable().optional(),
+  sessionTopic: z.string().nullable().optional(),
+  sessionType: z.string().nullable().optional(),
   status: z.string().nullable().optional(),
   createdAt: z.string().nullable().optional(),
 });
