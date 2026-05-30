@@ -47,8 +47,12 @@ export default function ClosTab({ subjectId }: Props) {
       setLoading(true);
       try {
         const [cloRes, mappingRes] = await Promise.all([
-          subjectApiRequest.getCloBySubjectId(subjectId),
-          subjectApiRequest.getCloPloMappingsBySubjectId(subjectId),
+          subjectApiRequest.getCloBySubjectId(subjectId).catch(() => {
+            return null;
+          }),
+          subjectApiRequest.getCloPloMappingsBySubjectId(subjectId).catch(() => {
+            return null;
+          }),
         ]);
 
         const mappingData = unwrapArray(
@@ -72,7 +76,6 @@ export default function ClosTab({ subjectId }: Props) {
 
               return ploPayload as CurriculumPloType | null;
             } catch (error) {
-              console.error(`Failed to fetch PLO detail for ${ploId}`, error);
               return null;
             }
           }),
@@ -82,7 +85,6 @@ export default function ClosTab({ subjectId }: Props) {
         setClos(cloData);
         setPlos(ploResults.filter(Boolean) as CurriculumPloType[]);
       } catch (error) {
-        console.error("Failed to fetch CLO-PLO mappings", error);
         setMappings([]);
         setClos([]);
         setPlos([]);

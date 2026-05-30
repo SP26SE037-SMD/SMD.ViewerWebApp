@@ -47,6 +47,22 @@ export const SyllabusCompareRes = z.object({
   data: SyllabusCompareData,
 });
 
+export const SyllabusStudentCompareData = z.object({
+  historyId: z.string(),
+  oldSyllabusId: z.string(),
+  newSyllabusId: z.string(),
+  assessmentDiffJson: z.string().nullable().optional(),
+  conceptDiffJson: z.string().nullable().optional(),
+  selectedCompare: z.boolean(),
+  createdAt: z.string(),
+});
+
+export const SyllabusStudentCompareRes = z.object({
+  status: z.number(),
+  message: z.string(),
+  data: SyllabusStudentCompareData,
+});
+
 export const SyllabusSession = z.object({
   sessionId: z.string(),
   syllabusId: z.string(),
@@ -216,3 +232,5 @@ export type SessionMaterialBlockDetailType = z.infer<
 export type SessionMaterialBlockDetailResType = z.infer<
   typeof SessionMaterialBlockDetailRes
 >;
+export type SyllabusStudentCompareDataType = z.infer<typeof SyllabusStudentCompareData>;
+export type SyllabusStudentCompareResType = z.infer<typeof SyllabusStudentCompareRes>;

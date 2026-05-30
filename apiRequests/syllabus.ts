@@ -10,6 +10,7 @@ import {
   MaterialBlockResType,
   SyllabusSessionResType,
   SessionMaterialBlockDetailResType,
+  SyllabusStudentCompareResType,
 } from "@/schemaValidations/syllabus.schema";
 
 const syllabusApiRequest = {
@@ -43,6 +44,11 @@ const syllabusApiRequest = {
     return http.post<SyllabusCompareResType>(
       `/api/syllabus/compare?${params.toString()}`,
       null,
+    );
+  },
+  getSyllabusCompareStudent: (newSyllabusId: string) => {
+    return http.get<SyllabusStudentCompareResType>(
+      `/api/syllabus/${newSyllabusId}/get-syllabus-compare/student`,
     );
   },
   getSyllabusDetail: (syllabusId: string) => {

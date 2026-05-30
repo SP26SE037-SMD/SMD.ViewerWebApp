@@ -1,24 +1,21 @@
 import { SubjectDetailType } from "@/schemaValidations/subject.schema";
 import { SyllabusContentType } from "@/schemaValidations/syllabus.schema";
-import { ArrowLeft, BellPlus } from "lucide-react";
+import { ArrowLeft, History } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import StudentCompareModal from "./student-compare-modal";
 
 type Props = {
   syllabus: SyllabusContentType | null;
   subjectDetail: SubjectDetailType | null;
-  isWishlisted?: boolean;
 };
 
 export default function SyllabusHeader({
   syllabus,
   subjectDetail,
-  isWishlisted = false,
 }: Props) {
   const router = useRouter();
-
-  const wishlistButtonClassName = isWishlisted
-    ? "shrink-0 inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border-2 border-white bg-[#059669] text-white text-xs font-bold shadow-sm transition-colors hover:bg-[#047857]"
-    : "shrink-0 inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border-2 border-[#059669] bg-white text-[#059669] text-xs font-bold transition-colors hover:bg-[#ecfdf5]";
+  const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
 
   return (
     <div className="bg-white border-b border-gray-100 top-0 z-30">
@@ -40,16 +37,28 @@ export default function SyllabusHeader({
               </p>
             </div>
           </div>
-          <button
-            type="button"
-            className={wishlistButtonClassName}
-            aria-label="Subscribe subject"
-            title="Subscribe subject"
-          >
-            <BellPlus size={14} />
-          </button>
+          {syllabus?.syllabusId && (
+            <button
+              onClick={() => setIsCompareModalOpen(true)}
+              type="button"
+              className="shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-gray-200 bg-white text-gray-700 text-sm font-medium shadow-sm transition-colors hover:bg-gray-50"
+              aria-label="Compare with previous version"
+              title="Compare with previous version"
+            >
+              <History size={16} />
+              Compare with previous version
+            </button>
+          )}
         </div>
       </div>
+      
+      {syllabus?.syllabusId && (
+        <StudentCompareModal
+          isOpen={isCompareModalOpen}
+          onClose={() => setIsCompareModalOpen(false)}
+          syllabusId={syllabus.syllabusId}
+        />
+      )}
     </div>
   );
 }
