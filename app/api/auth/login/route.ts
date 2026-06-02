@@ -78,10 +78,16 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
     console.error("Login proxy failed", error);
     return Response.json(
       { message: "Không thể kết nối tới backend đăng nhập" },
-      { status: 502 },
+      {
+        status: 502,
+        headers: {
+          "X-Auth-Proxy-Error": errorMessage,
+        },
+      },
     );
   }
 }
