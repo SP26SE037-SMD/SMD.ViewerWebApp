@@ -95,7 +95,7 @@ export default function SyllabusContent() {
     <div className="min-h-screen bg-[#f8fafb] font-[Lexend]">
       <PageHeader
         title="Syllabus"
-        description="Search syllabus of subject"
+        description="Search subject"
         icon={
           <BookOpen size={22} className="text-[#4caf50]" strokeWidth={1.7} />
         }

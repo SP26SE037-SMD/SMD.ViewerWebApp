@@ -136,20 +136,30 @@ export default function ClosTab({ subjectId }: Props) {
           }),
         );
 
+        const publishedCurricula = curriculumDetails.filter(
+          (item): item is { curriculumId: string; curriculum: CurriculumDetailType } =>
+            item.curriculum !== null,
+        );
+
         if (!isActive) return;
 
         setClos(cloData);
-        setCurricula(curriculumDetails);
+        setCurricula(publishedCurricula);
 
-        // auto-select first curriculum if available
-        if (curriculumDetails.length > 0) {
-          setSelectedCurriculumId(curriculumDetails[0].curriculumId);
+        // auto-select first published curriculum if available
+        if (publishedCurricula.length > 0) {
+          setSelectedCurriculumId(publishedCurricula[0].curriculumId);
+        } else {
+          setSelectedCurriculumId(null);
+          setMappings([]);
         }
       } catch (error) {
         console.error("Failed to fetch initial CLO/Curricula", error);
         if (!isActive) return;
         setClos([]);
         setCurricula([]);
+        setSelectedCurriculumId(null);
+        setMappings([]);
       } finally {
         if (isActive) setLoading(false);
       }

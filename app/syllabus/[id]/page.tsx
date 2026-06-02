@@ -30,7 +30,6 @@ export default function SyllabusDetailPage({
     typeof reduxUser?.role === "string"
       ? reduxUser.role
       : reduxUser?.role?.roleName;
-  const canViewCompare = userRole === "LECTURER";
 
   if (loading) {
     return (
@@ -58,11 +57,7 @@ export default function SyllabusDetailPage({
     <div className="min-h-screen bg-[#f8fafb] font-[Lexend] pb-24">
       <SyllabusHeader syllabus={syllabus} subjectDetail={subjectDetail} />
       <div className="max-w-6xl mx-auto px-4">
-        <SyllabusTabs
-          activeTab={activeTab}
-          onChangeTab={setActiveTab}
-          canViewCompare={canViewCompare}
-        />
+        <SyllabusTabs activeTab={activeTab} onChangeTab={setActiveTab} />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 py-8">
@@ -96,11 +91,7 @@ export default function SyllabusDetailPage({
             {activeTab === "assessments" && syllabus && (
               <AssessmentsTab syllabusId={syllabus.syllabusId} />
             )}
-            {canViewCompare && activeTab === "compare" && syllabus && (
-              <div className="bg-white rounded-3xl p-8 border border-gray-100 text-sm text-gray-500">
-                Compare view is not available.
-              </div>
-            )}
+            {/* 'Compare' tab removed */}
           </motion.div>
         </AnimatePresence>
       </div>

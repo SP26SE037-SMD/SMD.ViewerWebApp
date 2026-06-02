@@ -5,17 +5,13 @@ import { motion } from "framer-motion";
 type Props = {
   activeTab: SyllabusTab;
   onChangeTab: (tab: SyllabusTab) => void;
-  canViewCompare: boolean;
 };
 
 export default function SyllabusTabs({
   activeTab,
   onChangeTab,
-  canViewCompare,
 }: Props) {
-  const visibleTabs = canViewCompare
-    ? TabSyllabus
-    : TabSyllabus.filter((tab) => tab.id !== "compare");
+  const visibleTabs = TabSyllabus;
 
   return (
     <>
