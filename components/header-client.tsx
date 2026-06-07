@@ -52,15 +52,28 @@ export default function HeaderClient({ account }: Props) {
     <nav className="sticky top-0 z-50 w-full bg-white border-b border-gray-100 shadow-sm">
       <div className="mx-auto max-w-6xl flex h-16 items-center justify-between px-4">
         {/* Logo */}
-        <Link href="/home" className="relative h-9 w-28 shrink-0">
-          <Image
-            src="/smd-with-name.png"
-            alt="SMD Logo"
-            fill
-            priority
-            sizes="112px"
-            className="object-contain"
-          />
+        <Link href="/home" className="flex items-center gap-3 shrink-0">
+          <div className="relative h-12 w-32">
+            <Image
+              src="/smd-with-name.png"
+              alt="SMD Logo"
+              fill
+              priority
+              sizes="128px"
+              className="object-contain"
+            />
+          </div>
+          <div className="h-7 w-px bg-gray-300" />
+          <div className="relative h-12 w-12">
+            <Image
+              src="/GIGGLING.png"
+              alt="Giggling Logo"
+              fill
+              priority
+              sizes="48px"
+              className="object-contain"
+            />
+          </div>
         </Link>
 
         {/* Title */}

@@ -338,13 +338,21 @@ export default function Login() {
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-6"
+            className="mb-6 flex items-center justify-center gap-4"
           >
             <Image
               src="/smd-with-name.png"
-              alt="Logo"
+              alt="SMD Logo"
               width={120}
-              height={40}
+              height={48}
+              className="object-contain"
+            />
+            <div className="h-8 w-px bg-gray-300" />
+            <Image
+              src="/GIGGLING.png"
+              alt="Giggling Logo"
+              width={80}
+              height={80}
               className="object-contain"
             />
           </motion.div>
