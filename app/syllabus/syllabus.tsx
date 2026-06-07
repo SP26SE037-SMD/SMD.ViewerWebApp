@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import subjectApiRequest from "@/apiRequests/subject";
 import { SubjectContentType } from "@/schemaValidations/subject.schema";
 import { motion, AnimatePresence } from "framer-motion";
@@ -32,26 +32,21 @@ export default function SyllabusContent() {
   const [subjects, setSubjects] = useState<SubjectContentType[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalPages, setTotalPages] = useState(0);
-  const [totalElements, setTotalElements] = useState(0);
-  const [localSearch, setLocalSearch] = useState(searchQuery);
+  const [draftSearch, setDraftSearch] = useState(searchQuery);
+  const [appliedSearch, setAppliedSearch] = useState(searchQuery);
   const [searchType, setSearchType] = useState<"name" | "code">(
     searchByQuery === "code" ? "code" : "name",
   );
-
-  useEffect(() => {
-    setLocalSearch(searchQuery);
-    setSearchType(searchByQuery === "code" ? "code" : "name");
-  }, [searchByQuery, searchQuery]);
+  const [pageIndex, setPageIndex] = useState(page);
 
   useEffect(() => {
     const fetchSubjects = async () => {
       setLoading(true);
       try {
         const res = await subjectApiRequest.getSubjects({
-          search: localSearch.trim() || undefined,
+          search: appliedSearch.trim() || undefined,
           searchBy: searchType,
-          status: "COMPLETED",
-          page,
+          page: pageIndex,
           size,
           sortBy: "approvedDate",
           direction: "asc",
@@ -59,7 +54,6 @@ export default function SyllabusContent() {
         if (res?.payload?.data) {
           setSubjects(res.payload.data.content || []);
           setTotalPages(res.payload.data.totalPages || 0);
-          setTotalElements(res.payload.data.totalElements || 0);
         } else {
           setSubjects([]);
         }
@@ -72,23 +66,16 @@ export default function SyllabusContent() {
     };
 
     fetchSubjects();
-  }, [localSearch, searchType, page, size]);
+  }, [appliedSearch, searchType, pageIndex, size]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    const params = new URLSearchParams();
-    if (localSearch.trim()) {
-      params.set("search", localSearch.trim());
-      params.set("searchBy", searchType);
-    }
-    params.set("page", "0");
-    router.push(`/syllabus?${params.toString()}`);
+    setAppliedSearch(draftSearch);
+    setPageIndex(0);
   };
 
   const goToPage = (p: number) => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("page", String(p));
-    router.push(`/syllabus?${params.toString()}`);
+    setPageIndex(p);
   };
 
   return (
@@ -105,19 +92,18 @@ export default function SyllabusContent() {
         {/* ── Search bar ── */}
         <SearchBar
           className="mb-8"
-          value={localSearch}
-          onValueChange={setLocalSearch}
+          value={draftSearch}
+          onValueChange={setDraftSearch}
           searchType={searchType}
-          onSearchTypeChange={setSearchType}
+          onSearchTypeChange={(type) => {
+            setSearchType(type);
+            setPageIndex(0);
+          }}
           onSubmit={handleSearch}
           onClear={() => {
-            setLocalSearch("");
-            const params = new URLSearchParams(searchParams.toString());
-            params.delete("search");
-            params.delete("searchBy");
-            params.delete("name");
-            params.delete("code");
-            router.push(`/syllabus?${params.toString()}`);
+            setDraftSearch("");
+            setAppliedSearch("");
+            setPageIndex(0);
           }}
           namePlaceholder="Enter subject name..."
           codePlaceholder="Enter subject code..."

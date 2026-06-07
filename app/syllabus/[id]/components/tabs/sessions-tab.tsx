@@ -2,22 +2,26 @@ import { useEffect, useState } from "react";
 import syllabusApiRequest from "@/apiRequests/syllabus";
 import {
   CloSessionMappingType,
-  SessionMaterialItemType,
   SyllabusSessionType,
 } from "@/schemaValidations/syllabus.schema";
 import TableSection from "@/components/table-section";
-import Link from "next/link";
 
 type Props = {
   syllabusId: string;
   subjectId: string;
 };
 
-export default function SessionsTab({ syllabusId, subjectId }: Props) {
+const formatSessionTopic = (sessionTopic: string | null | undefined) => {
+  if (!sessionTopic) return "-";
+  return sessionTopic.replace(/[~˜]+/g, " & ").replace(/\s{2,}/g, " ").trim();
+};
+
+export default function SessionsTab({ syllabusId }: Props) {
   const [sessions, setSessions] = useState<SyllabusSessionType[]>([]);
   const [sessionCloMappings, setSessionCloMappings] = useState<
     Record<string, CloSessionMappingType[]>
   >({});
+  const [sessionMinute, setSessionMinute] = useState<number | null>(null);
 
   const [loading, setLoading] = useState(true);
 
@@ -25,8 +29,15 @@ export default function SessionsTab({ syllabusId, subjectId }: Props) {
     const fetchSessions = async () => {
       setLoading(true);
       try {
-        const res =
-          await syllabusApiRequest.getSessionsBySyllabusId(syllabusId);
+        const [sessionsRes, sessionMinuteRes] = await Promise.all([
+          syllabusApiRequest.getSessionsBySyllabusId(syllabusId),
+          syllabusApiRequest.getSettingByCode("SESSION_MINUTE"),
+        ]);
+
+        const settingMinute = Number(sessionMinuteRes?.payload?.data?.value);
+        setSessionMinute(Number.isFinite(settingMinute) ? settingMinute : null);
+
+        const res = sessionsRes;
         const sessionData = res?.payload?.data ?? [];
         setSessions(sessionData);
 
@@ -50,6 +61,7 @@ export default function SessionsTab({ syllabusId, subjectId }: Props) {
         console.error("Failed to fetch sessions", error);
         setSessions([]);
         setSessionCloMappings({});
+        setSessionMinute(null);
       } finally {
         setLoading(false);
       }
@@ -109,7 +121,7 @@ export default function SessionsTab({ syllabusId, subjectId }: Props) {
               </td>
               <td className="px-6 py-4 align-top">
                 <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
-                  {s.sessionTopic || "-"}
+                  {formatSessionTopic(s.sessionTopic)}
                 </div>
               </td>
               <td className="px-6 py-4 align-top">
@@ -143,7 +155,7 @@ export default function SessionsTab({ syllabusId, subjectId }: Props) {
 
               <td className="px-6 py-4 align-top">
                 <span className="inline-flex px-2.5 py-1 bg-[#eaf7e8] text-[#3d6b2c] font-bold text-[10px] uppercase rounded-lg border border-[#3d6b2c]/20">
-                  {s.duration ?? 0} min
+                  {sessionMinute ?? s.duration ?? 0} min
                 </span>
               </td>
             </tr>

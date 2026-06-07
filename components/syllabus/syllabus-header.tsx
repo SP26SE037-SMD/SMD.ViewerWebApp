@@ -29,7 +29,7 @@ export default function SyllabusHeader({
           </button>
           <div className="flex-1 min-w-0">
             <h1 className="text-lg font-bold text-gray-900 font-[Bricolage_Grotesque] truncate">
-              {subjectDetail?.subjectCode || "N/A"}
+              {subjectDetail?.subjectCode || "N/A"} - {subjectDetail?.subjectName || "N/A"}
             </h1>
             <div className="flex-1 min-w-0">
               <p className="text-xs text-gray-400 truncate">

@@ -17,8 +17,28 @@ export default function SourcesTab({ subjectId }: Props) {
     const fetchSources = async () => {
       setLoading(true);
       try {
-        const res = await subjectApiRequest.getSourcesBySubjectId(subjectId);
-        setSources(res?.payload?.data ?? []);
+        const subjectDetailRes =
+          await subjectApiRequest.getSubjectDetail(subjectId);
+        const subjectCode = subjectDetailRes?.payload?.data?.subjectCode;
+
+        if (!subjectCode) {
+          setSources([]);
+          return;
+        }
+
+        const subjectsRes = await subjectApiRequest.getSubjects({
+          searchBy: "code",
+          search: subjectCode,
+          page: 0,
+          size: 10,
+          sortBy: "subjectCode",
+          direction: "asc",
+        });
+
+        const subject = subjectsRes?.payload?.data?.content?.find(
+          (item) => item.subjectId === subjectId,
+        );
+        setSources(subject?.sources ?? []);
       } catch (error) {
         console.error("Failed to fetch sources", error);
         setSources([]);
@@ -84,7 +104,8 @@ export default function SourcesTab({ subjectId }: Props) {
                     Author: {source.author || "-"}
                   </p>
                   <p className="wrap-break-word">
-                    Publisher: {source.publisher || "-"}
+                    Publisher: {source.publisher || "-"} - Published Year:{" "}
+                    {source.publishedYear || "-"}
                   </p>
                   {source.url ? (
                     <Link

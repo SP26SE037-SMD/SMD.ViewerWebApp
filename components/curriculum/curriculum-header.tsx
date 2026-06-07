@@ -19,11 +19,8 @@ export default function CurriculumHeader({ curriculum, onBack }: Props) {
           </button>
           <div className="flex-1 min-w-0">
             <h1 className="text-lg font-bold text-gray-900 font-[Bricolage_Grotesque] truncate">
-              {curriculum.curriculumCode}
+              {curriculum.curriculumCode} - {curriculum.curriculumName.split("(")[0].trim()}
             </h1>
-            <p className="text-xs text-gray-400 truncate">
-              {curriculum.curriculumName.split("(")[0].trim()}
-            </p>
           </div>
         </div>
       </div>

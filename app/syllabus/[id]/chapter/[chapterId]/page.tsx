@@ -160,7 +160,7 @@ export default function ChapterViewerPage({
                 style={{ minHeight: "1123px" }} 
               >
                 {/* Document Content Area */}
-                <article className="px-10 py-12 sm:px-16 sm:py-16 md:px-20 md:py-20 flex-1">
+                <article className="px-6 py-8 sm:px-10 sm:py-10 md:px-14 md:py-12 flex-1">
                   {/* Blocks renderer */}
                   <div className="space-y-1">
                     {pageBlocks.map((block, index) => {

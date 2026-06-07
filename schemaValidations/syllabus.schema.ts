@@ -207,6 +207,19 @@ export const SessionMaterialBlockDetailRes = z.object({
   data: SessionMaterialBlockDetail,
 });
 
+export const SettingDetail = z.object({
+  id: z.string(),
+  code: z.string(),
+  value: z.string(),
+  description: z.string().nullable().optional(),
+});
+
+export const SettingDetailRes = z.object({
+  status: z.number(),
+  message: z.string(),
+  data: SettingDetail,
+});
+
 export type SyllabusContentType = z.infer<typeof SyllabusContent>;
 export type SyllabusResType = z.infer<typeof SyllabusRes>;
 export type SyllabusListResType = z.infer<typeof SyllabusListRes>;
@@ -234,5 +247,7 @@ export type SessionMaterialBlockDetailType = z.infer<
 export type SessionMaterialBlockDetailResType = z.infer<
   typeof SessionMaterialBlockDetailRes
 >;
+export type SettingDetailType = z.infer<typeof SettingDetail>;
+export type SettingDetailResType = z.infer<typeof SettingDetailRes>;
 export type SyllabusStudentCompareDataType = z.infer<typeof SyllabusStudentCompareData>;
 export type SyllabusStudentCompareResType = z.infer<typeof SyllabusStudentCompareRes>;

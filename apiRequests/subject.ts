@@ -14,7 +14,7 @@ const subjectApiRequest = {
     const params = new URLSearchParams();
     if (body.search) params.set("search", body.search);
     if (body.searchBy) params.set("searchBy", body.searchBy);
-    params.set("status", body.status ?? "COMPLETED");
+    if (body.status) params.set("status", body.status);
     params.set("page", String(body.page ?? 0));
     params.set("size", String(body.size ?? 10));
     if (body.sortBy) params.set("sortBy", body.sortBy);

@@ -39,10 +39,12 @@ export const SubjectDepartment = z.object({
 });
 
 export const SubjectPreRequisite = z.object({
-  prerequisiteId: z.string(),
+  id: z.string().optional(),
+  subjectCode: z.string().optional(),
+  subjectName: z.string().optional(),
   prerequisiteSubjectCode: z.string(),
   prerequisiteSubjectName: z.string(),
-  isMandatory: z.boolean(),
+  isMandatory: z.boolean().optional(),
   createdAt: z.string(),
 });
 
@@ -76,9 +78,28 @@ export const SubjectContent = z.object({
   decisionNo: z.string().nullable().optional(),
   tool: z.string().nullable().optional(),
   minToPass: z.number().nullable().optional(),
+  minBloomLevel: z.number().nullable().optional(),
+  theoryPeriods: z.number().nullable().optional(),
+  practicalPeriods: z.number().nullable().optional(),
+  selfStudyPeriods: z.number().nullable().optional(),
   approvedDate: z.string().nullable().optional(),
+  createdAt: z.string().nullable().optional(),
   department: SubjectDepartment.nullable().optional(),
-  preRequisite: SubjectPreRequisite.nullable().optional(),
+  preRequisite: z.array(SubjectPreRequisite).nullable().optional(),
+  sources: z
+    .array(
+      z.object({
+        sourceId: z.string(),
+        sourceCode: z.string().optional(),
+        sourceName: z.string(),
+        type: z.string(),
+        author: z.string().nullable().optional(),
+        publisher: z.string().nullable().optional(),
+        publishedYear: z.number().nullable().optional(),
+        url: z.string().nullable().optional(),
+      }),
+    )
+    .optional(),
 });
 
 export const SubjectRes = z.object({
@@ -101,6 +122,7 @@ export const SubjectDetailRes = z.object({
 
 export const SubjectSource = z.object({
   sourceId: z.string(),
+  sourceCode: z.string().optional(),
   sourceName: z.string(),
   type: z.string(),
   author: z.string().nullable().optional(),

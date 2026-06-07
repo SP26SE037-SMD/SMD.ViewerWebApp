@@ -1,7 +1,7 @@
 import { ChapterBlock } from "./types";
 
-const EFFECTIVE_PAGE_HEIGHT = 800;
-const INITIAL_OFFSET = 180;
+const EFFECTIVE_PAGE_HEIGHT = 920;
+const INITIAL_OFFSET = 100;
 
 export const paginateBlocks = (inputBlocks: ChapterBlock[]): ChapterBlock[][] => {
   const blocks = inputBlocks.map((block) => ({ ...block }));
@@ -10,7 +10,7 @@ export const paginateBlocks = (inputBlocks: ChapterBlock[]): ChapterBlock[][] =>
   let currentHeight = 0;
 
   const processBlock = (block: ChapterBlock, availableHeight: number) => {
-    let estimatedHeight = 50;
+    let estimatedHeight = 40;
 
     switch (block.type) {
       case "H1":
@@ -21,7 +21,7 @@ export const paginateBlocks = (inputBlocks: ChapterBlock[]): ChapterBlock[][] =>
         break;
       case "PARAGRAPH":
       case "QUOTE":
-        estimatedHeight = 40 + Math.ceil((block.content.length || 1) / 80) * 28;
+        estimatedHeight = 16 + Math.ceil((block.content.length || 1) / 100) * 24;
         break;
       case "ORDERED_LIST":
       case "BULLET_LIST": {
@@ -31,18 +31,18 @@ export const paginateBlocks = (inputBlocks: ChapterBlock[]): ChapterBlock[][] =>
         } catch {
           items = [block.content];
         }
-        estimatedHeight = 40 + items.length * 32;
+        estimatedHeight = 12 + items.length * 24;
         break;
       }
       case "CODE_BLOCK":
-        estimatedHeight = 60 + (block.content.match(/\n/g) || []).length * 22;
+        estimatedHeight = 40 + (block.content.match(/\n/g) || []).length * 20;
         break;
       case "TABLE": {
         let rows = [];
         try {
           rows = JSON.parse(block.content);
         } catch {}
-        estimatedHeight = 60 + rows.length * 48;
+        estimatedHeight = 40 + rows.length * 40;
         break;
       }
       case "IMAGE": {
@@ -56,7 +56,7 @@ export const paginateBlocks = (inputBlocks: ChapterBlock[]): ChapterBlock[][] =>
         break;
       }
       case "DIVIDER":
-        estimatedHeight = 80;
+        estimatedHeight = 64;
         break;
     }
 

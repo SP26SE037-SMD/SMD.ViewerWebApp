@@ -1,28 +1,13 @@
-import { BookOpen, CheckCircle2, FileText, Layers } from "lucide-react";
+import { FileText } from "lucide-react";
 import { SubjectDetailType } from "@/schemaValidations/subject.schema";
 
 type Props = {
   subjectDetail: SubjectDetailType;
 };
 
-function getPreRequisiteText(
-  preRequisite:
-    | SubjectDetailType["preRequisite"]
-    | { prerequisiteSubjectCode?: string }[]
-    | null
-    | undefined,
-) {
-  if (!preRequisite) return "None";
-  if (Array.isArray(preRequisite)) {
-    const codes = preRequisite
-      .map((item) => item?.prerequisiteSubjectCode)
-      .filter(Boolean);
-    return codes.length ? codes.join(", ") : "None";
-  }
-  return preRequisite.prerequisiteSubjectCode || "None";
-}
-
 export default function GeneralTab({ subjectDetail }: Props) {
+  const preRequisites = subjectDetail?.preRequisite ?? [];
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
       <div className="lg:col-span-7 space-y-6">
@@ -37,6 +22,16 @@ export default function GeneralTab({ subjectDetail }: Props) {
               </span>
               <p className="text-sm text-gray-800 font-medium">
                 {subjectDetail?.subjectName || "N/A"}
+              </p>
+            </div>
+            <hr className="border-gray-50" />
+            <div>
+              <span className="text-xs font-bold uppercase tracking-wider text-gray-400 block mb-1">
+                Department
+              </span>
+              <p className="text-sm text-gray-800 font-medium">
+                {subjectDetail?.department?.departmentCode || "N/A"} -{" "}
+                {subjectDetail?.department?.departmentName || "N/A"}
               </p>
             </div>
             <hr className="border-gray-50" />
@@ -80,10 +75,18 @@ export default function GeneralTab({ subjectDetail }: Props) {
               <span className="text-xs font-bold uppercase tracking-wider text-gray-400 block mb-1">
                 Pre-Requisite
               </span>
-              {getPreRequisiteText(subjectDetail?.preRequisite) !== "None" ? (
-                <span className="inline-flex px-2.5 py-1 rounded bg-emerald-100 text-emerald-600 text-xs font-bold uppercase tracking-wider">
-                  {getPreRequisiteText(subjectDetail?.preRequisite)}
-                </span>
+              {preRequisites.length > 0 ? (
+                <div className="flex flex-wrap gap-2">
+                  {preRequisites.map((item, index) => (
+                    <span
+                      key={`${item.prerequisiteSubjectCode}-${index}`}
+                      className="inline-flex px-2.5 py-1 rounded bg-emerald-100 text-emerald-600 text-xs font-bold uppercase tracking-wider"
+                    >
+                      {item.prerequisiteSubjectCode} -{" "}
+                      {item.prerequisiteSubjectName}
+                    </span>
+                  ))}
+                </div>
               ) : (
                 <span className="text-sm text-gray-400 italic">
                   No pre-requisites
@@ -92,21 +95,13 @@ export default function GeneralTab({ subjectDetail }: Props) {
             </div>
           </div>
         </div>
-
-        {/* <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-gray-100">
-          <h2 className="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <BookOpen size={20} className="text-[#4caf50]" /> Course Description
-          </h2>
-          <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
-            {subjectDetail?.description || "N/A"}
-          </div>
-        </div> */}
       </div>
 
       <div className="lg:col-span-5 space-y-6">
         <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-gray-100">
           <h2 className="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <FileText size={20} className="text-[#4caf50]" />
+            <FileText size={20} className="text-[#4caf50]" /> Additional
+            Information
           </h2>
           <div className="space-y-4">
             <div>
@@ -150,7 +145,7 @@ export default function GeneralTab({ subjectDetail }: Props) {
                 Decision No
               </span>
               <p className="text-sm text-gray-800 font-medium">
-                {subjectDetail?.decisionNo || "N/A"} (Approved:{" "}
+                {subjectDetail?.decisionNo || "N/A"} (Approved Date:{" "}
                 {subjectDetail?.approvedDate || "N/A"})
               </p>
             </div>

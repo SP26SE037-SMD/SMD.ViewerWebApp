@@ -85,7 +85,9 @@ function HoverPopover({
 
       <Popover.Portal>
         <Popover.Content sideOffset={8} align="center" asChild>
-          <div className={`z-50 ${maxWidth} rounded-xl bg-white border border-gray-100 p-4 shadow-lg text-sm text-gray-700`}>
+          <div
+            className={`z-50 ${maxWidth} rounded-xl bg-white border border-gray-100 p-4 shadow-lg text-sm text-gray-700`}
+          >
             {content}
             <Popover.Arrow className="fill-white" />
           </div>
@@ -100,9 +102,9 @@ export default function ClosTab({ subjectId }: Props) {
   const [curricula, setCurricula] = useState<
     { curriculumId: string; curriculum: CurriculumDetailType | null }[]
   >([]);
-  const [selectedCurriculumId, setSelectedCurriculumId] = useState<string | null>(
-    null,
-  );
+  const [selectedCurriculumId, setSelectedCurriculumId] = useState<
+    string | null
+  >(null);
   const [mappings, setMappings] = useState<CloPloMappingDetailType[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -125,10 +127,10 @@ export default function ClosTab({ subjectId }: Props) {
         const curriculumDetails = await Promise.all(
           curriculumIds.map(async (curriculumId) => {
             try {
-              const res = await curriculumApiRequest.getCurriculumById(curriculumId);
-              const curriculum = (res?.payload?.data ?? null) as
-                | CurriculumDetailType
-                | null;
+              const res =
+                await curriculumApiRequest.getCurriculumById(curriculumId);
+              const curriculum = (res?.payload?.data ??
+                null) as CurriculumDetailType | null;
               return { curriculumId, curriculum };
             } catch {
               return { curriculumId, curriculum: null };
@@ -137,8 +139,12 @@ export default function ClosTab({ subjectId }: Props) {
         );
 
         const publishedCurricula = curriculumDetails.filter(
-          (item): item is { curriculumId: string; curriculum: CurriculumDetailType } =>
-            item.curriculum !== null,
+          (
+            item,
+          ): item is {
+            curriculumId: string;
+            curriculum: CurriculumDetailType;
+          } => item.curriculum !== null,
         );
 
         if (!isActive) return;
@@ -179,10 +185,11 @@ export default function ClosTab({ subjectId }: Props) {
     const fetchMappingsFor = async () => {
       setLoading(true);
       try {
-        const res = await curriculumApiRequest.getCloPloMappingsBySubjectAndCurriculum(
-          subjectId,
-          selectedCurriculumId,
-        );
+        const res =
+          await curriculumApiRequest.getCloPloMappingsBySubjectAndCurriculum(
+            subjectId,
+            selectedCurriculumId,
+          );
 
         const data = unwrapArray(res?.payload) as CloPloMappingDetailType[];
         if (!isActive) return;
@@ -210,16 +217,28 @@ export default function ClosTab({ subjectId }: Props) {
 
   // BUILD PLO COLUMNS and CLO rows for selected curriculum
   const ploList = useMemo(() => {
-    const unique = new Map<string, { ploCode: string; ploDescription?: string }>();
+    const unique = new Map<
+      string,
+      { ploCode: string; ploDescription?: string }
+    >();
     mappings.forEach((m) => {
       if (!unique.has(m.ploId))
-        unique.set(m.ploId, { ploCode: m.ploCode, ploDescription: m.ploDescription });
+        unique.set(m.ploId, {
+          ploCode: m.ploCode,
+          ploDescription: m.ploDescription,
+        });
     });
-    return Array.from(unique.entries()).map(([ploId, info]) => ({ ploId, ...info }));
+    return Array.from(unique.entries()).map(([ploId, info]) => ({
+      ploId,
+      ...info,
+    }));
   }, [mappings]);
 
   const allCloIds = useMemo(
-    () => Array.from(new Set([...clos.map((c) => c.cloId), ...mappings.map((m) => m.cloId)])),
+    () =>
+      Array.from(
+        new Set([...clos.map((c) => c.cloId), ...mappings.map((m) => m.cloId)]),
+      ),
     [clos, mappings],
   );
 
@@ -229,22 +248,31 @@ export default function ClosTab({ subjectId }: Props) {
     return set;
   }, [mappings]);
 
-  const selectedCurriculum = curricula.find((c) => c.curriculumId === selectedCurriculumId) || null;
+  const selectedCurriculum =
+    curricula.find((c) => c.curriculumId === selectedCurriculumId) || null;
 
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <label className="text-sm font-medium text-gray-700">Select curriculum:</label>
+        <label className="text-sm font-medium text-gray-700">
+          Select curriculum:
+        </label>
         <select
           value={selectedCurriculumId ?? ""}
           onChange={(e) => setSelectedCurriculumId(e.target.value || null)}
-          className="px-3 py-2 border rounded bg-white"
+          className="px-3 py-2 border rounded bg-white text-gray-900"
         >
-          <option value="">-- Select curriculum --</option>
+          <option value="" className="text-gray-500">
+            -- Select curriculum --
+          </option>
           {curricula.map((c) => (
-              <option key={c.curriculumId} value={c.curriculumId}>
-                {c.curriculum?.curriculumName || c.curriculumId}
-              </option>
+            <option
+              key={c.curriculumId}
+              value={c.curriculumId}
+              className="text-gray-900"
+            >
+              {c.curriculum?.curriculumName || c.curriculumId}
+            </option>
           ))}
         </select>
       </div>
@@ -253,7 +281,10 @@ export default function ClosTab({ subjectId }: Props) {
         <TableSection title="CLOs">
           <tbody className="divide-y divide-gray-50">
             <tr>
-              <td className="px-6 py-6 text-sm text-gray-500" colSpan={1 + ploList.length}>
+              <td
+                className="px-6 py-6 text-sm text-gray-500"
+                colSpan={1 + ploList.length}
+              >
                 Loading...
               </td>
             </tr>
@@ -266,14 +297,29 @@ export default function ClosTab({ subjectId }: Props) {
       )}
 
       {!loading && selectedCurriculumId && (
-        <TableSection title={`CLO-PLO mapping - ${selectedCurriculum?.curriculum?.curriculumName || selectedCurriculumId}`}>
+        <TableSection
+          title={
+            <>
+              Mapping of CLOs to PLOs of Curriculum:{" "}
+              <span className="text-[#4caf50] font-extrabold">
+                {selectedCurriculum?.curriculum?.curriculumName ||
+                  selectedCurriculumId}
+              </span>
+            </>
+          }
+        >
           <thead>
             <tr className="bg-white border-b border-gray-100 text-[11px] font-bold text-gray-400 uppercase tracking-wider">
               <th className="px-6 py-4 text-left">CLO \ PLO</th>
               {ploList.map((plo) => (
                 <th key={plo.ploId} className="px-6 py-4 text-left">
-                  <HoverPopover content={plo.ploDescription || "No description"} maxWidth="max-w-sm">
-                    <div className="cursor-help text-sm font-semibold text-gray-700">{plo.ploCode}</div>
+                  <HoverPopover
+                    content={plo.ploDescription || "No description"}
+                    maxWidth="max-w-sm"
+                  >
+                    <div className="cursor-default text-sm font-semibold text-gray-700">
+                      {plo.ploCode}
+                    </div>
                   </HoverPopover>
                 </th>
               ))}
@@ -282,7 +328,10 @@ export default function ClosTab({ subjectId }: Props) {
           <tbody className="divide-y divide-gray-50">
             {allCloIds.length === 0 && (
               <tr>
-                <td className="px-6 py-6 text-sm text-gray-500" colSpan={1 + ploList.length}>
+                <td
+                  className="px-6 py-6 text-sm text-gray-500"
+                  colSpan={1 + ploList.length}
+                >
                   No CLOs found for this subject.
                 </td>
               </tr>
@@ -291,11 +340,17 @@ export default function ClosTab({ subjectId }: Props) {
             {allCloIds.map((cloId) => {
               const clo = cloById.get(cloId);
               return (
-                <tr key={cloId} className="align-top hover:bg-[#f8fff8] transition-colors">
+                <tr
+                  key={cloId}
+                  className="align-top hover:bg-[#f8fff8] transition-colors"
+                >
                   <td className="px-6 py-4 font-semibold text-gray-900 whitespace-nowrap">
-                    <HoverPopover content={clo?.description || "No description"} maxWidth="max-w-xs">
+                    <HoverPopover
+                      content={clo?.description || "No description"}
+                      maxWidth="max-w-xs"
+                    >
                       <div>
-                        <span className="px-2 py-0.5 bg-orange-50 text-orange-600 font-medium text-[10px] rounded border border-orange-100 cursor-help">
+                        <span className="px-2 py-0.5 bg-orange-50 text-orange-600 font-medium text-[10px] rounded border border-orange-100 cursor-default">
                           {clo?.cloCode || "N/A"}
                         </span>
                       </div>

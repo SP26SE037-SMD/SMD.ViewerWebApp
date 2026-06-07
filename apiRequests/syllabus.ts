@@ -11,6 +11,7 @@ import {
   SyllabusSessionResType,
   SessionMaterialBlockDetailResType,
   SyllabusStudentCompareResType,
+  SettingDetailResType,
 } from "@/schemaValidations/syllabus.schema";
 
 const syllabusApiRequest = {
@@ -93,6 +94,9 @@ const syllabusApiRequest = {
     return http.get<SessionMaterialBlockDetailResType>(
       `/api/session-material-blocks/detail?${params.toString()}`,
     );
+  },
+  getSettingByCode: (code: string) => {
+    return http.get<SettingDetailResType>(`/api/settings/code/${code}`);
   },
 };
 
