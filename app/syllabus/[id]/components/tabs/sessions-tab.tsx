@@ -13,7 +13,11 @@ type Props = {
 
 const formatSessionTopic = (sessionTopic: string | null | undefined) => {
   if (!sessionTopic) return "-";
-  return sessionTopic.replace(/[~˜]+/g, " & ").replace(/\s{2,}/g, " ").trim();
+  return sessionTopic
+    .replace(/[~˜]+/g, "\n")
+    .replace(/\s{2,}/g, " ")
+    .replace(/\s*\n\s*/g, "\n")
+    .trim();
 };
 
 export default function SessionsTab({ syllabusId }: Props) {
