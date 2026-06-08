@@ -29,7 +29,9 @@ export default function StudentCompareModal({ isOpen, onClose, syllabusId }: Pro
           setError("No previous syllabus version to compare.");
         }
       } catch (err: any) {
-        console.error("Failed to fetch compare data", err);
+        if (err?.status !== 404) {
+          console.error("Failed to fetch compare data", err);
+        }
         setError("No previous syllabus version to compare.");
       } finally {
         setLoading(false);
