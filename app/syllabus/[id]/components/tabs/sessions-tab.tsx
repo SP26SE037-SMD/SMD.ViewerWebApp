@@ -47,7 +47,7 @@ export default function SessionsTab({ syllabusId, subjectId }: Props) {
 
         setSessionCloMappings(Object.fromEntries(cloMappingResults));
       } catch (error) {
-        console.error("Failed to fetch sessions", error);
+        console.warn("Failed to fetch sessions");
         setSessions([]);
         setSessionCloMappings({});
       } finally {
@@ -104,12 +104,12 @@ export default function SessionsTab({ syllabusId, subjectId }: Props) {
               </td>
               <td className="px-6 py-4 align-top">
                 <div className="text-sm font-semibold text-gray-900 leading-relaxed whitespace-pre-wrap">
-                  {s.sessionTitle}
+                  {s.sessionTitle ? s.sessionTitle.replace(/~/g, "\n") : "-"}
                 </div>
               </td>
               <td className="px-6 py-4 align-top">
                 <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
-                  {s.sessionTopic || "-"}
+                  {s.sessionTopic ? s.sessionTopic.replace(/~/g, "\n") : "-"}
                 </div>
               </td>
               <td className="px-6 py-4 align-top">
@@ -119,7 +119,7 @@ export default function SessionsTab({ syllabusId, subjectId }: Props) {
               </td>
               <td className="px-6 py-4 align-top">
                 <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
-                  {s.teachingMethods || "-"}
+                  {s.teachingMethods ? s.teachingMethods.replace(/~/g, "\n") : "-"}
                 </div>
               </td>
               <td className="px-6 py-4 align-top">

@@ -72,7 +72,7 @@ export default function CompareTab({ subjectId }: Props) {
 
       setPair({ newVersion, oldVersion });
     } catch (e: unknown) {
-      console.error("Failed to load syllabuses for comparison", e);
+      console.warn("Failed to load syllabuses for comparison");
       const backendMessage =
         e instanceof HttpError
           ? e.payload?.message
@@ -108,7 +108,7 @@ export default function CompareTab({ subjectId }: Props) {
         (compareRes?.payload?.data ?? null) as SyllabusCompareDataType | null,
       );
     } catch (e: unknown) {
-      console.error("Failed to compare syllabuses", e);
+      console.warn("Failed to compare syllabuses");
       const backendMessage =
         e instanceof HttpError
           ? e.payload?.message

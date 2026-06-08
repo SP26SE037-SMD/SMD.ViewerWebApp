@@ -20,7 +20,7 @@ export default function SourcesTab({ subjectId }: Props) {
         const res = await subjectApiRequest.getSourcesBySubjectId(subjectId);
         setSources(res?.payload?.data ?? []);
       } catch (error) {
-        console.error("Failed to fetch sources", error);
+        console.warn("Failed to fetch sources");
         setSources([]);
       } finally {
         setLoading(false);

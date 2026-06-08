@@ -42,7 +42,7 @@ export default function AssessmentsTab({ syllabusId }: Props) {
         await Promise.all(promises);
         setCloMappings(mappingsMap);
       } catch (error) {
-        console.error("Failed to fetch assessments", error);
+        console.warn("Failed to fetch assessments");
         setAssessments([]);
         setCloMappings({});
       } finally {

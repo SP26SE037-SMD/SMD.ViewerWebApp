@@ -32,7 +32,7 @@ export default function ChapterMaterialsTab({ syllabus, subjectId }: Props) {
         );
         setMaterials(res?.payload?.data ?? []);
       } catch (error) {
-        console.error("Failed to fetch syllabus materials", error);
+        console.warn("Failed to fetch syllabus materials");
         setMaterials([]);
       } finally {
         setLoading(false);
