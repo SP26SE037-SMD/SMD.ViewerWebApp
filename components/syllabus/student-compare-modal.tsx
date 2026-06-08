@@ -228,6 +228,60 @@ export default function StudentCompareModal({ isOpen, onClose, syllabusId }: Pro
                 )}
               </div>
 
+              {/* Session Changes */}
+              <div>
+                <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-teal-50 text-teal-600 flex items-center justify-center">
+                    <Info size={16} />
+                  </div>
+                  Session Changes
+                </h3>
+
+                {sessionDiff?.addedSessions?.length > 0 && (
+                  <div className="mb-4">
+                    <h4 className="text-sm font-semibold text-green-700 mb-2">Added Sessions</h4>
+                    <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
+                      {sessionDiff.addedSessions.map((s: string, i: number) => (
+                        <li key={i}>{s}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {sessionDiff?.removedSessions?.length > 0 && (
+                  <div className="mb-4">
+                    <h4 className="text-sm font-semibold text-red-700 mb-2">Removed Sessions</h4>
+                    <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
+                      {sessionDiff.removedSessions.map((s: string, i: number) => (
+                        <li key={i} className="line-through">{s}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                
+                {sessionDiff?.changedSessions?.length > 0 && (
+                  <div className="mb-4">
+                    <h4 className="text-sm font-semibold text-orange-700 mb-2">Modified Sessions</h4>
+                    <div className="space-y-3">
+                      {sessionDiff.changedSessions.map((s: any, i: number) => (
+                        <div key={i} className="bg-orange-50/50 p-3 rounded-lg border border-orange-100">
+                          <p className="font-medium text-orange-900 text-sm mb-1">{s.sessionName}</p>
+                          <ul className="list-disc pl-5 space-y-1 text-sm text-orange-800">
+                            {s.detailChanges?.map((change: string, idx: number) => (
+                              <li key={idx}>{change}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {(!sessionDiff?.addedSessions?.length && !sessionDiff?.removedSessions?.length && !sessionDiff?.changedSessions?.length) && (
+                  <p className="text-sm text-gray-500 italic">No session changes.</p>
+                )}
+              </div>
+
             </div>
           ) : (
             <div className="text-center py-20 text-gray-500">
