@@ -52,6 +52,7 @@ export const SyllabusStudentCompareData = z.object({
   oldSyllabusId: z.string(),
   newSyllabusId: z.string(),
   assessmentDiffJson: z.string().nullable().optional(),
+  sessionDiffJson: z.string().nullable().optional(),
   conceptDiffJson: z.string().nullable().optional(),
   selectedCompare: z.boolean(),
   createdAt: z.string(),

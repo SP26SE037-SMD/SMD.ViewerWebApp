@@ -45,11 +45,13 @@ export default function StudentCompareModal({ isOpen, onClose, syllabusId }: Pro
 
   let assessmentDiff: any = null;
   let conceptDiff: any = null;
+  let sessionDiff: any = null;
 
   if (data) {
     try {
       if (data.assessmentDiffJson) assessmentDiff = JSON.parse(data.assessmentDiffJson);
       if (data.conceptDiffJson) conceptDiff = JSON.parse(data.conceptDiffJson);
+      if (data.sessionDiffJson) sessionDiff = JSON.parse(data.sessionDiffJson);
     } catch (e) {
       console.error("Failed to parse diff JSON", e);
     }
