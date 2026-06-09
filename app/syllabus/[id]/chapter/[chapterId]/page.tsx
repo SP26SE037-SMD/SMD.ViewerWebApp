@@ -10,6 +10,7 @@ import { mapMaterialBlocks } from "@/app/syllabus/[id]/chapter/[chapterId]/utils
 import { paginateBlocks } from "@/app/syllabus/[id]/chapter/[chapterId]/utils/pagination";
 import { renderChapterBlock } from "@/app/syllabus/[id]/chapter/[chapterId]/components/chapter-block-renderer";
 import Sidebar from "@/app/syllabus/[id]/chapter/[chapterId]/components/sidebar";
+import Export from "@/app/syllabus/[id]/chapter/[chapterId]/components/export";
 
 export default function ChapterViewerPage({
   params,
@@ -52,7 +53,7 @@ export default function ChapterViewerPage({
 
         setSelectionBox({
           x: rect.left + rect.width / 2,
-          y: Math.max(8, rect.top - 8), 
+          y: Math.max(8, rect.top - 8),
           text,
         });
       }, 0);
@@ -141,23 +142,26 @@ export default function ChapterViewerPage({
               </p>
             </div>
           </div>
-          <div className="text-xs font-bold text-gray-400 bg-gray-100 px-3 py-1.5 rounded-lg shrink-0">
-            {pages.length} Pages
+          <div className="flex items-center gap-2 shrink-0">
+            <div className="text-xs font-bold text-gray-400 bg-gray-100 px-3 py-1.5 rounded-lg">
+              {pages.length} Pages
+            </div>
+            <Export chapterName={chapterName} />
           </div>
         </div>
       </header>
 
       {/* ── Word-like Paginated Document Container ── */}
-      <div className="pt-8 md:pt-12 px-2 sm:px-4 pb-20">
-        <div className="max-w-400 mx-auto flex flex-col lg:flex-row items-start gap-6 md:gap-8">
-          <Sidebar blocks={blocks} className="order-2 lg:order-1" />
+      <div className="pt-8 md:pt-12 px-2 sm:px-4 pb-20 print:p-0 print:m-0 print:bg-white">
+        <div className="max-w-400 mx-auto flex flex-col lg:flex-row items-start gap-6 md:gap-8 print:block print:w-full print:m-0">
+          <Sidebar blocks={blocks} className="order-2 lg:order-1 print:hidden" />
 
-          <div className="order-1 lg:order-2 flex-1 w-full flex flex-col items-center gap-8 md:gap-12 lg:ml-80 xl:ml-88">
+          <div className="order-1 lg:order-2 flex-1 w-full flex flex-col items-center gap-8 md:gap-12 lg:ml-80 xl:ml-88 print:ml-0 print:gap-0 print:w-full printable-document-container">
             {pages.map((pageBlocks, pageIndex) => (
               <div
                 key={pageIndex}
-                className="w-full max-w-212.5 bg-white rounded-sm shadow-[0_4px_24px_rgb(0,0,0,0.06)] ring-1 ring-gray-200 isolate relative flex flex-col"
-                style={{ minHeight: "1123px" }} 
+                className="w-full max-w-212.5 bg-white rounded-sm shadow-[0_4px_24px_rgb(0,0,0,0.06)] ring-1 ring-gray-200 isolate relative flex flex-col print-page"
+                style={{ minHeight: "1123px" }}
               >
                 {/* Document Content Area */}
                 <article className="px-6 py-8 sm:px-10 sm:py-10 md:px-14 md:py-12 flex-1">
