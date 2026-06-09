@@ -7,6 +7,7 @@ import { CloType } from "@/schemaValidations/subject.schema";
 import {
   CurriculumDetailType,
   CloPloMappingDetailType,
+  CurriculumPloType,
 } from "@/schemaValidations/curriculum.schema";
 
 type Props = {
@@ -106,6 +107,7 @@ export default function ClosTab({ subjectId }: Props) {
     string | null
   >(null);
   const [mappings, setMappings] = useState<CloPloMappingDetailType[]>([]);
+  const [plos, setPlos] = useState<CurriculumPloType[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -158,6 +160,7 @@ export default function ClosTab({ subjectId }: Props) {
         } else {
           setSelectedCurriculumId(null);
           setMappings([]);
+          setPlos([]);
         }
       } catch (error) {
         console.error("Failed to fetch initial CLO/Curricula", error);
@@ -166,6 +169,7 @@ export default function ClosTab({ subjectId }: Props) {
         setCurricula([]);
         setSelectedCurriculumId(null);
         setMappings([]);
+        setPlos([]);
       } finally {
         if (isActive) setLoading(false);
       }
@@ -179,12 +183,37 @@ export default function ClosTab({ subjectId }: Props) {
   }, [subjectId]);
 
   useEffect(() => {
-    if (!selectedCurriculumId) return;
+    if (!selectedCurriculumId) {
+      setMappings([]);
+      setPlos([]);
+      return;
+    }
 
     let isActive = true;
     const fetchMappingsFor = async () => {
       setLoading(true);
       try {
+        const allPlos: CurriculumPloType[] = [];
+        let page = 0;
+        let totalPages = 1;
+
+        while (page < totalPages) {
+          const res = await curriculumApiRequest.getPlosByCurriculumId(
+            selectedCurriculumId,
+            page,
+            10,
+          );
+          const data = res?.payload?.data;
+
+          if (data?.content?.length) {
+            allPlos.push(...data.content);
+          }
+
+          totalPages = data?.totalPages ?? 0;
+          if (totalPages === 0) break;
+          page += 1;
+        }
+
         const res =
           await curriculumApiRequest.getCloPloMappingsBySubjectAndCurriculum(
             subjectId,
@@ -193,10 +222,12 @@ export default function ClosTab({ subjectId }: Props) {
 
         const data = unwrapArray(res?.payload) as CloPloMappingDetailType[];
         if (!isActive) return;
+        setPlos(allPlos);
         setMappings(data);
       } catch (error) {
-        console.error("Failed to fetch mappings for curriculum", error);
+        console.error("Failed to fetch mappings or PLOs for curriculum", error);
         if (!isActive) return;
+        setPlos([]);
         setMappings([]);
       } finally {
         if (isActive) setLoading(false);
@@ -217,22 +248,12 @@ export default function ClosTab({ subjectId }: Props) {
 
   // BUILD PLO COLUMNS and CLO rows for selected curriculum
   const ploList = useMemo(() => {
-    const unique = new Map<
-      string,
-      { ploCode: string; ploDescription?: string }
-    >();
-    mappings.forEach((m) => {
-      if (!unique.has(m.ploId))
-        unique.set(m.ploId, {
-          ploCode: m.ploCode,
-          ploDescription: m.ploDescription,
-        });
-    });
-    return Array.from(unique.entries()).map(([ploId, info]) => ({
-      ploId,
-      ...info,
+    return plos.map((plo) => ({
+      ploId: plo.ploId,
+      ploCode: plo.ploCode,
+      ploDescription: plo.description,
     }));
-  }, [mappings]);
+  }, [plos]);
 
   const allCloIds = useMemo(
     () =>
